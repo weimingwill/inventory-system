@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="lib/jquery.js"></script>
+<link href="css/bootstrap.css" rel="stylesheet" />
+<script src="lib/bootstrap.js"></script>
+<script src="lib/alasql.js"></script>
+<script src="lib/purl.js"></script>
+<script src="js/db.js"></script>
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="width=device-width">
+<title>COMPANY</title>
+</head>
+<body>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<!-- Brand and toggle get grouped for better mobile display -->
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed"
+					data-toggle="collapse" data-target="#navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand">COMPANY</a>
+			</div>
+
+			<!-- Collect the nav links, forms, and other content for toggling -->
+			<div class="collapse navbar-collapse" id="navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="index.html">Inventory Management</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown"><a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"><span class="glyphicon glyphicon-cog"></span>
+							Settings <span class="caret"></span></a>
+						<ul class="dropdown-menu">
+							<li><a onclick="window.location.reload(true);"><span
+									class="glyphicon glyphicon-refresh"></span> Reload</a></li>
+							<li><a onclick="DB.init();"><span
+									class="glyphicon glyphicon-repeat"></span> Init DB</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a onclick="DB.remove();"><span
+									class="glyphicon glyphicon-trash"></span> Delete DB</a></li>
+						</ul></li>
+				</ul>
+			</div>
+			<!-- /.navbar-collapse -->
+		</div>
+		<!-- /.container-fluid -->
+	</nav>
+
+	<div class="container">
+		<form action="index.html" class="form-inline text-center">
+			<div class="form-group">
+				<label>Warehouse</label> <select name="q1" class="form-control">
+					<option value="0">All</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Classification</label> <select name="q2" class="form-control">
+					<option value="0">All</option>
+				</select>
+			</div>
+			<div class="form-group">
+				<label>Code</label> <input name="q3" type="text"
+					class="form-control" placeholder="Prefix Search">
+			</div>
+			<button type="submit" class="btn btn-primary">
+				<span class="glyphicon glyphicon-search"></span> Search
+			</button>
+		</form>
+		<hr>
+
+		<div class="clearfix" style="margin: 10px 0;">
+			<a href="stock-form.html" class="btn btn-sm btn-success pull-right"><span
+				class="glyphicon glyphicon-plus"></span> New</a>
+		</div>
+
+		<table class="table table-hover table-condensed">
+			<thead>
+				<tr>
+					<th>Warehouse</th>
+					<th>Classification</th>
+					<th>Code</th>
+					<th>Maker</th>
+					<th>Detail</th>
+					<th>Price</th>
+					<th>In Stock</th>
+					<th>Unit</th>
+				</tr>
+			</thead>
+			<tbody id="tbody-stocks"></tbody>
+		</table>
+	</div>
+	<script src="js/index.js"></script>
+</body>
+</html>
