@@ -1,67 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<link href="css/google-material-icons.css" rel="stylesheet">
-	<link href="css/vuetify.min.css" rel="stylesheet">
-
-	<script src="lib/jquery.js"></script>
-	<!--<script src="lib/bootstrap.js"></script>-->
-	<script src="lib/alasql.js"></script>
-	<script src="lib/purl.js"></script>
-	<script src="js/db.js"></script>
-
-	<script src="lib/vue.js"></script>
-	<script src="lib/vuex.js"></script>
-    <script src="lib/vuetify.min.js"></script>
-
-	<meta charset="utf-8">
-	<meta http-equiv="Pragma" content="no-cache">
-	<meta http-equiv="Cache-Control" content="no-cache">
-	<meta name="viewport" content="width=device-width">
-	<title>E-Commerce Inventory</title>
+<script src="lib/jquery.js"></script>
+<link href="css/bootstrap.css" rel="stylesheet" />
+<script src="lib/bootstrap.js"></script>
+<script src="lib/alasql.js"></script>
+<script src="lib/purl.js"></script>
+<script src="js/db.js"></script>
+<meta charset="utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="width=device-width">
+<title>COMPANY</title>
 </head>
 <body>
-	<v-app id="example-3" class="elevation-1" top-toolbar left-sidebar>
-		<!--<v-toolbar>-->
-			<!--<v-toolbar-side-icon class="hidden-lg-and-up" @click.native.stop="sidebar4 = !sidebar4" />-->
-			<!--<v-toolbar-logo class="text-xs-right">Logo</v-toolbar-logo>-->
-		<!--</v-toolbar>-->
-		<main>
-			<v-sidebar v-model="sidebar4" height="auto">
-				<v-list dense>
-					<template v-for="(item,i) in itemGroup">
-						<v-list-group v-if="item.items">
-							<v-list-item slot="item">
-								<v-list-tile ripple>
-									<v-list-tile-title v-text="item.title" />
-									<v-list-tile-action>
-										<v-icon>keyboard_arrow_down</v-icon>
-									</v-list-tile-action>
-								</v-list-tile>
-							</v-list-item>
-							<v-list-item v-for="(subItem,i) in item.items" :key="i">
-								<v-list-tile ripple>
-									<v-list-tile-title v-text="subItem.title" />
-								</v-list-tile>
-							</v-list-item>
-						</v-list-group>
-						<v-subheader v-else-if="item.header" v-text="item.header" />
-						<v-divider v-else-if="item.divider" light />
-						<v-list-item v-else>
-							<v-list-tile ripple>
-								<v-list-tile-title v-text="item.title" />
-							</v-list-tile>
-						</v-list-item>
-					</template>
-				</v-list>
-			</v-sidebar>
-			<v-content>
-				<v-container fluid></v-container>
-			</v-content>
-		</main>
-	</v-app>
-
-
 	<nav class="navbar navbar-default">
 		<div class="container">
 			<!-- Brand and toggle get grouped for better mobile display -->

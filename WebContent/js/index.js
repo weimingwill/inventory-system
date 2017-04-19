@@ -1,4 +1,34 @@
 // create search box
+// import Vue from 'vue'
+// import Vuetify from 'vuetify'
+
+Vue.use(Vuetify);
+
+var app = new Vue({
+    el: '#example-3',
+    data () {
+        return {
+            itemGroup: [
+                { header: 'Header' },
+                {
+                    title: 'Parent',
+                    group: '/company',
+                    items: [
+                        { title: 'Child' },
+                        { title: 'Child' },
+                        { title: 'Child' }
+                    ]
+                },
+                { title: 'Link' },
+                { title: 'Link' },
+                { divider: true },
+                { header: 'Another Header' },
+                { title: 'Link' }
+            ]
+        }
+    }
+});
+
 var rows = alasql('SELECT * FROM whouse;');
 for (var i = 0; i < rows.length; i++) {
 	var row = rows[i];
