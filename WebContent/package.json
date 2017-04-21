@@ -1,0 +1,38 @@
+{
+  "name": "inventory-system",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "webpack -d --watch"
+  },
+  "dependencies": {
+    "vue": "^2.2.6",
+    "vue-router": "^2.4.0"
+  },
+  "author": "Weiming <wingalong@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/weimingwill/vue-tut/issues"
+  },
+  "homepage": "https://github.com/weimingwill/vue-tut#readme",
+  "devDependencies": {
+    "autoprefixer": "^6.7.7",
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.1",
+    "babel-preset-env": "^1.4.0",
+    "css-loader": "^0.28.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "html-webpack-plugin": "^2.28.0",
+    "style-loader": "^0.16.1",
+    "url-loader": "^0.5.8",
+    "vue": "^2.2.6",
+    "vue-loader": "^11.3.4",
+    "vue-router": "^2.4.0",
+    "vue-style-loader": "^3.0.0",
+    "vue-template-compiler": "^2.2.6",
+    "vuetify": "^0.10.4",
+    "webpack": "^2.4.1",
+    "webpack-merge": "^4.1.0"
+  }
+}
