@@ -10,7 +10,13 @@ function resolve (dir) {
 
 module.exports = {
   entry: {
-    app: './src/main.js'
+    app: './src/main.js',
+    // vendors: [
+    //   "vue",
+    //   "vue-router",
+    //   "vuex",
+    //   "vuex-router-sync"
+    // ]
   },
   output: {
     path: path.resolve(__dirname, ''),
@@ -20,27 +26,52 @@ module.exports = {
     extensions: ['.js', '.vue', '.json'],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
-      '@': resolve('src')
+      '@': resolve('src'),
+      assets: path.resolve(__dirname, 'src/assets'),
+      components: path.resolve(__dirname, 'src/components'),
+      views: path.resolve(__dirname, 'src/views'),
+      'vuex-store': path.resolve(__dirname, 'src/store')
     }
   },
   module: {
     rules: [
       {
-          test: /\.css$/,
-          use: [
-              { loader: "style-loader" },
-              { loader: "css-loader" },
-          ],
+        test: /\.css$/,
+        use: [
+          { loader: "style-loader" },
+          { loader: "css-loader" },
+        ],
+      },
+      {
+        test: /\.styl$/,
+        use: [
+          {loader: 'style-loader'},
+          {loader: 'css-loader'},
+          {loader: 'stylus-loader'}
+        ]
       },
       {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: vueLoaderConfig
       },
+      // {
+      //   test: /\.js$/,
+      //   loader: 'babel-loader',
+      //   include: [resolve('src'), resolve('test')]
+      // },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        // use: ['vue-hot-reload-loader', 'buble-loader'],
+        use: [
+          {loader: 'vue-hot-reload-loader'},
+          {loader: 'buble-loader'}
+        ],
+        exclude: /node_modules/,
+        include: resolve('src'),
+        // options: {
+        //     objectAssign: 'Object.assign'
+        // }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
@@ -61,10 +92,10 @@ module.exports = {
     ]
   },
   plugins: [
-      new HtmlWebpackPlugin({
-          filename: 'index.html',
-          template: 'src/index.html',
-          inject: true
-      }),
+    new HtmlWebpackPlugin({
+      filename: 'index.html',
+      template: 'src/index.html',
+      inject: true
+    }),
   ]
 };
