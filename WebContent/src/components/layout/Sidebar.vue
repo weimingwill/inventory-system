@@ -1,8 +1,9 @@
 <template>
-    <v-sidebar v-model="sidebar4" height="auto">
+    <v-sidebar height="auto">
         <v-list dense>
-            <template v-for="(item,i) in itemGroup">
-                <v-list-group v-if="item.items">
+            <!--<p style="color: white">{{ menu }}</p>-->
+            <template v-for="(item,i) in menu">
+                <v-list-group v-if="item.subItems">
                     <v-list-item slot="item">
                         <v-list-tile ripple>
                             <v-list-tile-title v-text="item.title" />
@@ -11,8 +12,8 @@
                             </v-list-tile-action>
                         </v-list-tile>
                     </v-list-item>
-                    <v-list-item v-for="(subItem,i) in item.items" :key="i">
-                        <v-list-tile ripple :href="subItem.href" :router="subItem.router">
+                    <v-list-item v-for="(subItem,i) in item.subItems" :key="i">
+                        <v-list-tile ripple :href="subItem.path" :router="subItem.router">
                             <v-list-tile-title v-text="subItem.title" />
                         </v-list-tile>
                     </v-list-item>
@@ -30,37 +31,44 @@
 </template>
 
 <script>
+  import { mapGetters, mapActions } from 'vuex'
+
   export default {
     name: 'sidebar',
-    data () {
-      return {
-        itemGroup: [
-          { header: 'Header' },
-          {
-            title: 'Inventory Control',
-            group: '/inventory',
-            items: [
-              {
-                title: 'Inventory',
-                href: '/inventory',
-                router: true
-              },
-              {
-                title: 'Variants',
-                href: '/variant',
-                router: true
-              }
-            ]
-          },
-          { title: 'Stock' },
-          { title: 'Link' },
-          { divider: true },
-          { header: 'Another Header' },
-          { title: 'Link' }
-        ],
-        sidebar4: ''
-      }
-    }
+
+    computed: mapGetters({
+      menu: 'menuitems',
+    }),
+
+//    data () {
+//      return {
+//        itemGroup: [
+//          { header: 'Header' },
+//          {
+//            title: 'Inventory Control',
+//            group: '/inventory',
+//            subItems: [
+//              {
+//                title: 'Inventory',
+//                path: '/inventory',
+//                router: true
+//              },
+//              {
+//                title: 'Variants',
+//                path: '/variant',
+//                router: true
+//              }
+//            ]
+//          },
+//          { title: 'Stock' },
+//          { title: 'Link' },
+//          { divider: true },
+//          { header: 'Another Header' },
+//          { title: 'Link' }
+//        ],
+//        sidebar4: ''
+//      }
+//    }
   }
 </script>
 

@@ -4,27 +4,29 @@
 import lazyLoading from './lazyLoading'
 
 export default {
-  name: 'Inventory Controol',
+  title: 'Inventory Control',
   path: '/inventory-control',
   meta: {
     icon: 'fa-bar-chart-o',
     expanded: false,
     link: 'inventory-control/inventory.vue'
   },
-  component: lazyLoading('inventory-control', true),
+  // component: lazyLoading('inventory-control', true),
   
-  children: [
+  subItems: [
     {
-      name: 'Inventory',
-      path: 'inventory',
+      title: 'Inventory',
+      path: '/inventory',
+      router: true,
       component: lazyLoading('inventory-control/inventory'),
       meta: {
         link: 'inventory-control/inventory.vue'
       }
     },
     {
-      name: 'Variant',
-      path: 'variant',
+      title: 'Variant',
+      path: '/variant',
+      router: true,
       component: lazyLoading('inventory-control/variant'),
       meta: {
         link: 'inventory-control/variant.vue'
