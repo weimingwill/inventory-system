@@ -23,6 +23,7 @@
     "buble": "^0.15.2",
     "buble-loader": "^0.4.1",
     "css-loader": "^0.28.0",
+    "dsv-loader": "^2.0.0",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
     "gulp": "^3.9.1",

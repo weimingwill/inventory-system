@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-app id="example-3" class="elevation-1" top-toolbar left-sidebar>
+    <v-app top-toolbar left-sidebar>
       <main>
         <sidebar></sidebar>
         <app-main></app-main>
