@@ -13,8 +13,6 @@
         </v-card-title>
         <v-data-table
             v-bind:headers="headers"
-            v-model="items3"
-            v-bind:search="e3"
             select-all
         >
             <template slot="items" scope="props">
@@ -109,7 +107,9 @@
             calcium: '8%',
             iron: '1%'
           }
-        ]
+        ],
+        e3: '',
+        items3: ''
       }
     }
   }
