@@ -24,13 +24,15 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.vue', '.json'],
+    // root: [path.resolve(__dirname, 'semantic-ui/dist')],
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
       assets: path.resolve(__dirname, 'src/assets'),
       components: path.resolve(__dirname, 'src/components'),
       views: path.resolve(__dirname, 'src/views'),
-      'vuex-store': path.resolve(__dirname, 'src/store')
+      'vuex-store': path.resolve(__dirname, 'src/store'),
+      // semantic: path.resolve(__dirname, 'css/semantic.css')
     }
   },
   module: {

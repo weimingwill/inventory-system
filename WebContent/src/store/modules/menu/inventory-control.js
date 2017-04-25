@@ -7,7 +7,7 @@ export default {
   title: 'Inventory Control',
   path: '/inventory-control',
   meta: {
-    icon: 'fa-bar-chart-o',
+    icon: 'web_asset',
     expanded: false,
     link: 'inventory-control/inventory.vue'
   },

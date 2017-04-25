@@ -26,6 +26,6 @@
 </script>
 
 <style lang="stylus">
-  @import '../node_modules/vuetify/src/stylus/main'
-  @import '../css/google-material-icons.css'
+  @import '../node_modules/vuetify/src/stylus/main';
+  @import '../css/google-material-icons.css';
 </style>

@@ -7,7 +7,7 @@ export default {
   title: 'Purchasing',
   path: '/purchasing',
   meta: {
-    icon: 'fa-bar-chart-o',
+    icon: 'add_shopping_cart',
     expanded: false,
     link: 'purchasing/dashboard.vue'
   },
