@@ -19,7 +19,7 @@
 
 <style>
   .breadcrumbs {
-    padding: 20px 0 15px 10px;
+    padding: 40px 0 35px 10px;
     background-color: #f4f4f5;
     justify-content: flex-start;
   }

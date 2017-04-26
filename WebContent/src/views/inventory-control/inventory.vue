@@ -1,85 +1,37 @@
 <template>
     <div>
         <breadcrumbs :items="items"></breadcrumbs>
-        <!--<slot-->
-            <!--name="breadcrumbs"-->
-            <!--:items="items">-->
-        <!--</slot>-->
+        <div class="tool-card">
+            <v-card-title>
+                <v-spacer></v-spacer>
+                <v-text-field
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                    v-model="searchContent"
+                ></v-text-field>
+                <v-btn success dark>
+                    <v-icon left>add</v-icon>
+                    New Product
+                </v-btn>
 
+                <v-btn default light>
+                    <v-icon left>system_update_alt</v-icon>
+                    Import
+                </v-btn>
+
+                <v-btn default light>
+                    <v-icon left class="rotate-180">system_update_alt</v-icon>
+                    Export
+                </v-btn>
+            </v-card-title>
+        </div>
         <header></header>
-        <content></content>
+        <main-content :search-content="searchContent"></main-content>
     </div>
 
-    <!--<v-card>-->
-        <!--<v-card-title>-->
-            <!--Inventory-->
-            <!--<v-spacer></v-spacer>-->
-            <!--<v-text-field-->
-                <!--append-icon="search"-->
-                <!--label="Search"-->
-                <!--single-line-->
-                <!--hide-details-->
-                <!--v-model="e3"-->
-            <!--&gt;</v-text-field>-->
-        <!--</v-card-title>-->
-        <!--<v-data-table-->
-            <!--v-bind:headers="headers"-->
-            <!--v-bind:search="e3"-->
-            <!--select-all-->
-        <!--&gt;-->
-            <!--<template slot="items" scope="props">-->
-                <!--<td>-->
-                    <!--<v-checkbox-->
-                        <!--hide-details-->
-                        <!--primary-->
-                        <!--v-model="props.item.value"-->
-                    <!--&gt;</v-checkbox>-->
-                <!--</td>-->
-                <!--<td>-->
-                    <!--<v-edit-dialog-->
-                        <!--@open="props.item._name = props.item.name"-->
-                        <!--@cancel="props.item.name = props.item._name || props.item.name"-->
-                        <!--lazy-->
-                    <!--&gt; {{ props.item.name }}-->
-                        <!--<v-text-field-->
-                            <!--slot="input"-->
-                            <!--label="Edit"-->
-                            <!--v-bind:value="props.item.name"-->
-                            <!--v-on:change="val => props.item.name = val"-->
-                            <!--single-line counter="counter"-->
-                        <!--&gt;</v-text-field>-->
-                    <!--</v-edit-dialog>-->
-                <!--</td>-->
-                <!--<td class="text-xs-right">{{ props.item.calories }}</td>-->
-                <!--<td class="text-xs-right">{{ props.item.fat }}</td>-->
-                <!--<td class="text-xs-right">{{ props.item.carbs }}</td>-->
-                <!--<td class="text-xs-right">{{ props.item.protein }}</td>-->
-                <!--<td class="text-xs-right">{{ props.item.sodium }}</td>-->
-                <!--<td class="text-xs-right">{{ props.item.calcium }}</td>-->
-                <!--<td>-->
-                    <!--<v-edit-dialog-->
-                        <!--class="text-xs-right"-->
-                        <!--@open="props.item._iron = props.item.iron"-->
-                        <!--@cancel="props.item.iron = props.item._iron || props.item.iron"-->
-                        <!--large-->
-                        <!--lazy-->
-                    <!--&gt;-->
-                        <!--<div class="text-xs-right">{{ props.item.iron }}</div>-->
-                        <!--<div slot="input" class="mt-3 title">Update Iron</div>-->
-                        <!--<v-text-field-->
-                            <!--slot="input"-->
-                            <!--label="Edit"-->
-                            <!--v-bind:value="props.item.iron"-->
-                            <!--v-on:blur="val => props.item.iron = val"-->
-                            <!--single-line-->
-                            <!--counter-->
-                            <!--autofocus-->
-                        <!--&gt;</v-text-field>-->
-                    <!--</v-edit-dialog>-->
-                <!--</td>-->
-            <!--</template>-->
-        <!--</v-data-table>-->
-    <!--</v-card>-->
+
 </template>
 
 <script>
@@ -87,13 +39,15 @@
   console.log(data);
 
   import Breadcrumbs from '../breadcrumbs.vue'
+  import MainContent from '../inventory-control/components/inventory-content.vue'
 
   export default {
 
     name: 'inventory',
 
     components: {
-      Breadcrumbs
+      Breadcrumbs,
+      MainContent
     },
 
     data () {
@@ -133,9 +87,16 @@
             iron: '1%'
           }
         ],
-        e3: '',
+        searchContent: '',
         items3: ''
       }
     }
   }
 </script>
+
+<style>
+    .tool-card {
+        margin: -100px 0 -1px 0;
+        right: 0;
+    }
+</style>
