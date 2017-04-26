@@ -28,18 +28,15 @@
             </v-card-title>
         </div>
         <header></header>
-        <main-content :search-content="searchContent"></main-content>
+        <inventory-content :search-content="searchContent"></inventory-content>
     </div>
 
 
 </template>
 
 <script>
-  var data = require('../../../data/ITEM-ITEM.csv');
-  console.log(data);
-
   import Breadcrumbs from '../breadcrumbs.vue'
-  import MainContent from '../inventory-control/components/inventory-content.vue'
+  import InventoryContent from '../inventory-control/components/inventory-content.vue'
 
   export default {
 
@@ -47,7 +44,7 @@
 
     components: {
       Breadcrumbs,
-      MainContent
+      InventoryContent
     },
 
     data () {

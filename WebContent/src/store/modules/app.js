@@ -1,6 +1,15 @@
 import * as types from '../mutation-types'
 
+let products = require('../../data/products.csv');
+let variants = require('../../data/variants.csv');
+let suppliers = require('../../data/suppliers.csv');
+let supplierContacts = require('../../data/supplier-contacts.csv');
+
 const state = {
+  products: products,
+  variants: variants,
+  suppliers: suppliers,
+  supplierContacts: supplierContacts,
   device: {
     isMobile: false,
     isTablet: false
@@ -15,6 +24,8 @@ const state = {
 };
 
 const mutations = {
+  
+  
   [types.TOGGLE_DEVICE] (state, device) {
     state.device.isMobile = device === 'mobile';
     state.device.isTablet = device === 'tablet'

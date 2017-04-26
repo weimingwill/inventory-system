@@ -24,7 +24,6 @@ function generateRoutesFromMenu (menu = [], routes = []) {
     if (item.path) {
       routes.push(item)
     }
-    console.log(routes);
     if (!item.component) {
       generateRoutesFromMenu(item.subItems, routes)
     }

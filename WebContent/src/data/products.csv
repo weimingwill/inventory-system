@@ -1,0 +1,4 @@
+id,supplierId,sku,name,type,description,onHand,available,committed,sold,status,image,created,updated
+1,1,CD001,Cocktail Dress,Dress,,200,150,50,10,active,/inventory-i18n-task3/WebContent/src/assets/images/1-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
+2,2,CT001,Cotton T-shirt,T-shirt,,200,150,50,10,active,/inventory-i18n-task3/WebContent/src/assets/images/2-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
+3,3,SH001,Sweatshirt Hoodie,Sweatshirt,,200,150,50,10,active,/inventory-i18n-task3/WebContent/src/assets/images/3-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
