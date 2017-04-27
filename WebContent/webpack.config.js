@@ -67,13 +67,15 @@ module.exports = {
         // use: ['vue-hot-reload-loader', 'buble-loader'],
         use: [
           {loader: 'vue-hot-reload-loader'},
-          {loader: 'buble-loader'}
+          {
+            loader: 'buble-loader',
+            options: {
+                objectAssign: 'Object.assign'
+            }
+          }
         ],
         exclude: /node_modules/,
         include: resolve('src'),
-        // options: {
-        //     objectAssign: 'Object.assign'
-        // }
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,

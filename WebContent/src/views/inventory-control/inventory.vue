@@ -1,6 +1,6 @@
 <template>
     <div>
-        <breadcrumbs :items="items"></breadcrumbs>
+        <breadcrumbs :items="breadcrumbs"></breadcrumbs>
         <div class="tool-card">
             <v-card-title>
                 <v-spacer></v-spacer>
@@ -11,17 +11,17 @@
                     hide-details
                     v-model="searchContent"
                 ></v-text-field>
-                <v-btn success dark>
+                <v-btn outline success dark to="/createProduct" router>
                     <v-icon left>add</v-icon>
                     New Product
                 </v-btn>
 
-                <v-btn default light>
+                <v-btn outline default light>
                     <v-icon left>system_update_alt</v-icon>
                     Import
                 </v-btn>
 
-                <v-btn default light>
+                <v-btn outline default light>
                     <v-icon left class="rotate-180">system_update_alt</v-icon>
                     Export
                 </v-btn>
@@ -49,43 +49,10 @@
 
     data () {
       return {
-        headers: [
-          {
-            text: 'Dessert (100g serving)',
-            left: true,
-            sortable: false,
-            value: 'name'
-          },
-          { text: 'Calories', value: 'calories' }
+        breadcrumbs: [
+          { text: 'Inventory' }
         ],
-        items: [
-          {
-            text: 'Dashboard',
-            value: false,
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
-            sodium: 87,
-            calcium: '14%',
-            iron: '1%'
-          },
-          {
-            text: 'link1',
-            value: false,
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
-            sodium: 129,
-            calcium: '8%',
-            iron: '1%'
-          }
-        ],
-        searchContent: '',
-        items3: ''
+        searchContent: ''
       }
     }
   }

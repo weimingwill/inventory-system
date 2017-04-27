@@ -2,6 +2,8 @@
   <v-breadcrumbs divider="/">
     <v-breadcrumbs-item
         v-for="item in items" :key="item"
+        :href="item.href"
+        :target="item.target"
         :disabled="item.disabled"
     >
       {{ item.text }}

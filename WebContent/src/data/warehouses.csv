@@ -1,0 +1,5 @@
+id,name,location,managerId,numberOfShelves
+1,Shanghai Warehouse,Shanghai,1,100
+2,Beijing Warehouse,Beijing,2,200
+3,Shenzhen Warehouse,Shenzhen,3,300
+4,Hangzhou Warehouse,Hangzhou,4,400

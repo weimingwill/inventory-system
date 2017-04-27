@@ -12,3 +12,9 @@
   export default {
   }
 </script>
+
+<style>
+  .content {
+    padding-left: 300px;
+  }
+</style>

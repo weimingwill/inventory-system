@@ -1,5 +1,5 @@
 <template>
-    <v-sidebar height="100vh">
+    <v-sidebar height="100vh" fixed :mobile="false">
         <div class="sidebar-logo">
             <img class="logo" src="../../assets/logo.png">
             <span class="logo-title">EC Inventory</span>
@@ -21,7 +21,7 @@
                             </v-list-tile-action>
                         </v-list-tile>
                     </v-list-item>
-                    <v-list-item v-for="(subItem,i) in item.subItems" :key="i">
+                    <v-list-item v-if="subItem.isMenu" v-for="(subItem,i) in item.subItems" :key="i">
                         <v-list-tile ripple :href="subItem.path" :router="subItem.router">
                             <v-list-tile-title v-text="subItem.title" />
                         </v-list-tile>
@@ -80,31 +80,6 @@
 
     data () {
       return {
-//        itemGroup: [
-//          { header: 'Header' },
-//          {
-//            title: 'Inventory Control',
-//            group: '/inventory',
-//            subItems: [
-//              {
-//                title: 'Inventory',
-//                path: '/inventory',
-//                router: true
-//              },
-//              {
-//                title: 'Variants',
-//                path: '/variant',
-//                router: true
-//              }
-//            ]
-//          },
-//          { title: 'Stock' },
-//          { title: 'Link' },
-//          { divider: true },
-//          { header: 'Another Header' },
-//          { title: 'Link' }
-//        ],
-//        sidebar4: ''
         username: 'Zhuang Weiming',
         position: 'Inventory Manager',
         message: 'Message'
@@ -113,10 +88,21 @@
   }
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
     @import "../../../semantic/dist/components/image.css";
 
     /* Todo: responsive sidebar */
+
+    /* active tab */
+    .list__tile--active {
+        background-color: rgba(82, 122, 154, 0.3);
+        /*color: #2196f3;*/
+    }
+
+    .list__tile--active .list__tile__title {
+        font-weight: bold;
+        color: #58acff !important;
+    }
 
     .sidebar-logo {
         text-align: center;
@@ -133,9 +119,6 @@
         float: left;
     }
 
-    .logo-title {
-        /*float: left;*/
-    }
     .bottom-aligned {
         position: absolute;
         bottom: 0;
@@ -155,7 +138,7 @@
     }
 
     .avatar-title-content {
-        margin-left: 6%;
+        margin-left: 10%;
     }
 
     .avatar-title {
@@ -164,7 +147,7 @@
     }
 
     .message-icon {
-        margin-left: 2%;
+        margin-left: 6%;
     }
 
     .message-title {

@@ -8,5 +8,8 @@ module.exports = {
       ? config.build.productionSourceMap
       : config.dev.cssSourceMap,
     extract: isProduction
-  })
+  }),
+  buble: {
+    objectAssign: 'Object.assign',
+  }
 };

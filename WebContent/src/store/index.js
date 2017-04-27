@@ -5,6 +5,7 @@ import * as actions from './actions'
 import * as getters from './getters'
 
 import app from './modules/app'
+import inventory from './modules/inventory'
 import menu from './modules/menu'
 
 Vue.use(Vuex);
@@ -16,7 +17,8 @@ const store = new Vuex.Store({
   getters,
   modules: {
     app,
-    menu
+    menu,
+    inventory
   },
   strict: debug
 });

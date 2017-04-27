@@ -3,9 +3,12 @@
  */
 import lazyLoading from './lazyLoading'
 
+const FOLDER = 'inventory-control/';
+
 export default {
   title: 'Inventory Control',
   path: '/inventory-control',
+  isMenu: true,
   meta: {
     icon: 'web_asset',
     expanded: false,
@@ -18,6 +21,7 @@ export default {
       title: 'Inventory',
       path: '/inventory',
       router: true,
+      isMenu: true,
       component: lazyLoading('inventory-control/inventory'),
       meta: {
         link: 'inventory-control/inventory.vue'
@@ -27,10 +31,16 @@ export default {
       title: 'Variant',
       path: '/variant',
       router: true,
+      isMenu: true,
       component: lazyLoading('inventory-control/variant'),
       meta: {
         link: 'inventory-control/variant.vue'
       }
+    },
+    {
+      path: '/createProduct',
+      isMenu: false,
+      component: lazyLoading('inventory-control/create-product')
     }
   ]
 }
