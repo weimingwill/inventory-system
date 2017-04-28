@@ -20,7 +20,7 @@ const store = new Vuex.Store({
     menu,
     inventory
   },
-  strict: debug
+  // strict: debug
 });
 
 export default store

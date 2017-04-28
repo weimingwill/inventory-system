@@ -53,8 +53,8 @@
             <!--</td>-->
             <td class="">{{ props.item.name }}</td>
             <td class="">{{ props.item.type }}</td>
-            <td class="">{{ props.item.supplier }}</td>
-            <td class="">{{ props.item.brand }}</td>
+            <td class="">{{ getSupplierName(props.item.supplierId) }}</td>
+            <td class="">{{ getBrand(props.item.supplierId) }}</td>
             <td class="">{{ props.item.onHand }}</td>
             <td class="">{{ props.item.available }}</td>
             <td class="">{{ props.item.committed }}</td>
@@ -95,9 +95,23 @@
   export default {
     props: ['searchContent'],
 
-    computed: mapGetters({
-      items: 'products'
-    }),
+    computed: {
+      ...mapGetters({
+        items: 'products',
+        getSupplierName: 'getSupplierNameById',
+        getBrand: 'getBrandById'
+      })
+    },
+
+    methods: {
+
+    },
+
+    created() {
+      if (this.items.length === 0) {
+        this.$store.dispatch('initInventory')
+      }
+    },
 
     data () {
       return {

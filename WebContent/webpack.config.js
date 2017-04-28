@@ -3,6 +3,8 @@ var path = require('path');
 // var config = require('../config')
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var vueLoaderConfig = require('./build/vue-loader.conf.js');
+var LodashModuleReplacementPlugin = require('lodash-webpack-plugin');
+var webpack = require('webpack');
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
@@ -70,7 +72,8 @@ module.exports = {
           {
             loader: 'buble-loader',
             options: {
-                objectAssign: 'Object.assign'
+              'plugins': ['lodash'],
+              objectAssign: 'Object.assign'
             }
           }
         ],
@@ -105,5 +108,10 @@ module.exports = {
       template: 'src/index.html',
       inject: true
     }),
+    new LodashModuleReplacementPlugin({
+      'collections': true,
+      'paths': true
+    }),
+    new webpack.optimize.UglifyJsPlugin
   ]
 };

@@ -1,8 +1,8 @@
 <template>
     <v-sidebar height="100vh" fixed :mobile="false">
         <div class="sidebar-logo">
-            <img class="logo" src="../../assets/logo.png">
-            <span class="logo-title">EC Inventory</span>
+            <img class="logo" src="../../assets/logo2.png">
+            <p class="logo-title">EC Inventory</p>
         </div>
 
         <!--<v-divider light />-->
@@ -107,16 +107,18 @@
     .sidebar-logo {
         text-align: center;
         color: white;
-        font-size: 30px;
-        font-style: italic;
+        font-size: 20px;
         margin: 25px 0 30px 0;
         padding: 0 20px;
     }
 
+    .logo-title {
+        margin-top: 10px;
+    }
+
     .logo {
-        width: 20%;
+        /*width: 20%;*/
         height: auto;
-        float: left;
     }
 
     .bottom-aligned {

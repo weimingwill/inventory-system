@@ -7,6 +7,7 @@
           Product details
         </v-card-title>
         <v-container fluid>
+          <form @submit.prevent="validateForm">
           <v-row row>
             <v-col xs4>
               <v-subheader>Product Name</v-subheader>
@@ -16,7 +17,9 @@
                   name="name"
                   label="Enter product name"
                   v-model="product.name"
-                  required
+                  hint="Required"
+                  v-bind:rules="rules.name"
+                  v-validate="'required'"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -30,7 +33,8 @@
                   name="sku"
                   label="Enter SKU"
                   v-model="product.sku"
-                  required
+                  v-bind:rules="rules.sku"
+                  v-validate="'required'"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -45,9 +49,7 @@
                   v-model="product.supplier"
                   label="Select"
                   light
-                  single-line
-                  auto
-                  required
+                  v-bind:rules="[() => product.supplier && product.supplier.length > 0 || 'Please select an option']"
               />
             </v-col>
           </v-row>
@@ -62,29 +64,27 @@
                   v-model="product.type"
                   label="Select"
                   light
-                  single-line
-                  auto
-                  required
+                  v-bind:rules="[() => product.type && product.type.length > 0 || 'Please select an option']"
               />
             </v-col>
           </v-row>
 
-          <v-row row>
-            <v-col xs4>
-              <v-subheader>Brand</v-subheader>
-            </v-col>
-            <v-col xs8>
-              <v-select
-                  v-bind:items="supplierBrands"
-                  v-model="product.brand"
-                  label="Select"
-                  light
-                  single-line
-                  auto
-                  required
-              />
-            </v-col>
-          </v-row>
+          <!--<v-row row>-->
+            <!--<v-col xs4>-->
+              <!--<v-subheader>Brand</v-subheader>-->
+            <!--</v-col>-->
+            <!--<v-col xs8>-->
+              <!--<v-select-->
+                  <!--v-bind:items="supplierBrands"-->
+                  <!--v-model="product.brand"-->
+                  <!--label="Select"-->
+                  <!--light-->
+                  <!--single-line-->
+                  <!--auto-->
+                  <!--required-->
+              <!--/>-->
+            <!--</v-col>-->
+          <!--</v-row>-->
 
           <v-row row>
             <v-col xs4>
@@ -95,6 +95,8 @@
                   name="costPrice"
                   label="Enter initial cost price"
                   v-model="product.costPrice"
+                  v-bind:rules="rules.costPrice"
+                  v-validate="'decimal'"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -108,6 +110,8 @@
                   name="sellPrice"
                   label="Enter initial selling price"
                   v-model="product.sellPrice"
+                  v-bind:rules="rules.sellPrice"
+                  v-validate="'decimal'"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -121,6 +125,8 @@
                   name="weight"
                   label="Enter weight, unit g"
                   v-model="product.weight"
+                  v-bind:rules="rules.weight"
+                  v-validate="'decimal'"
               ></v-text-field>
               <span class="weight-unit">g</span>
             </v-col>
@@ -136,8 +142,7 @@
                   v-model="product.stockLocation"
                   label="Select"
                   light
-                  single-line
-                  auto
+                  v-bind:rules="[() => product.stockLocation && product.stockLocation.length > 0 || 'Please select an option']"
               />
             </v-col>
           </v-row>
@@ -146,15 +151,6 @@
             Product variant
           </v-card-title>
 
-          <!--<v-row row>-->
-          <!--<v-col xs4>-->
-          <!--<v-subheader>Variant option</v-subheader>-->
-          <!--</v-col>-->
-          <!--<v-col xs8>-->
-          <!--<v-subheader>Option values</v-subheader>-->
-          <!--</v-col>-->
-          <!--</v-row>-->
-
           <v-row row>
             <v-col xs4>
               <v-subheader>Color</v-subheader>
@@ -162,8 +158,11 @@
             <v-col xs8>
               <v-text-field
                   name="color"
-                  label="e.g. Red"
+                  label="e.g. Red, Blue"
+                  hint="Separate by ','"
                   v-model="product.color"
+                  v-bind:rules="rules.color"
+                  v-validate="'required'"
               ></v-text-field>
             </v-col>
           </v-row>
@@ -175,14 +174,18 @@
             <v-col xs8>
               <v-text-field
                   name="size"
-                  label="e.g. Large"
+                  label="e.g. Large, Small"
+                  hint="Separate by ', '"
                   v-model="product.size"
+                  v-bind:rules="rules.color"
+                  v-validate="'required'"
               ></v-text-field>
             </v-col>
           </v-row>
 
           <v-row class="btn-row" row>
-            <v-btn success dark v-on:click.native="create(product)" to="/createProduct" router>
+            <!--<v-btn type="submit" success dark to="/inventory" router>-->
+            <v-btn type="submit" success dark>
               Create product
             </v-btn>
 
@@ -190,7 +193,7 @@
               Cancel
             </v-btn>
           </v-row>
-
+          </form>
         </v-container>
       </v-card-text>
     </v-card>
@@ -200,6 +203,8 @@
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
   import { mapGetters, mapActions } from 'vuex'
+
+  let _ = require('lodash');
 
   export default {
 
@@ -212,20 +217,10 @@
     // Todo: loading page legacy because of the getters loading data
     computed: mapGetters([
       'supplierNames',
-      'supplierBrands',
+//      'supplierBrands',
       'productTypes',
       'warehouseLocations'
     ]),
-
-    methods: {
-      ...mapActions([
-        'createProduct'
-      ]),
-
-      create (product) {
-        this.createProduct(product);
-      }
-    },
 
     data () {
       return {
@@ -253,9 +248,47 @@
           stockLocation: '',
           color: '',
           size: ''
+        },
+        rules: {
+          name: [],
+          sku: [],
+          costPrice: [],
+          sellPrice: [],
+          weight: [],
+          color: [],
+          size: [],
         }
       }
-    }
+    },
+
+    watch: {
+      errors: {
+        handler: function(val, oldVal) {
+          _.forEach(this.rules, (val, key) => {
+            this.rules[key] = [() => (this.errors.has(key) ? this.errors.first(key) : true)];
+          });
+        },
+        deep: true
+      },
+    },
+
+    methods: {
+      ...mapActions([
+        'createProduct'
+      ]),
+
+      validateForm() {
+        this.$validator.validateAll()
+        .then(() => {
+          console.log("data", this.product);
+          this.createProduct(this.product);
+          this.$router.go(-1);
+        })
+        .catch(err => {
+          console.log(err);
+        });
+      }
+    },
   }
 </script>
 
