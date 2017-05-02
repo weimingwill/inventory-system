@@ -48,8 +48,7 @@ function initObjects(name, nameCamelCase) {
   if (exceptionObjects.includes(name)) {
   // call function dynamically. e.g initProduct
     let functionName = 'init' + nameCamelCase.charAt(0).toUpperCase() + nameCamelCase.slice(1);
-    initClasses[functionName]();
-    // this[functionName].apply(this, Array.prototype.slice.call());
+    return initClasses[functionName]();
   }
   
   let objects = localStorage.getItem(nameCamelCase);

@@ -36,11 +36,11 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import InventoryContent from '../inventory-control/components/inventory-content.vue'
+  import InventoryContent from './components/product-content.vue'
 
   export default {
 
-    name: 'inventory',
+    name: 'product',
 
     components: {
       Breadcrumbs,
@@ -50,7 +50,7 @@
     data () {
       return {
         breadcrumbs: [
-          { text: 'Inventory' }
+          { text: 'Products' }
         ],
         searchContent: ''
       }

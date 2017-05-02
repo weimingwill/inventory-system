@@ -53,6 +53,10 @@ const getters = {
   supplierBrands: state => state.suppliers.map(s => s.brand),
   productTypes: state => state.products.map(p => p.type),
   warehouseLocations: state => state.warehouses.map(w => w.location),
+
+  getProductVariants: (state, getters) => (productId) => {
+    return state.variants.filter(v => v.productId === productId);
+  }
 };
 
 const mutations = {
@@ -61,6 +65,7 @@ const mutations = {
     
     state.products = inventory.products;
     state.variants = inventory.variants;
+    log(state.variants);
     state.suppliers = inventory.suppliers;
     state.supplierContacts = inventory.supplierContacts;
     state.warehouses = inventory.warehouses;
@@ -100,15 +105,14 @@ const mutations = {
       sizes.forEach((size) => {
         let variant = {};
         variant.id = id;
+        variant.name = color + "-" + size
         variant.productId = product.id;
         variant.channelId = 0;
         variant.warehouseId = 1;
         variant.shelveId = 1;
         variant.layerId = 1;
-        variant.option1 = "color";
-        variant.option1Value = color;
-        variant.option2 = "size";
-        variant.option2Value = size;
+        variant.color = color;
+        variant.size = size;
         variant.sku = product.sku + "-"
           + getFirstCharOfEachWord(formatProductName(color)) + "-"
           + getFirstCharOfEachWord(size);

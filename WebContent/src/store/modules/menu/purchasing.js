@@ -24,6 +24,21 @@ export default {
       meta: {
         link: 'purchasing/dashboard.vue'
       }
+    },
+    {
+      title: 'Purchase Orders',
+      path: '/purchaseOrders',
+      router: true,
+      isMenu: true,
+      component: lazyLoading('purchasing/purchase-orders'),
+      meta: {
+        link: 'purchasing/purchase-orders.vue'
+      }
+    },
+    {
+      path: '/createPurchaseOrder',
+      isMenu: false,
+      component: lazyLoading('purchasing/create-purchase-order')
     }
   ]
 }

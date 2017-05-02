@@ -228,7 +228,7 @@
       return {
         breadcrumbs: [
           {
-            text: 'Inventory',
+            text: 'Products',
             href: window.location.href.replace('createProduct', 'inventory'),
             target: '_self'
           },

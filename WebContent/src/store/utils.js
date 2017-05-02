@@ -20,12 +20,6 @@ function currentDateTime() {
     + currentDate.getSeconds();
 }
 
-function getItemsSeparatedByComma(item) {
-  // Input: String. e.g. Red, Black, Green
-  // Output: Array. e.g. [Red, Black, Green]
-  return item.split(', ');
-}
-
 function formatProductName(name) {
   let pieces = name.split(" ");
   for ( let i = 0; i < pieces.length; i++ )
