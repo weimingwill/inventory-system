@@ -2,7 +2,12 @@
     <v-sidebar height="100vh" fixed :mobile="false">
         <div class="sidebar-logo">
             <img class="logo" src="../../assets/logo2.png">
-            <p class="logo-title">EC Inventory</p>
+            <p class="logo-title">
+                EC Inventory
+                <v-btn @click.native="clearStorage" icon="icon" slot="activator" v-tooltip:top="{ html: 'Reload DB' }">
+                    <v-icon>replay</v-icon>
+                </v-btn>
+            </p>
         </div>
 
         <!--<v-divider light />-->
@@ -74,9 +79,18 @@
   export default {
     name: 'sidebar',
 
-    computed: mapGetters({
-      menu: 'menuitems',
-    }),
+    computed: {
+      ...mapGetters({
+        menu: 'menuitems',
+      }),
+    },
+
+    methods: {
+      clearStorage: function () {
+        console.log('Clear Storage');
+        localStorage.clear();
+      }
+    },
 
     data () {
       return {

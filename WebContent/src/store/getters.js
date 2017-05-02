@@ -5,10 +5,7 @@ const device = state => state.app.device
 const sidebar = state => state.app.sidebar
 const effect = state => state.app.effect
 
-const products = state => state.inventory.products
-const variants = state => state.inventory.variants
-const suppliers = state => state.inventory.suppliers
-const supplierContacts = state => state.inventory.supplierContacts
+
 const menuitems = state => state.menu.items
 
 const componententry = state => {
@@ -20,10 +17,6 @@ export {
   app,
   
   inventory,
-  products,
-  variants,
-  suppliers,
-  supplierContacts,
   
   device,
   sidebar,

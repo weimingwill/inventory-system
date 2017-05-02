@@ -20,4 +20,49 @@ function currentDateTime() {
     + currentDate.getSeconds();
 }
 
-export {newIdOfArray, currentDateTime, log};
+function getItemsSeparatedByComma(item) {
+  // Input: String. e.g. Red, Black, Green
+  // Output: Array. e.g. [Red, Black, Green]
+  return item.split(', ');
+}
+
+function formatProductName(name) {
+  let pieces = name.split(" ");
+  for ( let i = 0; i < pieces.length; i++ )
+  {
+    let j = pieces[i].charAt(0).toUpperCase();
+    pieces[i] = j + pieces[i].substr(1).toLowerCase();
+  }
+  return pieces.join(" ");
+}
+
+function getFirstCharOfEachWord(str) {
+  let result = "";
+  
+  str.split(" ").forEach((word) => {
+    if (parseInt(word).toString() !== "NaN") {
+      result += word;
+    } else {
+      result += word.charAt(0);
+    }
+  });
+  return result;
+}
+
+function dashToCamelCase(str) {
+  let parts = str.split("-");
+  for (let i = 1; i < parts.length; i++) {
+    parts[i] = parts[i].charAt(0).toUpperCase();
+  }
+  return parts.join("");
+}
+
+
+export {
+  log,
+  newIdOfArray,
+  currentDateTime,
+  formatProductName,
+  getFirstCharOfEachWord,
+  dashToCamelCase
+  };
