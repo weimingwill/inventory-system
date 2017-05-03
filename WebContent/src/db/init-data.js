@@ -53,6 +53,14 @@ function initSuppliers() {
   return init(objects);
 }
 
+function initWarehouses() {
+  let objects = [
+    'warehouses'
+  ];
+  
+  return init(objects);
+}
+
 function init(objects) {
   let initObject = {};
   
@@ -142,5 +150,6 @@ function combineObjects(oldObjects, identifier, combinedKey, attrsToCombine) {
 export {
   initProducts,
   initPurchasing,
-  initSuppliers
+  initSuppliers,
+  initWarehouses
 }

@@ -9,7 +9,7 @@ import menu from './modules/menu'
 import inventory from './modules/inventory'
 import supplier from './modules/supplier'
 import purchasing from './modules/purchasing'
-
+import warehouse from './modules/warehouse'
 
 Vue.use(Vuex);
 
@@ -23,7 +23,8 @@ const store = new Vuex.Store({
     menu,
     inventory,
     supplier,
-    purchasing
+    purchasing,
+    warehouse
   },
   // strict: debug
 });

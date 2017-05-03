@@ -77,6 +77,7 @@
 
     created() {
       if (this.items.length === 0) {
+        this.$store.dispatch('initWarehouse');
         this.$store.dispatch('initSupplier');
         this.$store.dispatch('initInventory');
       }

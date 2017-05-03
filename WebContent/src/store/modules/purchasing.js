@@ -9,11 +9,13 @@ import {
   log} from '../../utils/utils';
 
 import {
-  initPurchasing
+  initPurchasing,
+  initWarehouses
 } from '../../db/init-data'
 
 const state = {
   purchaseOrders: [],
+  warehouses: []
 };
 
 const getters = {
@@ -51,9 +53,10 @@ const mutations = {
     let purchasing = initPurchasing();
     log(purchasing)
     state.purchaseOrders = purchasing.purchaseOrders;
-
-  }
   
+    // let warehouseObjects = initWarehouses();
+    // state.warehouses = warehouseObjects.warehouses
+  }
 };
 
 const actions = {

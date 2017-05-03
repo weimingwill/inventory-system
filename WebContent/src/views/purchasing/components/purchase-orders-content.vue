@@ -31,7 +31,9 @@
             </td>
             <td>{{ props.item.orderNumber }}</td>
             <td>{{ getSupplierName(props.item.supplierId) }}</td>
-            <td>{{ props.item.status }}</td>
+            <td>
+              <v-chip label class="table-chip green white--text">{{ props.item.status }}</v-chip>
+            </td>
             <td>{{ totalReceivedQuantity(props.item.orderNumber) }}</td>
             <td>{{ totalQuantity(props.item.orderNumber) }}</td>
             <td>{{ totalCost(props.item.orderNumber) }}</td>
@@ -69,6 +71,7 @@
 
     created() {
       if (this.items.length === 0) {
+        this.$store.dispatch('initWarehouse');
         this.$store.dispatch('initSupplier');
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing')
@@ -125,7 +128,14 @@
   }
 </script>
 
-<style>
+<style scoped>
+  .table-chip {
+    margin: 0;
+    padding: 0 8px;
+    height: 25px;
+    font-size: 13px;
+  }
+
   .tabs__items {
     border-bottom-width: 0;
   }
