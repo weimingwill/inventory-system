@@ -19,11 +19,10 @@
             v-model="items"
             v-bind:search="searchContent"
             select-all
-            @click.native="toProductVariant"
         >
 
           <template slot="items" scope="props">
-            <td>
+            <td ref="productIdTd" class="product-id-td">
               <v-checkbox
                   hide-details
                   primary
@@ -33,7 +32,7 @@
                   name="props.item.id"
                   v-model="props.item.id"
                   type="hidden"
-                  ref="productIdTd" />
+                   />
             </td>
 
             <td class="image-td">
@@ -108,10 +107,8 @@
     },
 
     methods: {
-      toProductVariant: function () {
-        console.log('toProductVariant');
-        console.log(this.$refs.clickedRow)
-//        console.log(this.e3)
+      rowOnClick: function (id) {
+        this.$router.replace('/inventory/' + id)
       }
     },
 
@@ -119,6 +116,18 @@
       if (this.items.length === 0) {
         this.$store.dispatch('initInventory')
       }
+    },
+
+    mounted() {
+      this.$refs.productIdTd.forEach(($td) => {
+        $td.parentNode.addEventListener('click', () => this.rowOnClick($td.lastChild.value))
+      });
+    },
+
+    beforeDestroy() {
+      this.$refs.productIdTd.forEach(($td) => {
+        $td.parentNode.removeEventListener('click', () => this.rowOnClick($td.lastChild.value))
+      });
     },
 
     data () {
@@ -199,5 +208,9 @@
 
   .image-td {
     padding-top: 6px!important;
+  }
+
+  table tbody tr:hover {
+    cursor: pointer;
   }
 </style>

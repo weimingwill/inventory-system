@@ -38,17 +38,17 @@ export default {
       }
     },
     {
-      path: '/createProduct',
+      path: '/inventory/createProduct',
       isMenu: false,
       component: lazyLoading('inventory-control/create-product')
     },
     {
-      path: '/createVariant',
+      path: '/variant/createVariant',
       isMenu: false,
       component: lazyLoading('inventory-control/create-variant')
     },
     {
-      path: '/productVariants',
+      path: '/inventory/:id',
       isMenu: false,
       component: lazyLoading('inventory-control/product-variant')
     }

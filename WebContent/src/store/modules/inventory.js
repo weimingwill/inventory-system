@@ -53,7 +53,7 @@ const getters = {
   supplierBrands: state => state.suppliers.map(s => s.brand),
   productTypes: state => state.products.map(p => p.type),
   warehouseLocations: state => state.warehouses.map(w => w.location),
-
+  
   getProductVariants: (state, getters) => (productId) => {
     return state.variants.filter(v => v.productId === productId);
   }
@@ -138,6 +138,11 @@ const mutations = {
     addVariants(variants);
   },
   
+  [types.GET_PRODUCT_VARIANT] (state, productId) {
+    let variants = state.variants.find(v => v.productId === productId);
+    log(variants);
+    return variants;
+  }
 };
 
 const actions = {
@@ -154,6 +159,7 @@ const actions = {
     log('init inventory');
     commit(types.INIT_INVENTORY)
   },
+  
 };
 
 export default {

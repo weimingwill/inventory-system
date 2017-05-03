@@ -19,7 +19,7 @@
     </div>
     <header></header>
     <product-variant-content :search-content="searchContent"></product-variant-content>
-    <product-details></product-details>
+    <!--<product-details></product-details>-->
   </div>
 
 
@@ -27,7 +27,7 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import productVairantContent from '../inventory-control/components/product-variant-content.vue'
+  import productVariantContent from '../inventory-control/components/product-variant-content.vue'
 
   export default {
 
@@ -35,7 +35,7 @@
 
     components: {
       Breadcrumbs,
-      productVairantContent
+      productVariantContent
     },
 
     data () {

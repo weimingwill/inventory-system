@@ -59,15 +59,21 @@
     props: ['searchContent'],
 
     computed: {
+      items () {
+        let productId = this.$route.params.id;
+        return this.$store.getters.getProductVariants(productId);
+      },
+
       ...mapGetters({
-        items: 'getProductVariants',
         getSupplierName: 'getSupplierNameById',
         getBrand: 'getBrandById'
       })
     },
 
     methods: {
-
+      ...mapActions([
+        'getProductVariants'
+      ])
     },
 
     created() {

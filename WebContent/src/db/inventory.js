@@ -5,7 +5,7 @@ import { log, dashToCamelCase } from '../store/utils'
 import * as dbKey from './setting'
 
 
-const initClasses = { initProducts };
+const initClasses = {  };
 
 function initInventory() {
   let objects = [
@@ -26,24 +26,8 @@ function initInventory() {
   return initObject;
 }
 
-function initProducts() {
-  log('init products');
-  let products = localStorage.products;
-  if (!products) {
-    products = require('../data/products.csv');
-    products = products.map(p => {
-      p.value = false;
-      return p;
-    });
-    localStorage.products = JSON.stringify(products);
-  } else {
-    products = JSON.parse(products)
-  }
-  return products;
-}
-
 function initObjects(name, nameCamelCase) {
-  let exceptionObjects = ['products'];
+  let exceptionObjects = [];
   
   if (exceptionObjects.includes(name)) {
   // call function dynamically. e.g initProduct
@@ -54,6 +38,11 @@ function initObjects(name, nameCamelCase) {
   let objects = localStorage.getItem(nameCamelCase);
   if (!objects) {
     objects = require('../data/' + name + '.csv');
+  
+    objects = objects.map(o => {
+      o.value = false;
+      return o;
+    });
     
     localStorage.setItem(nameCamelCase, JSON.stringify(objects));
   } else {
