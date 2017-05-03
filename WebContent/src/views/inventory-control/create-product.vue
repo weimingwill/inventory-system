@@ -203,7 +203,7 @@
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
   import { mapGetters, mapActions } from 'vuex'
-  import { getFirstCharOfEachWord } from '../../store/utils'
+  import { getFirstCharOfEachWord } from '../../utils/utils'
 
   let _ = require('lodash');
 

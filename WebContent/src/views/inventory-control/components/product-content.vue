@@ -38,22 +38,6 @@
             <td class="image-td">
               <img class="product-image" :src="props.item.image">
             </td>
-            
-            <!--<td>-->
-              <!--<v-edit-dialog-->
-                  <!--@open="props.item._name = props.item.name"-->
-                  <!--@cancel="props.item.name = props.item._name || props.item.name"-->
-                  <!--lazy-->
-              <!--&gt; {{ props.item.name }}-->
-                <!--<v-text-field-->
-                    <!--slot="input"-->
-                    <!--label="Edit"-->
-                    <!--v-bind:value="props.item.name"-->
-                    <!--v-on:change="val => props.item.name = val"-->
-                    <!--single-line counter="counter"-->
-                <!--&gt;</v-text-field>-->
-              <!--</v-edit-dialog>-->
-            <!--</td>-->
             <td class="">{{ props.item.name }}</td>
             <td class="">{{ props.item.type }}</td>
             <td class="">{{ getSupplierName(props.item.supplierId) }}</td>
@@ -63,27 +47,6 @@
             <td class="">{{ props.item.committed }}</td>
             <td class="">{{ props.item.status }}</td>
             <td class="">{{ props.item.created }}</td>
-            <!--<td>-->
-              <!--<v-edit-dialog-->
-                  <!--class="text-xs-right"-->
-                  <!--@open="props.item._iron = props.item.iron"-->
-                  <!--@cancel="props.item.iron = props.item._iron || props.item.iron"-->
-                  <!--large-->
-                  <!--lazy-->
-              <!--&gt;-->
-                <!--<div class="text-xs-right">{{ props.item.iron }}</div>-->
-                <!--<div slot="input" class="mt-3 title">Update Iron</div>-->
-                <!--<v-text-field-->
-                    <!--slot="input"-->
-                    <!--label="Edit"-->
-                    <!--v-bind:value="props.item.iron"-->
-                    <!--v-on:blur="val => props.item.iron = val"-->
-                    <!--single-line-->
-                    <!--counter-->
-                    <!--autofocus-->
-                <!--&gt;</v-text-field>-->
-              <!--</v-edit-dialog>-->
-            <!--</td>-->
           </template>
         </v-data-table>
       </v-card>
@@ -114,7 +77,8 @@
 
     created() {
       if (this.items.length === 0) {
-        this.$store.dispatch('initInventory')
+        this.$store.dispatch('initSupplier');
+        this.$store.dispatch('initInventory');
       }
     },
 

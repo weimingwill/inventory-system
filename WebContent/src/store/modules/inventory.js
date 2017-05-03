@@ -7,56 +7,37 @@ import {
   currentDateTime,
   formatProductName,
   getFirstCharOfEachWord,
-  log} from '../utils';
+  log} from '../../utils/utils';
 
 import {
-  initInventory,
   addProduct,
   addVariants
 } from '../../db/inventory'
+
+import {
+  initProducts
+} from '../../db/init-data'
 
 const imagePath = '/inventory-i18n-task3/WebContent/src/assets/logo.png';
 
 const state = {
   products: [],
   variants: [],
-  suppliers: [],
-  supplierContacts: [],
-  warehouses: []
 };
 
 const getters = {
   products: state => state.products,
   variants: state => state.variants,
-  suppliers: state => state.suppliers,
-  supplierContacts: state => state.supplierContacts,
   
   getProductById: (state, getters) => (id) => {
     return state.products.filter(p => p.id === id);
   },
   
-  getSupplierById: (state, getters) => (id) => {
-    return state.suppliers.filter(s => s.id === id)[0];
+  getVariantById: (state, getters) => (id) => {
+    return state.variants.find(v => v.id === id);
   },
   
-  getSupplierNameById: (state, getters) => (id) => {
-    let supplier = getters.getSupplierById(id);
-    return supplier.name;
-  },
-  
-  getBrandById: (state, getters) => (id) => {
-    let supplier = getters.getSupplierById(id);
-    return supplier.brand;
-  },
-  
-  getSupplierByName: (state, getters) => (name) => {
-    return state.suppliers.filter(s => s.name === name)[0]
-  },
-  
-  supplierNames: state => state.suppliers.map(s => s.name),
-  supplierBrands: state => state.suppliers.map(s => s.brand),
   productTypes: state => state.products.map(p => p.type),
-  warehouseLocations: state => state.warehouses.map(w => w.location),
   
   getProductVariants: (state, getters) => (productId) => {
     return state.variants.filter(v => v.productId === productId);
@@ -65,14 +46,9 @@ const getters = {
 
 const mutations = {
   [types.INIT_INVENTORY] (state) {
-    let inventory = initInventory();
-    
+    let inventory = initProducts();
     state.products = inventory.products;
     state.variants = inventory.variants;
-    log(state.variants);
-    state.suppliers = inventory.suppliers;
-    state.supplierContacts = inventory.supplierContacts;
-    state.warehouses = inventory.warehouses;
   },
   
   [types.CREATE_PRODUCT] (state, product) {
@@ -141,12 +117,6 @@ const mutations = {
     state.variants.concat(variants);
     addVariants(variants);
   },
-  
-  [types.GET_PRODUCT_VARIANT] (state, productId) {
-    let variants = state.variants.find(v => v.productId === productId);
-    log(variants);
-    return variants;
-  }
 };
 
 const actions = {

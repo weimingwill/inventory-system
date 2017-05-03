@@ -8,7 +8,7 @@ export default {
   path: '/purchasing',
   isMenu: true,
   meta: {
-    icon: 'add_shopping_cart',
+    icon: 'shopping_cart',
     expanded: false,
     link: 'purchasing/dashboard.vue'
   },

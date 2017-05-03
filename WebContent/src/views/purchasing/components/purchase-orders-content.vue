@@ -29,56 +29,16 @@
                   v-model="props.item.value"
               ></v-checkbox>
             </td>
-
-            <td class="image-td">
-              <img class="product-image" :src="props.item.image">
-            </td>
-
-            <!--<td>-->
-            <!--<v-edit-dialog-->
-            <!--@open="props.item._name = props.item.name"-->
-            <!--@cancel="props.item.name = props.item._name || props.item.name"-->
-            <!--lazy-->
-            <!--&gt; {{ props.item.name }}-->
-            <!--<v-text-field-->
-            <!--slot="input"-->
-            <!--label="Edit"-->
-            <!--v-bind:value="props.item.name"-->
-            <!--v-on:change="val => props.item.name = val"-->
-            <!--single-line counter="counter"-->
-            <!--&gt;</v-text-field>-->
-            <!--</v-edit-dialog>-->
-            <!--</td>-->
-            <td class="">{{ props.item.name }}</td>
-            <td class="">{{ props.item.type }}</td>
-            <td class="">{{ getSupplierName(props.item.supplierId) }}</td>
-            <td class="">{{ getBrand(props.item.supplierId) }}</td>
-            <td class="">{{ props.item.onHand }}</td>
-            <td class="">{{ props.item.available }}</td>
-            <td class="">{{ props.item.committed }}</td>
-            <td class="">{{ props.item.status }}</td>
-            <td class="">{{ props.item.created }}</td>
-            <!--<td>-->
-            <!--<v-edit-dialog-->
-            <!--class="text-xs-right"-->
-            <!--@open="props.item._iron = props.item.iron"-->
-            <!--@cancel="props.item.iron = props.item._iron || props.item.iron"-->
-            <!--large-->
-            <!--lazy-->
-            <!--&gt;-->
-            <!--<div class="text-xs-right">{{ props.item.iron }}</div>-->
-            <!--<div slot="input" class="mt-3 title">Update Iron</div>-->
-            <!--<v-text-field-->
-            <!--slot="input"-->
-            <!--label="Edit"-->
-            <!--v-bind:value="props.item.iron"-->
-            <!--v-on:blur="val => props.item.iron = val"-->
-            <!--single-line-->
-            <!--counter-->
-            <!--autofocus-->
-            <!--&gt;</v-text-field>-->
-            <!--</v-edit-dialog>-->
-            <!--</td>-->
+            <td>{{ props.item.orderNumber }}</td>
+            <td>{{ getSupplierName(props.item.supplierId) }}</td>
+            <td>{{ props.item.status }}</td>
+            <td>{{ totalReceivedQuantity(props.item.orderNumber) }}</td>
+            <td>{{ totalQuantity(props.item.orderNumber) }}</td>
+            <td>{{ totalCost(props.item.orderNumber) }}</td>
+            <td>{{ props.item.due }}</td>
+            <td>{{ props.item.allReceivedAt }}</td>
+            <td>{{ props.item.created }}</td>
+            <td>{{ props.item.updated }}</td>
           </template>
         </v-data-table>
       </v-card>
@@ -95,9 +55,11 @@
 
     computed: {
       ...mapGetters({
-        items: 'products',
+        items: 'purchaseOrders',
         getSupplierName: 'getSupplierNameById',
-        getBrand: 'getBrandById'
+        totalReceivedQuantity: 'getTotalReceiveQuantity',
+        totalQuantity: 'getTotalQuantity',
+        totalCost: 'getTotalCost'
       })
     },
 
@@ -107,7 +69,9 @@
 
     created() {
       if (this.items.length === 0) {
-        this.$store.dispatch('initInventory')
+        this.$store.dispatch('initSupplier');
+        this.$store.dispatch('initInventory');
+        this.$store.dispatch('initPurchasing')
       }
     },
 
@@ -135,7 +99,7 @@
           value: 'quantity',
           left: true
         }, {
-          text: 'Total Cost',
+          text: 'Total Cost (S$)',
           value: 'totalCost',
           left: true
         }, {
@@ -168,14 +132,6 @@
 
   .datatable {
     margin-bottom: 200px;
-  }
-
-  .rotate-180 {
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    transform: rotate(180deg);
   }
 
   .tools {

@@ -28,7 +28,7 @@
             </v-card-title>
         </div>
         <header></header>
-        <inventory-content :search-content="searchContent"></inventory-content>
+        <product-content :search-content="searchContent"></product-content>
     </div>
 
 
@@ -36,7 +36,7 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import InventoryContent from './components/product-content.vue'
+  import ProductContent from './components/product-content.vue'
 
   export default {
 
@@ -44,7 +44,7 @@
 
     components: {
       Breadcrumbs,
-      InventoryContent
+      ProductContent
     },
 
     data () {

@@ -18,7 +18,7 @@
       </v-card-title>
     </div>
     <header></header>
-    <inventory-content :search-content="searchContent"></inventory-content>
+    <purchase-order-content :search-content="searchContent"></purchase-order-content>
   </div>
 
 
@@ -48,7 +48,7 @@
   }
 </script>
 
-<style>
+<style scoped>
   .tool-card {
     margin: -100px 0 -1px 0;
     right: 0;
