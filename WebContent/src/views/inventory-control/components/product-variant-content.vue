@@ -1,54 +1,36 @@
 <template>
-  <v-tabs>
-    <v-tab-item
-        v-for="i in 1" :key="i"
-        v-bind:href="'#mobile-tabs-3-' + i"
-        slot="activators"
+    <v-data-table
+        v-bind:headers="headers"
+        v-model="items"
+        v-bind:search="searchContent"
+        select-all
+        hide-actions
     >
-      All
-    </v-tab-item>
-    <v-tab-content
-        v-for="i in 1" :key="i"
-        v-bind:id="'mobile-tabs-3-' + i"
-        slot="content"
-    >
-      <v-card>
-        <v-data-table
-            v-bind:headers="headers"
-            v-model="items"
-            v-bind:search="searchContent"
-            select-all
-        >
-          <p> {{ items }}</p>
+      <template slot="items" scope="props">
+        <td>
+          <v-checkbox
+              hide-details
+              primary
+              v-model="props.item.value"
+          ></v-checkbox>
+        </td>
 
-          <template slot="items" scope="props">
-            <td>
-              <v-checkbox
-                  hide-details
-                  primary
-                  v-model="props.item.value"
-              ></v-checkbox>
-            </td>
+        <td class="image-td">
+          <img class="product-image" :src="props.item.image">
+        </td>
+        <td class="">{{ props.item.sku }}</td>
+        <td class="">{{ props.item.color }}</td>
+        <td class="">{{ props.item.size }}</td>
+        <td class="">{{ props.item.costPrice }}</td>
+        <td class="">{{ props.item.sellPrice }}</td>
+        <td class="">{{ props.item.onHand }}</td>
+        <td class="">{{ props.item.available }}</td>
+        <td class="">{{ props.item.committed }}</td>
 
-            <td class="image-td">
-              <img class="product-image" :src="props.item.image">
-            </td>
-            <td class="">{{ props.item.sku }}</td>
-            <td class="">{{ props.item.name }}</td>
-            <td class="">{{ props.item.costPrice }}</td>
-            <td class="">{{ props.item.sellPrice }}</td>
-            <td class="">{{ props.item.onHand }}</td>
-            <td class="">{{ props.item.available }}</td>
-            <td class="">{{ props.item.committed }}</td>
-            <td class="">{{ props.item.size }}</td>
-            <td class="">{{ props.item.color }}</td>
-            <td class="">{{ props.item.weight }}</td>
-            <td class=""><v-icon>place</v-icon></td>
-          </template>
-        </v-data-table>
-      </v-card>
-    </v-tab-content>
-  </v-tabs>
+        <td class="">{{ props.item.weight }}</td>
+        <td class=""><v-icon>place</v-icon></td>
+      </template>
+    </v-data-table>
 </template>
 
 <script>
@@ -56,18 +38,12 @@
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
-    props: ['searchContent'],
+    props: ['searchContent', 'productId'],
 
     computed: {
       items () {
-        let productId = this.$route.params.id;
-        return this.$store.getters.getProductVariants(productId);
+        return this.$store.getters.getProductVariants(this.productId);
       },
-
-      ...mapGetters({
-        getSupplierName: 'getSupplierNameById',
-        getBrand: 'getBrandById'
-      })
     },
 
     methods: {
@@ -94,8 +70,12 @@
           value: 'sku',
           left: true
         }, {
-          text: 'Name',
-          value: 'name',
+          text: 'Color',
+          value: 'color',
+          left: true
+        }, {
+          text: 'Size',
+          value: 'size',
           left: true
         }, {
           text: 'Cost Price',
@@ -117,15 +97,7 @@
           text: 'Committed',
           value: 'committed',
           left: true
-        }, {
-          text: 'Size',
-          value: 'size',
-          left: true
-        }, {
-          text: 'Color',
-          value: 'color',
-          left: true
-        }, {
+        },  {
           text: 'Weight',
           value: 'weight',
           left: true
@@ -141,26 +113,6 @@
 </script>
 
 <style scoped>
-  .tabs__items {
-    border-bottom-width: 0px;
-  }
-
-  .datatable {
-    margin-bottom: 200px;
-  }
-
-  .rotate-180 {
-    -webkit-transform: rotate(180deg);
-    -moz-transform: rotate(180deg);
-    -ms-transform: rotate(180deg);
-    -o-transform: rotate(180deg);
-    transform: rotate(180deg);
-  }
-
-  .tools {
-    margin-top: -10px;
-  }
-
   .product-image {
     width: 40px;
     height: auto;

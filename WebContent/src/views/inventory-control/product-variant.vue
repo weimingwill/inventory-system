@@ -18,8 +18,14 @@
       </v-card-title>
     </div>
     <header></header>
-    <product-variant-content :search-content="searchContent"></product-variant-content>
-    <!--<product-details></product-details>-->
+    <v-row>
+      <v-col xs10>
+        <product-variant-content :productId="id" :search-content="searchContent"></product-variant-content>
+      </v-col>
+      <v-col xs2>
+        <product-details :productId="id"></product-details>
+      </v-col>
+    </v-row>
   </div>
 
 
@@ -27,7 +33,8 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import productVariantContent from '../inventory-control/components/product-variant-content.vue'
+  import ProductVariantContent from '../inventory-control/components/product-variant-content.vue'
+  import ProductDetails from '../inventory-control/components/product-details.vue'
 
   export default {
 
@@ -35,7 +42,8 @@
 
     components: {
       Breadcrumbs,
-      productVariantContent
+      ProductVariantContent,
+      ProductDetails
     },
 
     data () {
@@ -49,8 +57,9 @@
           { text: 'Variants'}
 
         ],
-        searchContent: ''
-      }
+        searchContent: '',
+        id: this.$route.params.id
+    }
     }
   }
 </script>

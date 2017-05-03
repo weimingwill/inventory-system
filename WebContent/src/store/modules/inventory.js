@@ -31,6 +31,10 @@ const getters = {
   suppliers: state => state.suppliers,
   supplierContacts: state => state.supplierContacts,
   
+  getProductById: (state, getters) => (id) => {
+    return state.products.filter(p => p.id === id);
+  },
+  
   getSupplierById: (state, getters) => (id) => {
     return state.suppliers.filter(s => s.id === id)[0];
   },
