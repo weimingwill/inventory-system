@@ -25,12 +25,21 @@ const getters = {
   supplierContacts: state => state.supplierContacts,
   
   getSupplierById: (state, getters) => (id) => {
-    return state.suppliers.filter(s => s.id === id)[0];
+    return state.suppliers.find(s => s.id === id);
+  },
+  
+  getSupplierByName: (state, getters) => (name) => {
+    return state.suppliers.find(s => s.name === name);
   },
   
   getSupplierNameById: (state, getters) => (id) => {
     let supplier = getters.getSupplierById(id);
     return supplier.name;
+  },
+  
+  getSupplierContactsByName: (state, getters) => (name) => {
+    let supplierId = getters.getSupplierByName(name).id;
+    return state.supplierContacts.filter((sc) => sc.supplierId === supplierId).map(sc => sc.email);
   },
   
   getBrandById: (state, getters) => (id) => {

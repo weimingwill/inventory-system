@@ -38,7 +38,7 @@
 
     computed: {
       product() {
-        return this.$store.getters.getProductById(this.productId)[0];
+        return this.$store.getters.getProductById(this.productId);
       },
       ...mapGetters({
         getSupplierName: 'getSupplierNameById',
@@ -49,25 +49,5 @@
 </script>
 
 <style scoped>
-  .detail-container {
-    margin: 10px 0 0 15px;
-  }
 
-  .detail-content {
-    font-size: 15px;
-    margin: 8px 0;
-  }
-
-  .header-divider {
-    margin-bottom: 10px;
-  }
-
-  .detail-divider {
-    margin: 10px 0;
-  }
-
-  .detail-subheader {
-    font-size: 18px;
-    margin: 8px 0;
-  }
 </style>

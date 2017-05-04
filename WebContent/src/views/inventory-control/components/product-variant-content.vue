@@ -18,17 +18,17 @@
         <td class="image-td">
           <img class="product-image" :src="props.item.image">
         </td>
-        <td class="">{{ props.item.sku }}</td>
-        <td class="">{{ props.item.color }}</td>
-        <td class="">{{ props.item.size }}</td>
-        <td class="">{{ props.item.costPrice }}</td>
-        <td class="">{{ props.item.sellPrice }}</td>
-        <td class="">{{ props.item.onHand }}</td>
-        <td class="">{{ props.item.available }}</td>
-        <td class="">{{ props.item.committed }}</td>
+        <td>{{ props.item.sku }}</td>
+        <td>{{ props.item.color }}</td>
+        <td>{{ props.item.size }}</td>
+        <td>{{ props.item.costPrice }}</td>
+        <td>{{ props.item.sellPrice }}</td>
+        <td>{{ props.item.onHand }}</td>
+        <td>{{ props.item.available }}</td>
+        <td>{{ props.item.committed }}</td>
 
-        <td class="">{{ props.item.weight }}</td>
-        <td class=""><v-icon>place</v-icon></td>
+        <td>{{ props.item.weight }}</td>
+        <td><v-icon>place</v-icon></td>
       </template>
     </v-data-table>
 </template>
@@ -54,7 +54,9 @@
 
     created() {
       if (this.items.length === 0) {
-        this.$store.dispatch('initInventory')
+        this.$store.dispatch('initWarehouse');
+        this.$store.dispatch('initSupplier');
+        this.$store.dispatch('initInventory');
       }
     },
 
@@ -64,7 +66,7 @@
           text: '',
           left: true,
           sortable: false,
-          value: 'name',
+          value: '',
         }, {
           text: 'Sku',
           value: 'sku',

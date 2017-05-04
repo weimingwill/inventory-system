@@ -1,5 +1,5 @@
 <template>
-    <v-sidebar height="100vh" fixed :mobile="false">
+    <v-sidebar height="100vh" fixed>
         <div class="sidebar-logo">
             <img class="logo" src="../../assets/logo2.png">
             <p class="logo-title">

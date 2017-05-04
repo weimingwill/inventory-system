@@ -2,7 +2,7 @@
   <div>
     <breadcrumbs :items="breadcrumbs"></breadcrumbs>
     <v-card>
-      <v-row>
+      <v-row class="purchase-header-row">
         <v-col xs2>
           <v-card-title>Order #P0001</v-card-title>
         </v-col>
@@ -16,7 +16,6 @@
               <v-select
                   v-bind:items="supplierNames"
                   v-model="order.supplier"
-                  label="Select"
                   light
                   v-bind:rules="[() => order.supplier && order.supplier.length > 0 || 'Please select an option']"
               />
@@ -27,11 +26,10 @@
             </v-col>
             <v-col xs3>
               <v-select
-                  v-bind:items="supplierNames"
-                  v-model="order.supplier"
-                  label="Select"
+                  v-bind:items="supplierContacts"
+                  v-model="order.contact"
                   light
-                  v-bind:rules="[() => order.supplier && order.supplier.length > 0 || 'Please select an option']"
+                  v-bind:rules="[() => order.contact && order.contact.length > 0 || 'Please select an option']"
               />
             </v-col>
             <v-col xs1>
@@ -39,38 +37,22 @@
             </v-col>
             <v-col xs3>
               <v-select
-                  v-bind:items="supplierNames"
-                  v-model="order.supplier"
-                  label="Select"
+                  v-bind:items="warehouseLocations"
+                  v-model="order.warehouse"
                   light
-                  v-bind:rules="[() => order.supplier && order.supplier.length > 0 || 'Please select an option']"
+                  v-bind:rules="[() => order.warehouse && order.warehouse.length > 0 || 'Please select an option']"
               />
             </v-col>
           </v-row>
-
-          <!--<v-row>-->
-            <!--<v-col xs1>-->
-              <!--<v-subheader>Ship To</v-subheader>-->
-            <!--</v-col>-->
-            <!--<v-col xs4>-->
-              <!--<v-select-->
-                  <!--v-bind:items="supplierNames"-->
-                  <!--v-model="order.supplier"-->
-                  <!--label="Select"-->
-                  <!--light-->
-                  <!--v-bind:rules="[() => order.supplier && order.supplier.length > 0 || 'Please select an option']"-->
-              <!--/>-->
-            <!--</v-col>-->
-          <!--</v-row>-->
 
         </v-col>
 
         <v-col xs1 offset-xs1>
           <v-row>
-            <v-col xs12><v-btn>Void</v-btn></v-col>
+            <v-col xs12><v-btn outline small error>Void</v-btn></v-col>
           </v-row>
           <v-row>
-          <v-col xs12><v-btn >Edit</v-btn></v-col>
+          <v-col xs12><v-btn small primary>Edit</v-btn></v-col>
         </v-row>
 
         </v-col>
@@ -79,10 +61,14 @@
     </v-card>
     <v-row>
       <v-col xs10>
-        <!--<product-variant-content :productId="id" :search-content="searchContent"></product-variant-content>-->
+        <v-container fluid class="items-container">
+          <order-items></order-items>
+          <!--<received-items></received-items>-->
+          <!--<adjust-items></adjust-items>-->
+        </v-container>
       </v-col>
       <v-col xs2>
-        <!--<product-details :productId="id"></product-details>-->
+        <purchase-summary></purchase-summary>
       </v-col>
     </v-row>
   </div>
@@ -92,8 +78,9 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import ProductVariantContent from '../inventory-control/components/product-variant-content.vue'
-  import ProductDetails from '../inventory-control/components/product-details.vue'
+  import PurchaseSummary from '../purchasing/components/create-purchase-order-summary.vue'
+
+  import OrderItems from './components/order-items.vue'
 
   import { mapGetters, mapActions } from 'vuex'
 
@@ -103,23 +90,30 @@
 
     computed: {
       ...mapGetters([
-        'supplierNames'
-      ])
+        'supplierNames',
+        'warehouseLocations'
+      ]),
+
+      supplierContacts() {
+        if (this.order.supplier) {
+          return this.$store.getters.getSupplierContactsByName(this.order.supplier);
+        } else {
+          return []
+        }
+      }
     },
 
     components: {
       Breadcrumbs,
-//      ProductVariantContent,
-//      ProductDetails
+      OrderItems,
+      PurchaseSummary
     },
 
     created() {
-//      if (this.items.length === 0) {
       this.$store.dispatch('initWarehouse');
       this.$store.dispatch('initSupplier');
       this.$store.dispatch('initInventory');
       this.$store.dispatch('initPurchasing');
-//      }
     },
 
     data () {
@@ -136,7 +130,9 @@
         searchContent: '',
 //        id: this.$route.params.id,
         order: {
-          supplier: ''
+          supplier: '',
+          contact: '',
+          warehouse: '',
         },
 //        supplierNames: [
 //          'A',
@@ -150,5 +146,8 @@
   }
 </script>
 
-<style>
+<style scoped>
+  .purchase-header-row {
+    padding: 10px 5px 5px 0;
+  }
 </style>

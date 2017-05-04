@@ -10,7 +10,6 @@ import {
 
 import {
   initPurchasing,
-  initWarehouses
 } from '../../db/init-data'
 
 const state = {

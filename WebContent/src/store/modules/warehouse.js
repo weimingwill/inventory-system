@@ -17,6 +17,8 @@ const state = {
 
 const getters = {
   warehouses: state => state.warehouses,
+  
+  warehouseLocations: state => state.warehouses.map(w => w.location)
 };
 
 const mutations = {
@@ -28,7 +30,7 @@ const mutations = {
 
 const actions = {
   initWarehouse ({commit}) {
-    log('init supplier');
+    log('init warehouse');
     commit(types.INIT_WAREHOUSE)
   },
   

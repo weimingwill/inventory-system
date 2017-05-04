@@ -58,7 +58,7 @@
 
         ],
         searchContent: '',
-        id: this.$route.params.id
+        id: parseInt(this.$route.params.id)
     }
     }
   }

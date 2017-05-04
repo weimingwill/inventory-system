@@ -30,7 +30,7 @@ const getters = {
   variants: state => state.variants,
   
   getProductById: (state, getters) => (id) => {
-    return state.products.filter(p => p.id === id);
+    return state.products.find(p => p.id === id);
   },
   
   getVariantById: (state, getters) => (id) => {
@@ -41,14 +41,26 @@ const getters = {
   
   getProductVariants: (state, getters) => (productId) => {
     return state.variants.filter(v => v.productId === productId);
-  }
+  },
+  //
+  // itemNames: (state, getters) => {
+  //   return state.variants.map(variant => {
+  //     let product = getters.getProductById(variant.productId);
+  //     product.sku + " " + product.name + " " + variant.name;
+  //   })
+  // }
 };
 
 const mutations = {
   [types.INIT_INVENTORY] (state) {
     let inventory = initProducts();
     state.products = inventory.products;
-    state.variants = inventory.variants;
+  
+    state.variants = inventory.variants.map(variant => {
+      let product = state.products.find(p => p.id === variant.productId);
+      variant.fullname = product.sku + " " + product.name + " " + variant.name;
+      return variant;
+    });
   },
   
   [types.CREATE_PRODUCT] (state, product) {
