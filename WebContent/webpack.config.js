@@ -37,6 +37,7 @@ module.exports = {
       // semantic: path.resolve(__dirname, 'css/semantic.css')
     }
   },
+  devtool: 'eval-source-map',
   module: {
     rules: [
       {
@@ -113,5 +114,9 @@ module.exports = {
       'paths': true
     }),
     new webpack.optimize.UglifyJsPlugin
+    // new webpack.ProvidePlugin({
+    //   $: 'jquery',
+    //   jQuery: 'jquery'
+    // })
   ]
 };

@@ -1,0 +1,25 @@
+.detail-container {
+  margin: 10px 0 0 15px;
+}
+
+.detail-content {
+  font-size: 15px;
+  margin: 8px 0;
+}
+
+.header-divider {
+  margin-bottom: 10px;
+}
+
+.detail-divider {
+  margin: 10px 0;
+}
+
+.detail-subheader {
+  font-size: 18px;
+  margin: 8px 0;
+}
+
+.hidden {
+  display: none;
+}

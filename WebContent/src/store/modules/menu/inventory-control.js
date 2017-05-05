@@ -12,7 +12,7 @@ export default {
   meta: {
     icon: 'web_asset',
     expanded: false,
-    link: 'inventory-control/inventory.vue'
+    link: 'inventory-control/product.vue'
   },
   // component: lazyLoading('inventory-control', true),
   
@@ -22,9 +22,9 @@ export default {
       path: '/inventory',
       router: true,
       isMenu: true,
-      component: lazyLoading('inventory-control/inventory'),
+      component: lazyLoading('inventory-control/product'),
       meta: {
-        link: 'inventory-control/inventory.vue'
+        link: 'inventory-control/product.vue'
       }
     },
     {
@@ -38,9 +38,19 @@ export default {
       }
     },
     {
-      path: '/createProduct',
+      path: '/inventory/createProduct',
       isMenu: false,
       component: lazyLoading('inventory-control/create-product')
+    },
+    {
+      path: '/variant/createVariant',
+      isMenu: false,
+      component: lazyLoading('inventory-control/create-variant')
+    },
+    {
+      path: '/inventory/:id',
+      isMenu: false,
+      component: lazyLoading('inventory-control/product-variant')
     }
   ]
 }

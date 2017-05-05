@@ -8,7 +8,7 @@ export default {
   path: '/purchasing',
   isMenu: true,
   meta: {
-    icon: 'add_shopping_cart',
+    icon: 'shopping_cart',
     expanded: false,
     link: 'purchasing/dashboard.vue'
   },
@@ -17,13 +17,28 @@ export default {
   subItems: [
     {
       title: 'Dashboard',
-      path: '/dashboard',
+      path: '/purchasing',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/dashboard'),
       meta: {
         link: 'purchasing/dashboard.vue'
       }
+    },
+    {
+      title: 'Purchase Orders',
+      path: '/purchasing/purchaseOrders',
+      router: true,
+      isMenu: true,
+      component: lazyLoading('purchasing/purchase-orders'),
+      meta: {
+        link: 'purchasing/purchase-orders.vue'
+      }
+    },
+    {
+      path: '/purchasing/createPurchaseOrder',
+      isMenu: false,
+      component: lazyLoading('purchasing/create-purchase-order')
     }
   ]
 }

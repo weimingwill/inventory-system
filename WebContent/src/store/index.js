@@ -5,8 +5,11 @@ import * as actions from './actions'
 import * as getters from './getters'
 
 import app from './modules/app'
-import inventory from './modules/inventory'
 import menu from './modules/menu'
+import inventory from './modules/inventory'
+import supplier from './modules/supplier'
+import purchasing from './modules/purchasing'
+import warehouse from './modules/warehouse'
 
 Vue.use(Vuex);
 
@@ -18,7 +21,10 @@ const store = new Vuex.Store({
   modules: {
     app,
     menu,
-    inventory
+    inventory,
+    supplier,
+    purchasing,
+    warehouse
   },
   // strict: debug
 });

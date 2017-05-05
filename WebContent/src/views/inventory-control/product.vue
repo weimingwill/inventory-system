@@ -11,7 +11,7 @@
                     hide-details
                     v-model="searchContent"
                 ></v-text-field>
-                <v-btn outline success dark to="/createProduct" router>
+                <v-btn outline success dark to="/inventory/createProduct" router>
                     <v-icon left>add</v-icon>
                     New Product
                 </v-btn>
@@ -28,7 +28,7 @@
             </v-card-title>
         </div>
         <header></header>
-        <inventory-content :search-content="searchContent"></inventory-content>
+        <product-content :search-content="searchContent"></product-content>
     </div>
 
 
@@ -36,21 +36,21 @@
 
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
-  import InventoryContent from '../inventory-control/components/inventory-content.vue'
+  import ProductContent from './components/product-content.vue'
 
   export default {
 
-    name: 'inventory',
+    name: 'product',
 
     components: {
       Breadcrumbs,
-      InventoryContent
+      ProductContent
     },
 
     data () {
       return {
         breadcrumbs: [
-          { text: 'Inventory' }
+          { text: 'Products' }
         ],
         searchContent: ''
       }

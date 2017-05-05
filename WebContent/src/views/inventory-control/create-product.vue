@@ -203,6 +203,7 @@
 <script>
   import Breadcrumbs from '../breadcrumbs.vue'
   import { mapGetters, mapActions } from 'vuex'
+  import { getFirstCharOfEachWord } from '../../utils/utils'
 
   let _ = require('lodash');
 
@@ -219,22 +220,19 @@
       'supplierNames',
 //      'supplierBrands',
       'productTypes',
-      'warehouseLocations'
+      'warehouseLocations',
+      'calculateSKU'
     ]),
 
     data () {
       return {
         breadcrumbs: [
           {
-            text: 'Inventory',
+            text: 'Products',
             href: window.location.href.replace('createProduct', 'inventory'),
             target: '_self'
           },
           { text: 'Create product'}
-        ],
-        states: [
-          'A',
-          'B'
         ],
         product: {
           name: '',
@@ -270,6 +268,9 @@
         },
         deep: true
       },
+      'product.name': function () {
+        this.product.sku = getFirstCharOfEachWord(this.product.name);
+      }
     },
 
     methods: {

@@ -1,21 +1,19 @@
 <template>
   <v-tabs>
     <v-tab-item
-        v-for="i in 3" :key="i"
+        v-for="i in 1" :key="i"
         v-bind:href="'#mobile-tabs-3-' + i"
         slot="activators"
     >
-      Item {{ i }}
+      All
+      <!--Item {{ i }}-->
     </v-tab-item>
     <v-tab-content
-        v-for="i in 3" :key="i"
+        v-for="i in 1" :key="i"
         v-bind:id="'mobile-tabs-3-' + i"
         slot="content"
     >
       <v-card>
-
-        <!--<p>Items: {{ items }}</p>-->
-
         <v-data-table
             v-bind:headers="headers"
             v-model="items"
@@ -24,33 +22,22 @@
         >
 
           <template slot="items" scope="props">
-            <td>
+            <td ref="productIdTd" class="product-id-td">
               <v-checkbox
                   hide-details
                   primary
                   v-model="props.item.value"
               ></v-checkbox>
+              <input
+                  name="props.item.id"
+                  v-model="props.item.id"
+                  type="hidden"
+                   />
             </td>
 
             <td class="image-td">
               <img class="product-image" :src="props.item.image">
             </td>
-            
-            <!--<td>-->
-              <!--<v-edit-dialog-->
-                  <!--@open="props.item._name = props.item.name"-->
-                  <!--@cancel="props.item.name = props.item._name || props.item.name"-->
-                  <!--lazy-->
-              <!--&gt; {{ props.item.name }}-->
-                <!--<v-text-field-->
-                    <!--slot="input"-->
-                    <!--label="Edit"-->
-                    <!--v-bind:value="props.item.name"-->
-                    <!--v-on:change="val => props.item.name = val"-->
-                    <!--single-line counter="counter"-->
-                <!--&gt;</v-text-field>-->
-              <!--</v-edit-dialog>-->
-            <!--</td>-->
             <td class="">{{ props.item.name }}</td>
             <td class="">{{ props.item.type }}</td>
             <td class="">{{ getSupplierName(props.item.supplierId) }}</td>
@@ -60,27 +47,6 @@
             <td class="">{{ props.item.committed }}</td>
             <td class="">{{ props.item.status }}</td>
             <td class="">{{ props.item.created }}</td>
-            <!--<td>-->
-              <!--<v-edit-dialog-->
-                  <!--class="text-xs-right"-->
-                  <!--@open="props.item._iron = props.item.iron"-->
-                  <!--@cancel="props.item.iron = props.item._iron || props.item.iron"-->
-                  <!--large-->
-                  <!--lazy-->
-              <!--&gt;-->
-                <!--<div class="text-xs-right">{{ props.item.iron }}</div>-->
-                <!--<div slot="input" class="mt-3 title">Update Iron</div>-->
-                <!--<v-text-field-->
-                    <!--slot="input"-->
-                    <!--label="Edit"-->
-                    <!--v-bind:value="props.item.iron"-->
-                    <!--v-on:blur="val => props.item.iron = val"-->
-                    <!--single-line-->
-                    <!--counter-->
-                    <!--autofocus-->
-                <!--&gt;</v-text-field>-->
-              <!--</v-edit-dialog>-->
-            <!--</td>-->
           </template>
         </v-data-table>
       </v-card>
@@ -104,13 +70,29 @@
     },
 
     methods: {
-
+      rowOnClick: function (id) {
+        this.$router.replace('/inventory/' + id)
+      }
     },
 
     created() {
       if (this.items.length === 0) {
-        this.$store.dispatch('initInventory')
+        this.$store.dispatch('initWarehouse');
+        this.$store.dispatch('initSupplier');
+        this.$store.dispatch('initInventory');
       }
+    },
+
+    mounted() {
+      this.$refs.productIdTd.forEach(($td) => {
+        $td.parentNode.addEventListener('click', () => this.rowOnClick($td.lastChild.value))
+      });
+    },
+
+    beforeDestroy() {
+      this.$refs.productIdTd.forEach(($td) => {
+        $td.parentNode.removeEventListener('click', () => this.rowOnClick($td.lastChild.value))
+      });
     },
 
     data () {
@@ -157,13 +139,21 @@
           value: 'created',
           left: true
         }],
-        e3: ''
+        e3: '1'
       }
     }
   }
 </script>
 
 <style>
+  .tabs__items {
+    border-bottom-width: 0;
+  }
+
+  .datatable {
+    margin-bottom: 200px;
+  }
+
   .rotate-180 {
     -webkit-transform: rotate(180deg);
     -moz-transform: rotate(180deg);
@@ -183,5 +173,9 @@
 
   .image-td {
     padding-top: 6px!important;
+  }
+
+  table tbody tr:hover {
+    cursor: pointer;
   }
 </style>

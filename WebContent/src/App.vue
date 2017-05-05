@@ -15,7 +15,6 @@
   import Sidebar from './components/layout/Sidebar.vue'
   import AppMain from './components/layout/AppMain.vue'
 
-
   export default {
     name: 'app',
     components: {
@@ -27,5 +26,6 @@
 
 <style lang="stylus">
   @import '../node_modules/vuetify/src/stylus/main';
-  @import '../css/google-material-icons.css';
+  @import 'css/google-material-icons.css';
+  @import 'css/main.css';
 </style>
