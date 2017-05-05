@@ -17,7 +17,7 @@ export default {
   subItems: [
     {
       title: 'Dashboard',
-      path: '/dashboard',
+      path: '/purchasing',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/dashboard'),
@@ -27,7 +27,7 @@ export default {
     },
     {
       title: 'Purchase Orders',
-      path: '/purchaseOrders',
+      path: '/purchasing/purchaseOrders',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/purchase-orders'),
@@ -36,7 +36,7 @@ export default {
       }
     },
     {
-      path: '/createPurchaseOrder',
+      path: '/purchasing/createPurchaseOrder',
       isMenu: false,
       component: lazyLoading('purchasing/create-purchase-order')
     }

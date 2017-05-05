@@ -24,6 +24,9 @@ const getters = {
   suppliers: state => state.suppliers,
   supplierContacts: state => state.supplierContacts,
   
+  supplierNames: state => state.suppliers.map(s => s.name),
+  supplierBrands: state => state.suppliers.map(s => s.brand),
+  
   getSupplierById: (state, getters) => (id) => {
     return state.suppliers.find(s => s.id === id);
   },
@@ -36,12 +39,7 @@ const getters = {
     let supplier = getters.getSupplierById(id);
     return supplier.name;
   },
-  
-  getSupplierContactsByName: (state, getters) => (name) => {
-    let supplierId = getters.getSupplierByName(name).id;
-    return state.supplierContacts.filter((sc) => sc.supplierId === supplierId).map(sc => sc.email);
-  },
-  
+
   getBrandById: (state, getters) => (id) => {
     let supplier = getters.getSupplierById(id);
     return supplier.brand;
@@ -51,8 +49,16 @@ const getters = {
     return state.suppliers.filter(s => s.name === name)[0]
   },
   
-  supplierNames: state => state.suppliers.map(s => s.name),
-  supplierBrands: state => state.suppliers.map(s => s.brand),
+  // Supplier Contacts
+  getSupplierContactsByName: (state, getters) => (name) => {
+    let supplierId = getters.getSupplierByName(name).id;
+    return state.supplierContacts.filter((sc) => sc.supplierId === supplierId).map(sc => sc.email);
+  },
+  
+  getSupplierContactByEmail: (state) => (email) => {
+    return state.supplierContacts.find(sc => sc.email === email);
+  }
+  
 };
 
 const mutations = {

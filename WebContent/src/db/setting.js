@@ -3,3 +3,4 @@
  */
 export const PRODUCTS = 'products';
 export const VARIANTS = 'variants';
+export const PURCHASE_ORDERS = 'purchaseOrders';

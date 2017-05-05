@@ -19,6 +19,7 @@ const getters = {
   warehouses: state => state.warehouses,
   
   warehouseLocations: state => state.warehouses.map(w => w.location)
+  
 };
 
 const mutations = {

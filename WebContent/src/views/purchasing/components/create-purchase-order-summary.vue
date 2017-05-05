@@ -15,7 +15,7 @@
     <v-row><p class="detail-content">*Currency: USD</p></v-row>
 
     <v-row class="btn-row">
-      <v-btn class="fn-btn" success light>Create</v-btn>
+      <v-btn class="fn-btn" success light @click.native="createOrder">Create</v-btn>
     </v-row>
 
     <v-row class="btn-row">
@@ -23,7 +23,7 @@
     </v-row>
 
     <v-row class="btn-row">
-      <v-btn class="fn-btn" default light outline>Cancel</v-btn>
+      <v-btn class="fn-btn" default light outline to="/purchasing/purchaseOrders">Cancel</v-btn>
     </v-row>
   </v-container>
 </template>
@@ -32,7 +32,9 @@
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
-    props: ['orderedItems'],
+    name: 'PurchaseSummary',
+
+    props: ['orderedItems', 'orderDetails'],
 
     computed: {
       ...mapGetters({
@@ -60,6 +62,12 @@
           }
         });
         return totalCost
+      }
+    },
+
+    methods: {
+      createOrder: function () {
+        this.$emit('createPurchase')
       }
     },
 

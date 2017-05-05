@@ -10,7 +10,17 @@ const menuitems = state => state.menu.items
 
 const componententry = state => {
   return state.menu.items.filter(c => c.meta && c.meta.label === 'Components')[0]
-}
+};
+
+// Todo: refactor all functions with this type
+
+const getObjectByAttr = state => (moduleName, objName, attrName, attrValue) => {
+  return state[moduleName][objName].find(obj => obj[attrName] === attrValue);
+};
+
+const getObjectListByAttr = state => (moduleName, objName, attrName, attrValue) => {
+  return state[moduleName][objName].filter(obj => obj[attrName] === attrValue);
+};
 
 export {
   pkg,
@@ -22,5 +32,7 @@ export {
   sidebar,
   effect,
   menuitems,
-  componententry
+  componententry,
+  getObjectByAttr,
+  getObjectListByAttr
 }

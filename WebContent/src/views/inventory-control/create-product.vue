@@ -234,10 +234,6 @@
           },
           { text: 'Create product'}
         ],
-        states: [
-          'A',
-          'B'
-        ],
         product: {
           name: '',
           sku: '',

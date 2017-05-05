@@ -113,10 +113,10 @@ module.exports = {
       'collections': true,
       'paths': true
     }),
-    new webpack.optimize.UglifyJsPlugin,
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery'
-    })
+    new webpack.optimize.UglifyJsPlugin
+    // new webpack.ProvidePlugin({
+    //   $: 'jquery',
+    //   jQuery: 'jquery'
+    // })
   ]
 };

@@ -15,7 +15,6 @@
   import Sidebar from './components/layout/Sidebar.vue'
   import AppMain from './components/layout/AppMain.vue'
 
-
   export default {
     name: 'app',
     components: {

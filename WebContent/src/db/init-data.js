@@ -142,9 +142,18 @@ function combineObjects(oldObjects, identifier, combinedKey, attrsToCombine) {
     newObjects.push(newObject);
   });
   
+  newObjects = resetIds(newObjects)
+  
   log(newObjects);
   
   return newObjects;
+}
+
+function resetIds(objects) {
+  return objects.map((object, index) => {
+    object.id = index + 1;
+    return object;
+  })
 }
 
 export {
