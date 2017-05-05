@@ -62,13 +62,13 @@
     <v-row>
       <v-col xs10>
         <v-container fluid class="items-container">
-          <order-items></order-items>
+          <order-items :ordered-items="items"></order-items>
           <!--<received-items></received-items>-->
           <!--<adjust-items></adjust-items>-->
         </v-container>
       </v-col>
       <v-col xs2>
-        <purchase-summary></purchase-summary>
+        <purchase-summary :ordered-items="items"></purchase-summary>
       </v-col>
     </v-row>
   </div>
@@ -88,6 +88,12 @@
 
     name: 'createPurchaseOrder',
 
+    watch: {
+      items: function () {
+        this.summaryItems = this.items
+      }
+    },
+
     computed: {
       ...mapGetters([
         'supplierNames',
@@ -100,7 +106,7 @@
         } else {
           return []
         }
-      }
+      },
     },
 
     components: {
@@ -127,20 +133,13 @@
           { text: 'Create New Purchase Order'}
 
         ],
-        searchContent: '',
-//        id: this.$route.params.id,
         order: {
           supplier: '',
           contact: '',
           warehouse: '',
         },
-//        supplierNames: [
-//          'A',
-//          'B'
-//        ],
-        rules: {
-          supplier: [],
-        }
+        items: [],
+        summaryItems: []
       }
     }
   }
