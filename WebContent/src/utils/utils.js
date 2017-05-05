@@ -20,6 +20,12 @@ function currentDateTime() {
     + currentDate.getSeconds();
 }
 
+function getFormatedDate(datetime) {
+  return datetime.getFullYear() + "-"
+    + (datetime.getMonth() + 1) + "-"
+    + datetime.getDate()
+}
+
 function formatProductName(name) {
   let pieces = name.split(" ");
   for ( let i = 0; i < pieces.length; i++ )
@@ -79,6 +85,7 @@ export {
   log,
   newIdOfArray,
   currentDateTime,
+  getFormatedDate,
   formatProductName,
   getFirstCharOfEachWord,
   dashToCamelCase,

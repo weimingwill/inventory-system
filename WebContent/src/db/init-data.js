@@ -13,7 +13,7 @@ function initProducts() {
     'products',
     'variants',
   ];
-  
+
   return init(objects)
 }
 
@@ -21,27 +21,25 @@ function initPurchasing() {
   let objects = [
     'purchase-orders',
   ];
-  
-  let objectToCombine = 'purchaseOrders';
-  
-  let attrsToCombine = [
-    'variantId',
-    'adjustCost',
-    'adjustQuantity',
-    'adjustReason',
-    'adjusted',
-    'received',
-    'receivedAt',
-    'receivedQuantity',
-    'quantity'
-  ];
-  
-  let identifier = 'orderNumber';
-  let combinedKey = 'variants';
-  let initialObjects = init(objects);
-  
-  initialObjects[objectToCombine] = combineObjects(initialObjects[objectToCombine], identifier, combinedKey, attrsToCombine);
-  return initialObjects
+
+  let combinedObjParam = {
+    objectsToCombine: 'purchase-orders',
+    attrsToCombine: [
+      'variantId',
+      'adjustCost',
+      'adjustQuantity',
+      'adjustReason',
+      'adjusted',
+      'received',
+      'receivedAt',
+      'receivedQuantity',
+      'quantity'
+    ],
+    identifier: 'orderNumber',
+    combinedKey: 'variants'
+  };
+
+  return init(objects, combinedObjParam);
 }
 
 function initSuppliers() {
@@ -49,7 +47,7 @@ function initSuppliers() {
     'suppliers',
     'supplier-contacts'
   ];
-  
+
   return init(objects);
 }
 
@@ -57,34 +55,34 @@ function initWarehouses() {
   let objects = [
     'warehouses'
   ];
-  
+
   return init(objects);
 }
 
-function init(objects) {
+function init(objects, combinedObjParam) {
   let initObject = {};
-  
+
   objects.forEach((object) => {
     let camelCaseStr = dashToCamelCase(object);
-    initObject[camelCaseStr] = initObjects(object, camelCaseStr);
+    initObject[camelCaseStr] = initObjects(object, camelCaseStr, combinedObjParam);
   });
-  
+
   return initObject;
 }
 
-function initObjects(name, nameCamelCase) {
+function initObjects(name, nameCamelCase, combinedObjParam) {
   let exceptionObjects = [];
-  
+
   if (exceptionObjects.includes(name)) {
     // call function dynamically. e.g initProduct
     let functionName = 'init' + nameCamelCase.charAt(0).toUpperCase() + nameCamelCase.slice(1);
     return initClasses[functionName]();
   }
-  
+
   let objects = localStorage.getItem(nameCamelCase);
   if (!objects) {
     objects = require('../data/' + name + '.csv');
-    
+
     objects = objects.map(object => {
       for (let key in object) {
         if (object.hasOwnProperty(key)) {
@@ -97,12 +95,15 @@ function initObjects(name, nameCamelCase) {
           object[key] = value
         }
       }
-      
+
       object.value = false;
       return object;
     });
-    
-    
+
+    if (combinedObjParam !== undefined && combinedObjParam.objectsToCombine.includes(name)) {
+        objects = combineObjects(objects, combinedObjParam);
+    }
+
     localStorage.setItem(nameCamelCase, JSON.stringify(objects));
   } else {
     objects = JSON.parse(objects);
@@ -110,7 +111,11 @@ function initObjects(name, nameCamelCase) {
   return objects;
 }
 
-function combineObjects(oldObjects, identifier, combinedKey, attrsToCombine) {
+function combineObjects(oldObjects, combinedObjParam) {
+  let identifier = combinedObjParam.identifier;
+  let attrsToCombine = combinedObjParam.attrsToCombine;
+  let combinedKey = combinedObjParam.combinedKey;
+
   let identifierValues = [];
   let newObjects = [];
   log(oldObjects);
@@ -120,7 +125,7 @@ function combineObjects(oldObjects, identifier, combinedKey, attrsToCombine) {
       identifierValues.push(identifierValue);
     }
   });
-  
+
   identifierValues.forEach((value) => {
     let newObject = {};
     newObject[combinedKey] = [];
@@ -141,11 +146,11 @@ function combineObjects(oldObjects, identifier, combinedKey, attrsToCombine) {
     });
     newObjects.push(newObject);
   });
-  
-  newObjects = resetIds(newObjects)
-  
+
+  newObjects = resetIds(newObjects);
+
   log(newObjects);
-  
+
   return newObjects;
 }
 

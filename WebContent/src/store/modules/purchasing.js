@@ -5,6 +5,7 @@ import * as types from '../mutation-types'
 import {
   newIdOfArray,
   currentDateTime,
+  getFormatedDate,
   getFirstCharOfEachWord,
   log} from '../../utils/utils';
 
@@ -54,7 +55,7 @@ const getters = {
   getNewOrderNumber: (state) => {
     let orderNumberDigits = state.purchaseOrders.map(p => parseInt(p.orderNumber.charAt(p.orderNumber.length - 1)));
     let newOrderNumberDigit = Math.max.apply(Math, orderNumberDigits) + 1;
-    return `P000${newOrderNumberDigit}`;
+    return `P0000${newOrderNumberDigit}`;
   }
 };
 
@@ -77,8 +78,9 @@ const mutations = {
 
     let datetime = currentDateTime();
     let date = new Date();
-    let due = date.setDate(date.getDate() + 7);
-    
+    date.setDate(date.getDate() + 7);
+    let due = getFormatedDate(date);
+
     purchaseOrder.id = newIdOfArray(state.purchaseOrders);
     purchaseOrder.variants = [];
     purchaseOrder.created = datetime;
@@ -89,7 +91,7 @@ const mutations = {
     Array.from(items).forEach(item => {
       let variant = {};
       variant.variantId = item.id;
-      variant.quantity = item.quantity;
+      variant.quantity = parseInt(item.quantity);
       variant.adjustCost = "";
       variant.adjustQuantity = "";
       variant.adjustReason = "";
@@ -137,7 +139,7 @@ const actions = {
       s.MODULE_WAREHOUSE, s.OBJ_WARHEOUSE, 'location', order.warehouse).id;
     
     // Todo calculate due date
-    setTimeout(()=>commit(types.ADD_PURCHASE, {order, items}), 100);
+    commit(types.ADD_PURCHASE, {order, items});
   },
   
   

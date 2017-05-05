@@ -159,7 +159,7 @@
             order: this.order,
             items: this.orderedItems
           });
-//          this.$router.go(-1);
+          this.$router.replace('/purchasing/purchaseOrders');
         })
         .catch(err => {
           console.log(err);
