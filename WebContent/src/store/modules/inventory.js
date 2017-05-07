@@ -58,7 +58,7 @@ const mutations = {
   
     state.variants = inventory.variants.map(variant => {
       let product = state.products.find(p => p.id === variant.productId);
-      variant.fullname = product.sku + " " + product.name + " " + variant.name;
+      variant.fullname = [product.sku, product.name, variant.name].join(" ");
       return variant;
     });
   },

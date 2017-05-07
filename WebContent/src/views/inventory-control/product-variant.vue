@@ -32,7 +32,7 @@
 </template>
 
 <script>
-  import Breadcrumbs from '../breadcrumbs.vue'
+  import Breadcrumbs from '../components/breadcrumbs.vue'
   import ProductVariantContent from '../inventory-control/components/product-variant-content.vue'
   import ProductDetails from '../inventory-control/components/product-details.vue'
 

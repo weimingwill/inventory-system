@@ -59,6 +59,15 @@ function initWarehouses() {
   return init(objects);
 }
 
+
+function initSales() {
+  let objects = [
+    'sales'
+  ];
+  return init(objects);
+}
+
+// Helper functions
 function init(objects, combinedObjParam) {
   let initObject = {};
 
@@ -165,5 +174,6 @@ export {
   initProducts,
   initPurchasing,
   initSuppliers,
-  initWarehouses
+  initWarehouses,
+  initSales
 }

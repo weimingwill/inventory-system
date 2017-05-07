@@ -12,8 +12,7 @@ export default {
     expanded: false,
     link: 'purchasing/dashboard.vue'
   },
-  // component: lazyLoading('purchasing', true),
-  
+
   subItems: [
     {
       title: 'Dashboard',
@@ -33,6 +32,16 @@ export default {
       component: lazyLoading('purchasing/purchase-orders'),
       meta: {
         link: 'purchasing/purchase-orders.vue'
+      }
+    },
+    {
+      title: 'Reorder',
+      path: '/purchasing/reorder',
+      router: true,
+      isMenu: true,
+      component: lazyLoading('purchasing/reorder'),
+      meta: {
+        link: 'purchasing/reorder.vue'
       }
     },
     {

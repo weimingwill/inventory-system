@@ -25,7 +25,7 @@
 </template>
 
 <script>
-  import Breadcrumbs from '../breadcrumbs.vue'
+  import Breadcrumbs from '../components/breadcrumbs.vue'
   import PurchaseOrderContent from './components/purchase-orders-content.vue'
 
   export default {

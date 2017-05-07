@@ -10,6 +10,8 @@ export const INIT_SUPPLIER = 'INIT_SUPPLIER'
 
 export const INIT_WAREHOUSE = 'INIT_WAREHOUSE'
 
+export const INIT_SALES = 'INIT_SALES'
+
 // Products
 export const CREATE_PRODUCT = 'CREATE_PRODUCT'
 

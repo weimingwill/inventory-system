@@ -201,7 +201,7 @@
 </template>
 
 <script>
-  import Breadcrumbs from '../breadcrumbs.vue'
+  import Breadcrumbs from '../components/breadcrumbs.vue'
   import { mapGetters, mapActions } from 'vuex'
   import { getFirstCharOfEachWord } from '../../utils/utils'
 

@@ -12,4 +12,5 @@ export default {
     expanded: false,
     link: 'supplier/main.vue'
   },
+  // component: lazyLoading('supplier', true),
 }

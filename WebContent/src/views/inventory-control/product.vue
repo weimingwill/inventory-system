@@ -35,7 +35,7 @@
 </template>
 
 <script>
-  import Breadcrumbs from '../breadcrumbs.vue'
+  import Breadcrumbs from '../components/breadcrumbs.vue'
   import ProductContent from './components/product-content.vue'
 
   export default {

@@ -25,7 +25,7 @@
 </template>
 
 <script>
-  import Breadcrumbs from '../breadcrumbs.vue'
+  import Breadcrumbs from '../components/breadcrumbs.vue'
   import VariantContent from '../inventory-control/components/variant-content.vue'
 
   export default {
