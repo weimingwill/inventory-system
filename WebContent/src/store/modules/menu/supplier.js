@@ -8,9 +8,9 @@ export default {
   path: '/supplier',
   isMenu: true,
   meta: {
-    icon: 'domain',
+    icon: 'group',
     expanded: false,
-    link: 'supplier/main.vue'
+    link: 'supplier/index.vue'
   },
-  // component: lazyLoading('supplier', true),
+  component: lazyLoading('supplier', true),
 }

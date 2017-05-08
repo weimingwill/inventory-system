@@ -5,6 +5,9 @@ import * as types from '../../mutation-types'
 import lazyLoading from './lazyLoading'
 import inventoryControl from './inventory-control'
 import purchasing from './purchasing'
+import warehouse from './warehouse'
+import supplier from './supplier'
+import stockControl from './stock-control'
 
 // show: meta.label -> name
 // name: component name
@@ -32,7 +35,10 @@ const state = {
     //   component: lazyLoading('axios', true)
     // },
     inventoryControl,
-    purchasing
+    purchasing,
+    stockControl,
+    warehouse,
+    supplier,
   ]
 }
 

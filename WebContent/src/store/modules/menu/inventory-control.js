@@ -3,8 +3,6 @@
  */
 import lazyLoading from './lazyLoading'
 
-const FOLDER = 'inventory-control/';
-
 export default {
   title: 'Inventory Control',
   path: '/inventory-control',
