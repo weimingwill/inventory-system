@@ -33,7 +33,8 @@ function initPurchasing() {
       'received',
       'receivedAt',
       'receivedQuantity',
-      'quantity'
+      'quantity',
+      'price'
     ],
     identifier: 'orderNumber',
     combinedKey: 'variants'

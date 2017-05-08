@@ -9,6 +9,8 @@ function log(message) {
   return console.log.apply(console, [message]);
 }
 
+// Dates
+
 function currentDateTime() {
   // return datetime in format of '2017-4-28 13:2:15'
   let currentDate = new Date();
@@ -24,6 +26,17 @@ function getFormatedDate(datetime) {
   return datetime.getFullYear() + "-"
     + (datetime.getMonth() + 1) + "-"
     + datetime.getDate()
+}
+
+function getDateRangeOfWeek(date) {
+  let mon = date.getDate() - date.getDay() + 1;
+  let sun = mon + 6;
+  return {
+    monday: new Date(date.setDate(mon)),
+    sunday: new Date(date.setDate(sun)),
+    lastMonday: new Date(date.setDate(mon - 7)),
+    lastSunday: new Date(date.setDate(sun - 7))
+  }
 }
 
 function formatProductName(name) {
@@ -86,6 +99,7 @@ export {
   newIdOfArray,
   currentDateTime,
   getFormatedDate,
+  getDateRangeOfWeek,
   formatProductName,
   getFirstCharOfEachWord,
   dashToCamelCase,

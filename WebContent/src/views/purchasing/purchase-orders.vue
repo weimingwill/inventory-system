@@ -42,7 +42,7 @@
         breadcrumbs: [
           { text: 'Purchasing Orders' }
         ],
-        searchContent: ''
+        searchContent: '',
       }
     },
 

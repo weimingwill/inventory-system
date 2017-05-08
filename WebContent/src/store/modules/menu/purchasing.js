@@ -16,7 +16,7 @@ export default {
   subItems: [
     {
       title: 'Dashboard',
-      path: '/purchasing',
+      path: '/purchasing/dashboard',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/dashboard'),

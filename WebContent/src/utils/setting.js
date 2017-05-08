@@ -26,3 +26,15 @@ export const PURCHASE_ORDER_ATTR = [
   "created",
   "updated",
   "value"];
+
+export const PURCHASING_DASHBOARD_TITLES = [
+  'Total Purchased Units',
+  'Total Purchased Cost',
+  'Average Unit Cost'
+]
+
+export const PURCHASING_DASHBOARD_UNITS = [
+  '',
+  '$',
+  '$'
+]

@@ -33,7 +33,7 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import Chart from '../components/Chartjs.vue'
+  import Chart from '../components/chartjs.vue'
 
   import { mapGetters, mapActions } from 'vuex'
 

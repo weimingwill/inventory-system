@@ -6,6 +6,7 @@ import {
   newIdOfArray,
   currentDateTime,
   getFormatedDate,
+  getDateRangeOfWeek,
   getFirstCharOfEachWord,
   log} from '../../utils/utils';
 
@@ -76,14 +77,85 @@ const getters = {
     predictions = forecast(data, alpha, beta, gamma, period, m);
     console.log(predictions)
     return predictions;
-  }
+  },
+  
+  getDashboardInfo: (state, getters) => {
+    let totalUnits = 0;
+    let totalCost = 0;
+    let currPurchaseUnits = 0;
+    let lastWeekPurchaseUnits = 0;
+    let currCost = 0;
+    let lastWeekCost = 0;
+    let preTotalUnits = 0;
+    let preTotalCost = 0;
+    
+    Array.from(state.purchaseOrders).forEach(order => {
+      let purchaseDate = new Date(order.created);
+      let dateRange = getDateRangeOfWeek(purchaseDate);
+      let quantity = order.quantity;
+      let cost = order.cost;
+      if (dateRange.monday < purchaseDate < dateRange.sunday) {
+        currPurchaseUnits += quantity;
+        currCost += cost;
+      } else if (dateRange.lastMonday < purchaseDate < dateRange.lastSunday) {
+        lastWeekPurchaseUnits += quantity;
+        lastWeekCost += cost;
+      }
+      
+      if (purchaseDate < dateRange.monday) {
+        preTotalUnits += quantity;
+        preTotalCost += cost;
+      }
+      totalUnits += quantity;
+      totalCost += cost;
+    })
+    
+    let avgUnitCost = totalCost / totalUnits;
+    let avgPreCost = preTotalCost / preTotalUnits;
+    let info = [];
+    let values = [currPurchaseUnits, currCost, Math.round(avgUnitCost)];
+    let percentage = [
+      Math.round((currPurchaseUnits - lastWeekPurchaseUnits) / lastWeekPurchaseUnits * 100),
+      Math.round((currCost - lastWeekCost) / lastWeekCost  * 100),
+      Math.round((avgUnitCost - avgPreCost) / avgPreCost * 100)
+    ]
+    
+    for (let i = 0; i < 3; i++) {
+      let data = {}
+      data.id = i + 1;
+      data.title = s.PURCHASING_DASHBOARD_TITLES[i];
+      data.unit = s.PURCHASING_DASHBOARD_UNITS[i];
+      data.isIncreased = percentage[i] > 0;
+      data.percentage = percentage[i];
+      data.value = values[i];
+      info.push(data);
+    }
+    
+    log(info);
+    return info
+  },
 };
 
 const mutations = {
   [types.INIT_PURCHASING] (state) {
     let purchasing = initPurchasing();
-    log(purchasing)
-    state.purchaseOrders = purchasing.purchaseOrders;
+    // state.purchaseOrders = purchasing.purchaseOrders;
+  
+    state.purchaseOrders = purchasing.purchaseOrders.map(p => {
+      p.quantity = p.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
+        return sum + quantity;
+      });
+      
+      p.cost = p.variants.map(variant => {
+        return variant.quantity * variant.price
+      }).reduce((sum, cost) => {
+        return sum + cost;
+      });
+      
+      return p;
+    })
+    
+    log(state.purchaseOrders)
   },
 
   [types.ADD_PURCHASE] (state, {order, items}) {
@@ -129,7 +201,7 @@ const mutations = {
 };
 
 const actions = {
-  initPurchasing ({commit}) {
+  initPurchasing ({commit, getters}) {
     log('init purchasing');
     commit(types.INIT_PURCHASING)
   },
