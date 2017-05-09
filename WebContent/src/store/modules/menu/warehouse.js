@@ -7,6 +7,7 @@ export default {
   title: 'Warehouse',
   path: '/warehouse',
   isMenu: true,
+  router: true,
   meta: {
     icon: 'domain',
     expanded: false,

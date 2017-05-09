@@ -35,7 +35,10 @@
                 <v-subheader v-else-if="item.header" v-text="item.header" />
                 <v-divider v-else-if="item.divider" light />
                 <v-list-item v-else>
-                    <v-list-tile ripple>
+                    <v-list-tile ripple :href="item.path" :router="item.router">
+                        <v-list-tile-avatar>
+                            <v-icon>{{ item.meta.icon }}</v-icon>
+                        </v-list-tile-avatar>
                         <v-list-tile-title v-text="item.title" />
                     </v-list-tile>
                 </v-list-item>

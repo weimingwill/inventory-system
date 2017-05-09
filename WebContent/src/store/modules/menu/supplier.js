@@ -7,6 +7,7 @@ export default {
   title: 'Supplier',
   path: '/supplier',
   isMenu: true,
+  router: true,
   meta: {
     icon: 'group',
     expanded: false,
