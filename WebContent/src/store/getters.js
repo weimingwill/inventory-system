@@ -22,6 +22,25 @@ const getObjectListByAttr = state => (moduleName, objName, attrName, attrValue) 
   return state[moduleName][objName].filter(obj => obj[attrName] === attrValue);
 };
 
+const getObjectByAttrs = state => (moduleName, objName, attrNames, attrValues) => {
+  return state[moduleName][objName].find(obj => {
+    let result = true;
+    for (let i = 0; i < attrNames.length; i++) {
+      if (obj[attrNames[i]] !== attrValues[i]) {
+        result = false
+      }
+    }
+    return result
+  });
+};
+
+const getObjectList = state => (moduleName, objName, attrName) => {
+  return state[moduleName][objName].map(obj => {
+    return obj[attrName]
+  });
+};
+
+
 export {
   pkg,
   app,
@@ -34,5 +53,7 @@ export {
   menuitems,
   componententry,
   getObjectByAttr,
-  getObjectListByAttr
+  getObjectListByAttr,
+  getObjectByAttrs,
+  getObjectList
 }

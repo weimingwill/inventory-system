@@ -12,8 +12,8 @@
 <script>
   // Todo: simplify the import syntax --> solve error in webpack for index.js
   //  import { Sidebar, AppMain } from './components/layout/'
-  import Sidebar from './components/layout/Sidebar.vue'
-  import AppMain from './components/layout/AppMain.vue'
+  import Sidebar from './views/layout/Sidebar.vue'
+  import AppMain from './views/layout/AppMain.vue'
 
   export default {
     name: 'app',

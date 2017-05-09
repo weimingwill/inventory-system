@@ -11,7 +11,7 @@
             hide-details
             v-model="searchContent"
         ></v-text-field>
-        <v-btn outline success dark to="/purchasing/createPurchaseOrder" router>
+        <v-btn outline success dark to="/purchasing/purchaseOrders/createPurchaseOrder" router>
           <v-icon left>add</v-icon>
           New Purchase Order
         </v-btn>

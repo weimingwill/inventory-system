@@ -54,7 +54,11 @@ function initSuppliers() {
 
 function initWarehouses() {
   let objects = [
-    'warehouses'
+    'warehouses',
+    'shelves',
+    'layers',
+    'cells',
+    'cell-variant-join'
   ];
 
   return init(objects);

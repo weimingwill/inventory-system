@@ -45,7 +45,7 @@ export default {
       }
     },
     {
-      path: '/purchasing/createPurchaseOrder',
+      path: '/purchasing/purchaseOrders/createPurchaseOrder',
       isMenu: false,
       component: lazyLoading('purchasing/create-purchase-order')
     }

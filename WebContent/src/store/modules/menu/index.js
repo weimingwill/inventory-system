@@ -15,25 +15,6 @@ import stockControl from './stock-control'
 
 const state = {
   items: [
-    // {
-    //   name: 'Dashboard',
-    //   path: '/dashboard',
-    //   meta: {
-    //     icon: 'fa-tachometer',
-    //     link: 'dashboard/index.vue'
-    //   },
-    //   component: lazyLoading('dashboard', true)
-    // },
-    // {
-    //   name: 'Axios',
-    //   path: '/axiosDemo',
-    //   meta: {
-    //     auth: true,
-    //     icon: 'fa-rocket',
-    //     link: 'axios/index.vue'
-    //   },
-    //   component: lazyLoading('axios', true)
-    // },
     inventoryControl,
     purchasing,
     stockControl,
