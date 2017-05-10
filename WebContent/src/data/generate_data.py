@@ -1,3 +1,85 @@
+import csv
+import random
+
+
+def generate_random_numbers_add_up_to_sum(n, total):
+    """Return a randomly chosen list of n positive integers summing to total.
+    Each such list is equally likely to occur."""
+
+    dividers = sorted(random.sample(xrange(1, total), n - 1))
+    return [a - b for a, b in zip(dividers + [total], [0] + dividers)]
+
+
+def generate_sales_by_ten_days():
+    time = '2014-5-0'
+    with open('sales.csv', 'rb') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+        for row in spamreader:
+            if row[0] != 'time':
+                parts = time.split('-')
+                year = int(parts[0])
+                month = int(parts[1])
+                day = int(parts[2])
+
+                if month == 12 and day == 3:
+                    year += 1
+                    month = 1
+                    day = 1
+                elif day == 3:
+                    month += 1
+                    day = 1
+                else:
+                    day += 1
+
+                time = '-'.join([str(year), str(month), str(day)])
+
+                sales = int(row[1]) + 500
+
+                print ','.join([time, str(sales)])
+            else:
+                print ','.join(row)
+
+
+def generate_sales_by_month():
+    with open('sales.csv', 'rb') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+        counter = 0
+        trend = 0
+        for row in spamreader:
+            time = row[0]
+            if time != 'time':
+                if counter == 12:
+                    trend += 50
+                    counter = 0
+                else:
+                    counter += 1
+                sales = int(row[1]) + trend
+
+                print ','.join([time, str(sales)])
+            else:
+                print ','.join(row)
+
+
+def generate_sales_order():
+    with open('sales.csv', 'rb') as csvfile:
+        spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+        for row in spamreader:
+            time = row[0]
+            if time != 'time':
+                day = 1
+                sales = int(row[1])
+                sales_per_day = generate_random_numbers_add_up_to_sum(30, sales)
+                for sale in sales_per_day:
+                    date = time + "-" + str(day)
+                    print ','.join([date, str(sale)])
+                    day += 1
+            else:
+                print ','.join(row)
+
+
 def generate_layers():
     firstline = 'id,warehouseId,shelfId,name,fullname\n'
     id = 1
@@ -64,4 +146,4 @@ def generate_cell_variant_join_table():
     print file_content
     return file_content
 
-generate_cell_variant_join_table()
+generate_sales_by_month()

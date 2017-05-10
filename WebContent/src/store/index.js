@@ -10,6 +10,7 @@ import inventory from './modules/inventory'
 import supplier from './modules/supplier'
 import purchasing from './modules/purchasing'
 import warehouse from './modules/warehouse'
+import sales from './modules/sales'
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ const store = new Vuex.Store({
     inventory,
     supplier,
     purchasing,
-    warehouse
+    warehouse,
+    sales
   },
   // strict: debug
 });

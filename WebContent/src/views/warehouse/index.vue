@@ -20,7 +20,7 @@
               <v-row>
                 <v-col xs12>
                   <!-- Warehouse common shelves-->
-                  <v-row v-for="row in commonShelves">
+                  <v-row v-for="(row, index) in commonShelves" :key="index">
                     <v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">
                       {{ shelf.name }}
                     </v-col>
@@ -51,13 +51,13 @@
                     <v-col xs10 class="outbound-area">
                       <!-- Popular area and Cross docking area-->
                       <v-row>
-                        <v-col xs1 v-for="shelf in popularShelves" class="shelf">
+                        <v-col xs1 v-for="shelf in popularShelves" :key="shelf.id" class="shelf">
                           {{ shelf.name }}
                         </v-col>
                       </v-row>
 
                       <v-row>
-                        <v-col xs1 v-for="shelf in crossDockingShelves" class="shelf">
+                        <v-col xs1 v-for="shelf in crossDockingShelves" :key="shelf.id" class="shelf">
                           {{ shelf.name }}
                         </v-col>
                       </v-row>

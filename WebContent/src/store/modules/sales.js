@@ -25,28 +25,32 @@ const state = {
 const getters = {
   sales: state => state.sales,
 
-  getNewOrderNumber: (state) => {
-    let orderNumberDigits = state.purchaseOrders.map(p => parseInt(p.orderNumber.charAt(p.orderNumber.length - 1)));
-    let newOrderNumberDigit = Math.max.apply(Math, orderNumberDigits) + 1;
-    return `P0000${newOrderNumberDigit}`;
-  },
+  getLabels: (state) => state.sales.map(s => s.time),
 
-  getPredictions: (state) => {
+  getSales: (state) => state.sales.map(s => s.sales),
+
+  getPredictions: (state) => (data) => {
     let forecast = require('nostradamus')
-      , data = [
-      362, 385, 432, 341, 382, 409,
-      498, 387, 473, 513, 582, 474,
-      544, 582, 681, 557, 628, 707,
-      773, 592, 627, 725, 854, 661
-    ]
-      , alpha = 0.5  // overall smoothing component
+      , alpha = 0.6  // overall smoothing component
       , beta = 0.4   // trend smoothing component
-      , gamma = 0.6  // seasonal smoothing component
+      , gamma = 0.4  // seasonal smoothing component
       , period = 4   // # of observations per season
       , m = 4        // # of future observations to forecast
       , predictions = [];
 
     predictions = forecast(data, alpha, beta, gamma, period, m);
+
+    let dataSize = data.length;
+    let predictionSize = predictions.length;
+
+    for (let i = 0; i < predictionSize; i++) {
+      if (i < dataSize - 1) {
+        predictions[i] = 0
+      } else {
+        predictions[i] = Math.round(predictions[i])
+      }
+    }
+
     console.log(predictions)
     return predictions;
   }
