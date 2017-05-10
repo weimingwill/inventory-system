@@ -22,7 +22,7 @@ export default new Router({
 
 function generateRoutesFromMenu (menu = [], routes = []) {
   for (let i = 0, l = menu.length; i < l; i++) {
-    let item = menu[i]
+    let item = menu[i];
     if (item.path) {
       routes.push(item)
     }
