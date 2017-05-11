@@ -87,7 +87,6 @@ const getters = {
         finalPredictions = finalPredictions.concat(predictions.slice(dataSize))
       }
     }
-    log(finalPredictions);
     return finalPredictions;
   }
 };

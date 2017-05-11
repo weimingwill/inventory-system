@@ -58,6 +58,20 @@ const getters = {
     return `P0000${newOrderNumberDigit}`;
   },
   
+  purchaseOrderSuppliers: (state, getters) => {
+    return state.purchaseOrders.filter(order => order.status === s.STATUS_PURCHASED).map(p => {
+      return getters.getSupplierById(p.supplierId);
+    })
+  },
+  
+  quantityBySupplier: (state) => (supplierId) => {
+    return state.purchaseOrders.filter(
+      order => order.status === s.STATUS_PURCHASED && order.supplierId === supplierId).map(
+        p => p.quantity).reduce((sum, quantity) => {
+      return sum + quantity;
+    });
+  },
+  
   getDashboardInfo: (state, getters) => {
     let totalUnits = 0;
     let totalCost = 0;

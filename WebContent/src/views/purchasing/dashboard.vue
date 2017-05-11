@@ -12,17 +12,17 @@
         <v-col xs6>
           <v-card>
             <v-toolbar class="cyan chart-toolbar">
-              <v-toolbar-title class="chart-toolbar-title">Purchase Units</v-toolbar-title>
+              <v-toolbar-title class="chart-toolbar-title">Incoming Stock by Supplier</v-toolbar-title>
 
               <v-select
                   class="chart-toolbar-select"
-                  v-bind:items="series"
-                  v-model="temp"
+                  v-bind:items="supplierNames"
+                  v-model="supplier"
                   dark
               />
             </v-toolbar>
             <v-container class="chart-container">
-              <chart :type="'line'" :data="seriesData" :options="options"></chart>
+              <chart :type="'bar'" :data="incomingStockData" :options="incomingStockOptions"></chart>
             </v-container>
           </v-card>
         </v-col>
@@ -30,7 +30,7 @@
         <v-col xs6>
           <v-card>
             <v-toolbar class="cyan chart-toolbar">
-              <v-toolbar-title class="chart-toolbar-title">Purchase Units</v-toolbar-title>
+              <v-toolbar-title class="chart-toolbar-title">Total Cost by Supplier</v-toolbar-title>
 
               <v-select
                   class="chart-toolbar-select"
@@ -175,37 +175,41 @@
         }
       },
 
+      supplierNames() {
+        return this.suppliers.map(s => s.name);
+      },
+
+      supplierQuantity() {
+        return this.suppliers.map(s => this.$store.getters.quantityBySupplier(s.id));
+      },
+
+      incomingStockData () {
+        let data = {
+          labels: this.supplierNames
+        };
+        data.datasets = [{
+          data: this.supplierQuantity,
+          backgroundColor: this.transparentBgColor[1].replace(/1\)$/, '.5)')
+        }];
+//        this.incomingStockOptions.scales.yAxes[0].ticks.min = Math.min.apply(null, this.supplierQuantity);
+        return data
+      },
+
       seriesData () {
         let data = {
           labels: this.labels_3
-        }
+        };
         data.datasets = this.series.map((e, i) => {
           return {
             data: this.data_3[i],
             label: this.series[i],
-            borderColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)'),
-            pointBackgroundColor: this.backgroundColor_3[i],
-            backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
+            borderColor: this.transparentBgColor[i].replace(/1\)$/, '.5)'),
+            pointBackgroundColor: this.transparentBgColor[i],
+            backgroundColor: this.transparentBgColor[i].replace(/1\)$/, '.5)')
           }
-        })
+        });
         return data
       },
-
-//      predictionData () {
-//        let data = {
-//          labels: this.labels,
-//        }
-//        data.datasets = this.predictionSeries.map((e, i) => {
-//          return {
-//            data: this.chartData[i],
-//            label: this.predictionSeries[i],
-//            borderColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)'),
-//            pointBackgroundColor: this.backgroundColor_3[i],
-//            backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
-//          }
-//        })
-//        return data;
-//      },
     },
 
     watch: {
@@ -235,21 +239,23 @@
           return {
             data: this.chartData[i],
             label: this.predictionSeries[i],
-            borderColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)'),
-            pointBackgroundColor: this.backgroundColor_3[i],
-            backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
+            borderColor: this.transparentBgColor[i].replace(/1\)$/, '.5)'),
+            pointBackgroundColor: this.transparentBgColor[i],
+            backgroundColor: this.transparentBgColor[i].replace(/1\)$/, '.5)')
           }
-        })
-        console.log(this.predictionData);
+        });
       }
     },
 
     methods: {
-      setPredictions: function () {
+      setIncomingStock() {
+
+      },
+
+      setPredictions() {
         // Todo: find all related ids instead of one
         if (this.type && this.size && this.color) {
           let variantId = this.$store.getters.getVariantIdsByTypeColorSize(this.type, this.size, this.color);
-          console.log(variantId);
           this.sales = this.$store.getters.getSales(variantId);
           this.predictions = this.getPredictions(this.sales);
           this.labels = this.getLabels(variantId);
@@ -273,6 +279,7 @@
 
     mounted() {
       this.type = this.$store.getters.productTypes[0];
+      this.suppliers = this.$store.getters.purchaseOrderSuppliers;
     },
 
     data () {
@@ -288,24 +295,49 @@
           '#ed6c63',
           '#97cd76'
         ],
+
+        supplier: '',
+        suppliers: [],
+        incomingStockLabels: [],
+        incomingStockOptions: {
+          legend: {
+            display: false
+          },
+          scales: {
+            xAxes: [{}],
+            yAxes: [{
+              ticks: {
+                min: 0
+              }
+            }]
+          },
+          tooltips: {
+            mode: 'label'
+          }
+        },
+//        incomingStockData: [],
+
         labels_3: ['May', 'June', 'Jule', 'August', 'September', 'October', 'November'],
         data_3: [
           [65, 59, 90, 81, 56, 55, 40],
           [594, 357, 410, 444, 550, 421, 565]
         ],
+
         options: {
+          legend: {
+            display: false
+          },
           tooltips: {
             mode: 'label'
           }
         },
-        backgroundColor_3: [
+        transparentBgColor: [
           'rgba(31, 200, 219, 1)',
           'rgba(151, 205, 118, 1)'
         ],
         series: ['Product A', 'Product B'],
         temp: '',
 
-        e1: '',
         sales: [],
         labels: [],
         predictions: [],

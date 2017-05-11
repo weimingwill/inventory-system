@@ -46,3 +46,11 @@ export const PURCHASING_DASHBOARD_UNITS = [
   '$',
   '$'
 ];
+
+export const STATUS_PURCHASED = 'purchased';
+export const STATUS_RECEIVED = 'received';
+export const STATUS_ACTIVE = 'active';
+export const STATUS_PICKED = 'picked';
+export const STATUS_PACKED = 'packed';
+export const STATUS_STORED = 'stored';
+export const STATUS_CHECKED = 'checked';

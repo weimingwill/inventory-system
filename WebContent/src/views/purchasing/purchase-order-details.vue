@@ -110,7 +110,7 @@
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
   import OrderItems from './components/order-items.vue'
-  import PurchaseSummary from './components/create-purchase-order-summary.vue'
+  import PurchaseSummary from './components/purchase-order-summary.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
 
