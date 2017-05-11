@@ -63,7 +63,24 @@ const getters = {
       return getters.getSupplierById(p.supplierId);
     })
   },
-  
+
+  purchaseOrderVariantsBySupplierName: (state, getters) => (supplierName) => {
+    let purchaseOrders = state.purchaseOrders.filter(p => p.supplierId === getters.getSupplierByName(supplierName).id)
+    let variants = [];
+    Array.from(purchaseOrders).forEach(p => {
+      variants = variants.concat(p.variants)
+    });
+
+    variants.map(v => {
+      let variant = getters.getVariantById(v.variantId);
+      v.name = variant.name;
+      v.cost = variant.costPrice * v.quantity;
+      return v;
+    });
+
+    return variants;
+  },
+
   quantityBySupplier: (state) => (supplierId) => {
     return state.purchaseOrders.filter(
       order => order.status === s.STATUS_PURCHASED && order.supplierId === supplierId).map(
@@ -71,7 +88,15 @@ const getters = {
       return sum + quantity;
     });
   },
-  
+
+  costBySupplier: (state) => (supplierId) => {
+    return state.purchaseOrders.filter(
+      order => order.status === s.STATUS_PURCHASED && order.supplierId === supplierId).map(
+        p => p.cost).reduce((sum, cost) => {
+      return sum + cost;
+    });
+  },
+
   getDashboardInfo: (state, getters) => {
     let totalUnits = 0;
     let totalCost = 0;

@@ -46,7 +46,7 @@ const getters = {
   },
   
   getSupplierByName: (state, getters) => (name) => {
-    return state.suppliers.filter(s => s.name === name)[0]
+    return state.suppliers.find(s => s.name === name);
   },
   
   // Supplier Contacts

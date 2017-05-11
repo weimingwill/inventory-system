@@ -9,15 +9,15 @@
       </v-row>
 
       <v-row>
-        <v-col xs6>
+        <v-col xs6 pr-5>
           <v-card>
             <v-toolbar class="cyan chart-toolbar">
               <v-toolbar-title class="chart-toolbar-title">Incoming Stock by Supplier</v-toolbar-title>
 
               <v-select
                   class="chart-toolbar-select"
-                  v-bind:items="supplierNames"
-                  v-model="supplier"
+                  v-bind:items="supplierSelectionNames"
+                  v-model="supplierName"
                   dark
               />
             </v-toolbar>
@@ -27,20 +27,20 @@
           </v-card>
         </v-col>
 
-        <v-col xs6>
+        <v-col xs6 pl-5>
           <v-card>
             <v-toolbar class="cyan chart-toolbar">
               <v-toolbar-title class="chart-toolbar-title">Total Cost by Supplier</v-toolbar-title>
 
               <v-select
                   class="chart-toolbar-select"
-                  v-bind:items="series"
-                  v-model="temp"
+                  v-bind:items="supplierSelectionNames"
+                  v-model="supplierName"
                   dark
               />
             </v-toolbar>
             <v-container class="chart-container">
-              <chart :type="'line'" :data="seriesData" :options="options"></chart>
+              <chart :type="'bar'" :data="incomingCostData" :options="incomingStockOptions"></chart>
             </v-container>
           </v-card>
         </v-col>
@@ -164,35 +164,34 @@
         'colorsOfType'
       ]),
 
-      sizes() {
+      sizes () {
         if (this.type) {
+          return this.$store.getters.sizesOfType(this.type);
         }
       },
 
-      colors() {
+      colors () {
         if (this.type) {
           return this.$store.getters.colorsOfType(this.type);
         }
       },
 
-      supplierNames() {
+      supplierSelectionNames () {
+        let names = this.suppliers.map(s => s.name);
+        names.unshift('All');
+        return names;
+      },
+
+      supplierNames () {
         return this.suppliers.map(s => s.name);
       },
 
-      supplierQuantity() {
+      supplierQuantity () {
         return this.suppliers.map(s => this.$store.getters.quantityBySupplier(s.id));
       },
 
-      incomingStockData () {
-        let data = {
-          labels: this.supplierNames
-        };
-        data.datasets = [{
-          data: this.supplierQuantity,
-          backgroundColor: this.transparentBgColor[1].replace(/1\)$/, '.5)')
-        }];
-//        this.incomingStockOptions.scales.yAxes[0].ticks.min = Math.min.apply(null, this.supplierQuantity);
-        return data
+      supplierCost () {
+        return this.suppliers.map(s => this.$store.getters.costBySupplier(s.id));
       },
 
       seriesData () {
@@ -213,7 +212,7 @@
     },
 
     watch: {
-      type: function () {
+      type () {
         if (this.type) {
           this.sizes = this.$store.getters.sizesOfType(this.type);
           this.colors = this.$store.getters.colorsOfType(this.type);
@@ -223,32 +222,63 @@
         this.setPredictions();
       },
 
-      size: function () {
+      size () {
         this.setPredictions();
       },
 
-      color: function () {
+      color () {
         this.setPredictions();
       },
 
-      chartData: function () {
+      demandChartData () {
         this.predictionData = {
           labels: this.labels,
         };
         this.predictionData.datasets = this.predictionSeries.map((e, i) => {
           return {
-            data: this.chartData[i],
+            data: this.demandChartData[i],
             label: this.predictionSeries[i],
             borderColor: this.transparentBgColor[i].replace(/1\)$/, '.5)'),
             pointBackgroundColor: this.transparentBgColor[i],
             backgroundColor: this.transparentBgColor[i].replace(/1\)$/, '.5)')
           }
         });
+      },
+
+      supplierName () {
+        if (this.supplierName !== 'All') {
+          let variants = this.$store.getters.purchaseOrderVariantsBySupplierName(this.supplierName);
+          this.incomingStockLabels = variants.map(v => v.name);
+          this.stockChartData = variants.map(v => v.quantity);
+          this.costChartData = variants.map(v => v.cost);
+        } else {
+          this.incomingStockLabels = this.supplierNames;
+          this.stockChartData = this.supplierQuantity;
+          this.costChartData = this.supplierCost;
+        }
+        this.setIncomingStock();
       }
     },
 
     methods: {
-      setIncomingStock() {
+      setIncomingStock () {
+        // Incoming stock by supplier data
+        this.incomingStockData = {
+          labels: this.incomingStockLabels
+        };
+        this.incomingStockData.datasets = [{
+          data: this.stockChartData,
+          backgroundColor: this.transparentBgColor[1].replace(/1\)$/, '.5)')
+        }];
+
+        // Incoming cost by supplier data
+        this.incomingCostData = {
+          labels: this.incomingStockLabels
+        }
+        this.incomingCostData.datasets = [{
+          data: this.costChartData,
+          backgroundColor: this.transparentBgColor[1].replace(/1\)$/, '.5)')
+        }]
 
       },
 
@@ -272,7 +302,7 @@
             }
           }
           this.predictionOptions.scales.yAxes[0].ticks.min = Math.min.apply(null, this.sales.concat(this.predictions.slice(this.sales.length)));
-          this.chartData = [this.sales, this.predictions];
+          this.demandChartData = [this.sales, this.predictions];
         }
       }
     },
@@ -280,6 +310,7 @@
     mounted() {
       this.type = this.$store.getters.productTypes[0];
       this.suppliers = this.$store.getters.purchaseOrderSuppliers;
+      this.supplierName = this.supplierSelectionNames[0];
     },
 
     data () {
@@ -288,17 +319,10 @@
           { text: 'Dashboard' }
         ],
 
-        backgroundColor: [
-          '#1fc8db',
-          '#fce473',
-          '#42afe3',
-          '#ed6c63',
-          '#97cd76'
-        ],
-
-        supplier: '',
+        // incoming stock attributes
+        supplierName: '',
         suppliers: [],
-        incomingStockLabels: [],
+
         incomingStockOptions: {
           legend: {
             display: false
@@ -315,34 +339,20 @@
             mode: 'label'
           }
         },
-//        incomingStockData: [],
 
-        labels_3: ['May', 'June', 'Jule', 'August', 'September', 'October', 'November'],
-        data_3: [
-          [65, 59, 90, 81, 56, 55, 40],
-          [594, 357, 410, 444, 550, 421, 565]
-        ],
+        incomingStockLabels: [],
+        stockChartData: [],
+        incomingStockData: {},
 
-        options: {
-          legend: {
-            display: false
-          },
-          tooltips: {
-            mode: 'label'
-          }
-        },
-        transparentBgColor: [
-          'rgba(31, 200, 219, 1)',
-          'rgba(151, 205, 118, 1)'
-        ],
-        series: ['Product A', 'Product B'],
-        temp: '',
+        costChartData: [],
+        incomingCostData: {},
 
+        // demand forecast attributes
         sales: [],
         labels: [],
         predictions: [],
         predictionSeries: ['actual', 'prediction'],
-        chartData: [],
+        demandChartData: [],
         predictionOptions: {
           scales: {
             xAxes: [{}],
@@ -357,7 +367,21 @@
         size: '',
         color: '',
         sizes: [],
-        colors: []
+        colors: [],
+
+
+        transparentBgColor: [
+          'rgba(31, 200, 219, 1)',
+          'rgba(151, 205, 118, 1)'
+        ],
+
+        backgroundColor: [
+          '#1fc8db',
+          '#fce473',
+          '#42afe3',
+          '#ed6c63',
+          '#97cd76'
+        ]
       }
     },
     created() {
