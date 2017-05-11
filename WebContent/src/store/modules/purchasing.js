@@ -21,8 +21,7 @@ import {
 import * as s from '../../utils/setting'
 
 const state = {
-  purchaseOrders: [],
-  warehouses: []
+  purchaseOrders: []
 };
 
 const getters = {
@@ -208,7 +207,7 @@ const actions = {
       s.MODULE_SUPPLIER, s.OBJ_SUPPLIER_CONTACTS, 'email', order.contact).id;
 
     order.warehouseId = getters.getObjectByAttr(
-      s.MODULE_WAREHOUSE, s.OBJ_WARHEOUSE, 'location', order.warehouse).id;
+      s.MODULE_WAREHOUSE, s.OBJ_WAREHOUSE, 'location', order.warehouse).id;
 
     // Todo calculate due date
     commit(types.ADD_PURCHASE, {order, items});

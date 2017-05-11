@@ -17,15 +17,18 @@
         <td>{{ item.fullname }} </td>
         <td>
           <v-text-field
+              v-if="!isView"
               type="number"
               name="quantity"
               v-model="item.quantity"
-          ></v-text-field></td>
+          ></v-text-field>
+          <span v-else>{{ item.quantity }}</span>
+        </td>
         <td>{{ calculateStockAftPurchase(item.quantity, item.available) }}</td>
         <td>{{ item.costPrice }}</td>
         <!--<td>{{ item.tax }}</td>-->
         <td>{{ calculateCost(item.quantity, item.costPrice) }}</td>
-        <td class="delete-td">
+        <td class="delete-td" v-if="!isView">
           <v-btn icon="icon" class="black--text" @click.native="deleteItem(item.id)">
             <v-icon>delete</v-icon>
           </v-btn>
@@ -84,7 +87,7 @@
 
       </tbody>
     </table>
-    <v-btn @click.native="addNewItem" default light class="add-item-btn" :disabled="hasNewItem">
+    <v-btn v-if="!isView" @click.native="addNewItem" default light class="add-item-btn" :disabled="hasNewItem">
       <v-icon>add</v-icon>Add another item
     </v-btn>
   </v-container>
@@ -96,7 +99,7 @@
   export default {
     name: 'OrderItems',
 
-    props: ['orderedItems'],
+    props: ['orderedItems', 'isView'],
 
     computed: {
       ...mapGetters ([

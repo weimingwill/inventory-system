@@ -10,11 +10,15 @@ export const OBJ_SUPPLIER = 'suppliers';
 export const OBJ_SUPPLIER_CONTACTS = 'supplierContacts';
 
 export const MODULE_WAREHOUSE = 'warehouse';
-export const OBJ_WARHEOUSE = 'warehouse';
+export const OBJ_WAREHOUSE = 'warehouses';
 export const OBJ_SHELVES = 'shelves';
 export const OBJ_LAYERS = 'layers';
 export const OBJ_CELLS = 'cells';
 export const OBJ_CELL_VARIANT = 'cellVariantJoin';
+
+export const MODULE_PURCHASING = 'purchasing';
+export const OBJ_PURCHASE_ORDERS = 'purchaseOrders';
+
 
 export const PURCHASE_ORDER_ATTR = [
   "id",

@@ -15,15 +15,18 @@
     <v-row><p class="detail-content">*Currency: USD</p></v-row>
 
     <v-row class="btn-row">
-      <v-btn class="fn-btn" success light @click.native="createOrder">Create</v-btn>
+      <v-btn v-if="isCreate" class="fn-btn" success light @click.native="createOrder">Create</v-btn>
+      <!-- Todo: add edit function -->
+      <v-btn v-else-if="isEdit" class="fn-btn" success light @click.native="editOrder">Save</v-btn>
     </v-row>
 
     <v-row class="btn-row">
-      <v-btn class="fn-btn" success light outline>Save as draft</v-btn>
+      <v-btn v-if="isCreate" class="fn-btn" success light outline>Save as draft</v-btn>
     </v-row>
 
     <v-row class="btn-row">
-      <v-btn class="fn-btn" default light outline to="/purchasing/purchaseOrders">Cancel</v-btn>
+      <v-btn v-if="isCreate" class="fn-btn" default light outline to="/purchaseOrders">Cancel</v-btn>
+      <v-btn v-if="isEdit" class="fn-btn" default light outline @click.native="cancel">Cancel</v-btn>
     </v-row>
   </v-container>
 </template>
@@ -34,13 +37,13 @@
   export default {
     name: 'PurchaseSummary',
 
-    props: ['orderedItems', 'orderDetails'],
+    props: ['orderedItems', 'orderDetails', 'isEdit', 'isCreate'],
 
     computed: {
       ...mapGetters({
       }),
 
-      totalUnits: function () {
+      totalUnits() {
         let totalUnits = 0;
         Array.from(this.orderedItems).forEach(item => {
           let quantity = item.quantity;
@@ -52,7 +55,7 @@
         return totalUnits;
       },
 
-      totalCost: function () {
+      totalCost() {
         let totalCost = 0;
         Array.from(this.orderedItems).forEach(item => {
           let quantity = item.quantity;
@@ -66,8 +69,16 @@
     },
 
     methods: {
-      createOrder: function () {
+      createOrder() {
         this.$emit('createPurchase')
+      },
+
+      cancel() {
+        this.$router.replace('/purchaseOrders/view/' + this.$route.params.id);
+      },
+
+      editOrder() {
+        // Todo: add function to update order
       }
     },
 
@@ -80,6 +91,10 @@
 </script>
 
 <style scoped>
+  .row {
+    font-weight: bold;
+  }
+
   .btn-row {
     margin-top: 5px;
     padding: 0 10px 0 0;

@@ -22,6 +22,7 @@
         >
 
           <template slot="items" scope="props" class="template-datatable">
+            <td class="order-td hidden"><input v-model="props.item.id"></td>
             <td>
               <v-checkbox
                   hide-details
@@ -66,7 +67,9 @@
     },
 
     methods: {
-
+      rowOnClick: function (id) {
+        this.$router.replace('/purchaseOrders/view/' + id)
+      }
     },
 
     created() {
@@ -76,6 +79,28 @@
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing')
       }
+    },
+
+    mounted() {
+      let $orderIdTds = document.getElementsByClassName('order-td');
+      Array.from($orderIdTds).forEach(($td) => {
+        $td.parentNode.addEventListener('click', () => this.rowOnClick($td.firstChild.value))
+      });
+
+      // Do not go trigger click row if checkbox is clicked
+      let $checkboxes = document.getElementsByClassName('checkbox');
+      Array.from($checkboxes).forEach($checkbox => {
+        $checkbox.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      })
+    },
+
+    beforeDestroy() {
+      let $orderIdTds = document.getElementsByClassName('supplier-td');
+      Array.from($orderIdTds).forEach(($td) => {
+        $td.parentNode.removeEventListener('click', () => this.rowOnClick($td.firstChild.value))
+      });
     },
 
     data () {
@@ -136,10 +161,6 @@
     font-size: 13px;
   }
 
-  .tabs__items {
-    border-bottom-width: 0;
-  }
-
   .datatable {
     margin-bottom: 200px;
   }
@@ -148,12 +169,7 @@
     margin-top: -10px;
   }
 
-  .product-image {
-    width: 40px;
-    height: auto;
-  }
-
-  .image-td {
-    padding-top: 6px!important;
+  table tbody tr:hover td {
+    cursor: pointer !important;
   }
 </style>

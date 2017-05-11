@@ -16,7 +16,7 @@ export default {
   subItems: [
     {
       title: 'Dashboard',
-      path: '/purchasing/dashboard',
+      path: '/purchasingDashboard',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/dashboard'),
@@ -26,7 +26,7 @@ export default {
     },
     {
       title: 'Purchase Orders',
-      path: '/purchasing/purchaseOrders',
+      path: '/purchaseOrders',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/purchase-orders'),
@@ -36,7 +36,7 @@ export default {
     },
     {
       title: 'Reorder',
-      path: '/purchasing/reorder',
+      path: '/reorder',
       router: true,
       isMenu: true,
       component: lazyLoading('purchasing/reorder'),
@@ -45,9 +45,21 @@ export default {
       }
     },
     {
-      path: '/purchasing/purchaseOrders/createPurchaseOrder',
+      path: '/purchaseOrders/create/purchaseOrderDetails',
       isMenu: false,
-      component: lazyLoading('purchasing/create-purchase-order')
+      component: lazyLoading('purchasing/purchase-order-details')
+    },
+    {
+      path: '/purchaseOrders/view/:id',
+      canReuse: false,
+      isMenu: false,
+      component: lazyLoading('purchasing/purchase-order-details')
+    },
+    {
+      path: '/purchaseOrders/edit/:id',
+      canReuse: false,
+      isMenu: false,
+      component: lazyLoading('purchasing/purchase-order-details')
     }
   ]
 }

@@ -87,6 +87,14 @@
       this.$refs.productIdTd.forEach(($td) => {
         $td.parentNode.addEventListener('click', () => this.rowOnClick($td.lastChild.value))
       });
+
+      // Do not go trigger click row if checkbox is clicked
+      let $checkboxes = document.getElementsByClassName('checkbox');
+      Array.from($checkboxes).forEach($checkbox => {
+        $checkbox.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      })
     },
 
     beforeDestroy() {
