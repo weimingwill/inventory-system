@@ -93,6 +93,20 @@ function objectEntries(obj) {
   };
 }
 
+function removeArrayDuplicates(array) {
+  let exist = {};
+  return array.filter(a => {
+    return exist.hasOwnProperty(a) ? false : (exist[a] = true);
+  })
+}
+
+function calculateDistance(array1, array2, start, end) {
+  let sum = 0;
+  for (let i = start; i < end; i++) {
+    sum += Math.pow(array1[i] - array2[i], 2)
+  }
+  return sum;
+}
 
 export {
   log,
@@ -103,4 +117,6 @@ export {
   formatProductName,
   getFirstCharOfEachWord,
   dashToCamelCase,
+  removeArrayDuplicates,
+  calculateDistance
   };

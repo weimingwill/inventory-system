@@ -15,9 +15,9 @@ id,productId,channelId,warehouseId,shelveId,layerId,name,color,size,sku,onHand,a
 14,1,1,2,2,3,Soft Gray/Small,Soft Gray,Small,CD001-SG-S,40,30,10,0,1kg,10,20,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/1-2.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 15,3,1,2,2,3,Dark Gray/Large,Dark Gray,Large,SH001-DG-L,40,30,10,5,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 16,3,1,2,2,3,Light Gray/Large,Light Gray,Large,SH001-LG-L,10,10,5,5,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-2.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
-17,3,1,2,2,3,Red-Large,Red,Large,SH001-R-L,50,40,10,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-3.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
+17,3,1,2,2,3,Red/Large,Red,Large,SH001-R-L,50,40,10,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-3.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 18,3,1,2,2,3,Dark Gray/Medium,Dark Gray,Medium,SH001-DG-M,30,30,0,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 19,3,1,2,2,3,Light Gray/Medium,Light Gray,Medium,SH001-LG-M,20,10,10,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-2.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
-20,3,1,2,2,3,Red-Medium,Red,Medium,SH001-R-M,20,10,10,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-3.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
+20,3,1,2,2,3,Red/Medium,Red,Medium,SH001-R-M,20,10,10,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-3.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 21,3,1,2,2,3,Dark Gray/Small,Dark Gray,Small,SH001-DG-S,10,10,0,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-1.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22
 22,3,1,2,2,3,Light Gray/Small,Light Gray,Small,SH001-LG-S,10,5,5,0,2kg,15,30,,20,true,/inventory-i18n-task3/WebContent/src/assets/images/3-2.jpg,2017-03-03 14:20:00,2017-03-04 15:22:22

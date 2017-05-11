@@ -50,31 +50,32 @@
       <v-row>
         <v-col xs12>
           <v-card>
-            <v-toolbar class="chart-toolbar">
+            <v-toolbar class="demand-forecast-chart-toolbar">
               <v-toolbar-title class="chart-toolbar-title">Demand Forecast</v-toolbar-title>
 
               <v-select
                   class="chart-toolbar-select"
-                  v-bind:items="series"
-                  v-model="temp"
+                  v-bind:items="productTypes"
+                  v-model="type"
                   label="Select product type"
                   dark
               />
+
               <v-select
                   class="chart-toolbar-select"
-                  v-bind:items="series"
-                  v-model="temp"
-                  label="Select size"
-                  dark
-              />
-              <v-select
-                  class="chart-toolbar-select"
-                  v-bind:items="series"
-                  v-model="temp"
+                  v-bind:items="colors"
+                  v-model="color"
                   label="Select color"
                   dark
               />
 
+              <v-select
+                  class="chart-toolbar-select"
+                  v-bind:items="sizes"
+                  v-model="size"
+                  label="Select size"
+                  dark
+              />
 
             </v-toolbar>
             <v-container fluid class="demand-forecast-container">
@@ -157,8 +158,22 @@
         'getDashboardInfo',
         'getPredictions',
         'getLabels',
-        'getSales'
+        'getSales',
+        'productTypes',
+        'sizesOfType',
+        'colorsOfType'
       ]),
+
+      sizes() {
+        if (this.type) {
+        }
+      },
+
+      colors() {
+        if (this.type) {
+          return this.$store.getters.colorsOfType(this.type);
+        }
+      },
 
       seriesData () {
         let data = {
@@ -173,15 +188,50 @@
             backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
           }
         })
-        console.log(data)
         return data
       },
 
-      predictionData () {
-        let data = {
-          labels: this.labels,
+//      predictionData () {
+//        let data = {
+//          labels: this.labels,
+//        }
+//        data.datasets = this.predictionSeries.map((e, i) => {
+//          return {
+//            data: this.chartData[i],
+//            label: this.predictionSeries[i],
+//            borderColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)'),
+//            pointBackgroundColor: this.backgroundColor_3[i],
+//            backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
+//          }
+//        })
+//        return data;
+//      },
+    },
+
+    watch: {
+      type: function () {
+        if (this.type) {
+          this.sizes = this.$store.getters.sizesOfType(this.type);
+          this.colors = this.$store.getters.colorsOfType(this.type);
+          this.size = this.sizes[0];
+          this.color = this.colors[0];
         }
-        data.datasets = this.predictionSeries.map((e, i) => {
+        this.setPredictions();
+      },
+
+      size: function () {
+        this.setPredictions();
+      },
+
+      color: function () {
+        this.setPredictions();
+      },
+
+      chartData: function () {
+        this.predictionData = {
+          labels: this.labels,
+        };
+        this.predictionData.datasets = this.predictionSeries.map((e, i) => {
           return {
             data: this.chartData[i],
             label: this.predictionSeries[i],
@@ -190,9 +240,39 @@
             backgroundColor: this.backgroundColor_3[i].replace(/1\)$/, '.5)')
           }
         })
-        return data;
-      },
+        console.log(this.predictionData);
+      }
+    },
 
+    methods: {
+      setPredictions: function () {
+        // Todo: find all related ids instead of one
+        if (this.type && this.size && this.color) {
+          let variantId = this.$store.getters.getVariantIdsByTypeColorSize(this.type, this.size, this.color);
+          console.log(variantId);
+          this.sales = this.$store.getters.getSales(variantId);
+          this.predictions = this.getPredictions(this.sales);
+          this.labels = this.getLabels(variantId);
+
+          let year = 2017;
+          let month = 1;
+          for (let i = 0; i < 12; i++) {
+            this.labels.push([year, month].join('-'));
+            if (month === 12) {
+              month = 1;
+              year++;
+            } else {
+              month++
+            }
+          }
+          this.predictionOptions.scales.yAxes[0].ticks.min = Math.min.apply(null, this.sales.concat(this.predictions.slice(this.sales.length)));
+          this.chartData = [this.sales, this.predictions];
+        }
+      }
+    },
+
+    mounted() {
+      this.type = this.$store.getters.productTypes[0];
     },
 
     data () {
@@ -238,7 +318,14 @@
               ticks: {}
             }]
           }
-        }
+        },
+        predictionData: {},
+
+        type: '',
+        size: '',
+        color: '',
+        sizes: [],
+        colors: []
       }
     },
     created() {
@@ -247,17 +334,6 @@
       this.$store.dispatch('initInventory');
       this.$store.dispatch('initSales');
       this.$store.dispatch('initPurchasing');
-
-      this.sales = this.getSales;
-      this.predictions = this.getPredictions(this.sales);
-      this.labels = this.getLabels;
-
-      for (let i = 0; i < 20; i++) {
-        this.labels.push('2017-1-1')
-      }
-
-      this.chartData = [this.sales, this.predictions];
-      this.predictionOptions.scales.yAxes[0].ticks.min = Math.min.apply(null, this.sales);
     },
   }
 </script>
@@ -287,7 +363,12 @@
   .demand-forecast-container {
     padding: 20px 20px;
   }
+
   .demand-forecast-chart-container {
     padding-left: 20px;
+  }
+
+  .demand-forecast-chart-toolbar {
+    height: 80px;
   }
 </style>

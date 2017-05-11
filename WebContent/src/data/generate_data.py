@@ -42,6 +42,10 @@ def generate_sales_by_ten_days():
 
 
 def generate_sales_by_month():
+    """
+    Use data in form
+    :return:
+    """
     with open('sales.csv', 'rb') as csvfile:
         spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
 
@@ -51,7 +55,7 @@ def generate_sales_by_month():
             time = row[0]
             if time != 'time':
                 if counter == 12:
-                    trend += 50
+                    trend += 0
                     counter = 0
                 else:
                     counter += 1
@@ -60,6 +64,44 @@ def generate_sales_by_month():
                 print ','.join([time, str(sales)])
             else:
                 print ','.join(row)
+
+
+def generate_sales_by_month2():
+    '''
+    Generate data from scratch
+    :return:
+    '''
+    # ids = [1, 3, 4, 5, 6, 7, 8]
+    # ids = [9, 10, 11, 12, 13, 14]
+    ids = [15, 16, 17, 18, 19, 20, 21, 22]
+    is_summer_wear = False
+    for variantId in ids:
+        with open('sales-template.csv', 'rb') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=',', quotechar='|')
+
+            sales = 800
+            counter = 0
+            trend = 0
+            for row in spamreader:
+                time = row[0]
+                if time != 'time':
+                    if (counter >= 7 and is_summer_wear) or (counter < 7 and not is_summer_wear):
+                        sales -= random.randint(10, 20)
+                    else:
+                        sales += random.randint(10, 20)
+
+                    if counter == 12:
+                        trend += 0
+                        counter = 0
+                    else:
+                        counter += 1
+
+                    print ','.join([time, str(sales), str(variantId)])
+                # else:
+                #     print ','.join(row)
+
+
+generate_sales_by_month2()
 
 
 def generate_sales_order():
@@ -78,6 +120,11 @@ def generate_sales_order():
                     day += 1
             else:
                 print ','.join(row)
+
+
+
+
+
 
 
 def generate_layers():
@@ -145,5 +192,3 @@ def generate_cell_variant_join_table():
 
     print file_content
     return file_content
-
-generate_sales_by_month()

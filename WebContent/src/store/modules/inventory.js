@@ -7,6 +7,7 @@ import {
   currentDateTime,
   formatProductName,
   getFirstCharOfEachWord,
+  removeArrayDuplicates,
   log} from '../../utils/utils';
 
 import {
@@ -42,6 +43,43 @@ const getters = {
   getProductVariants: (state, getters) => (productId) => {
     return state.variants.filter(v => v.productId === productId);
   },
+  
+  variantsOfType: state => (type) => {
+    return state.variants.filter(v => {
+      let product = state.products.find(p => p.id === v.productId);
+      return product.type === type
+    });
+  },
+  
+  sizesOfType: state => (type) => {
+    let filteredVariants = state.variants.filter(v => {
+      let product = state.products.find(p => p.id === v.productId);
+      return product.type === type
+    });
+    let sizes = filteredVariants.map(v => v.size);
+    return removeArrayDuplicates(sizes);
+  },
+  
+  colorsOfType: state => (type) => {
+    let filteredVariants = state.variants.filter(v => {
+      let product = state.products.find(p => p.id === v.productId);
+      return product.type === type
+    });
+    let colors = filteredVariants.map(v => v.color);
+    return removeArrayDuplicates(colors);
+  },
+  
+  getVariantIdsByTypeColorSize: state => (type, size, color) => {
+    let filteredVariants = state.variants.filter(v => {
+      let product = state.products.find(p => p.id === v.productId);
+      return product.type === type
+    });
+    
+    // Todo: find all related instead of one
+    return filteredVariants.find(v => v.size === size && v.color === color).id;
+    // return filteredVariants.find(v => v.size === size && v.color === color).map(v => v.id);
+  }
+  
   //
   // itemNames: (state, getters) => {
   //   return state.variants.map(variant => {

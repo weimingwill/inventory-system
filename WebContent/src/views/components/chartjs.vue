@@ -60,7 +60,7 @@ export default {
       this.resetChart()
     },
     data () {
-      this.chart.update()
+      this.resetChart()
     },
     options () {
       this.resetChart()
