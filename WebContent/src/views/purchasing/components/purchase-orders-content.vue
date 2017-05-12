@@ -1,16 +1,16 @@
 <template>
   <v-tabs>
     <v-tab-item
-        v-for="i in 1" :key="i"
-        v-bind:href="'#mobile-tabs-3-' + i"
+        v-for="status in statuses" :key="status"
+        v-bind:href="'#tab-' + status"
         slot="activators"
+        class="tab"
     >
-      All
-      <!--Item {{ i }}-->
+      {{ status }}
     </v-tab-item>
     <v-tab-content
-        v-for="i in 1" :key="i"
-        v-bind:id="'mobile-tabs-3-' + i"
+        v-for="status in statuses" :key="status"
+        v-bind:id="'tab-' + status"
         slot="content"
     >
       <v-card>
@@ -33,7 +33,16 @@
             <td>{{ props.item.orderNumber }}</td>
             <td>{{ getSupplierName(props.item.supplierId) }}</td>
             <td>
-              <v-chip label class="table-chip green white--text">{{ props.item.status }}</v-chip>
+              <v-chip
+                  label class="table-chip white--text"
+                  v-bind:class="{
+                  green: props.item.status === 'purchased',
+                  teal: props.item.status === 'received',
+                  indigo: props.item.status === 'checked',
+                  primary: props.item.status === 'stored'}"
+              >
+                {{ props.item.status }}
+              </v-chip>
             </td>
             <td>{{ totalReceivedQuantity(props.item.orderNumber) }}</td>
             <td>{{ totalQuantity(props.item.orderNumber) }}</td>
@@ -58,17 +67,36 @@
 
     computed: {
       ...mapGetters({
-        items: 'purchaseOrders',
+        purchaseOrders: 'purchaseOrders',
         getSupplierName: 'getSupplierNameById',
         totalReceivedQuantity: 'getTotalReceiveQuantity',
         totalQuantity: 'getTotalQuantity',
-        totalCost: 'getTotalCost'
+        totalCost: 'getTotalCost',
+        statuses: 'getInboundStatuses'
       })
     },
 
     methods: {
       rowOnClick: function (id) {
-        this.$router.replace('/purchaseOrders/view/' + id)
+        if (this.isInbound) {
+          this.$router.replace('/inbound/view/' + id)
+        } else {
+          this.$router.replace('/purchaseOrders/view/' + id)
+        }
+      },
+
+      tabOnClick: function (status) {
+        if (status === 'all') {
+          this.items = this.purchaseOrders;
+        } else {
+          this.items = this.purchaseOrders.filter(order => order.status === status);
+        }
+      },
+
+      setPersonnel () {
+        let urlsParts = window.location.href.split('/');
+        // Two conditions: inbound and purchasing
+        this.isInbound = urlsParts.pop() === 'inbound';
       }
     },
 
@@ -79,9 +107,19 @@
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing')
       }
+
+      this.items = this.purchaseOrders;
     },
 
     mounted() {
+      this.setPersonnel();
+      // Add eventListener to tabs
+      let $tabs = document.getElementsByClassName('tab');
+      Array.from($tabs).forEach($tab => {
+        let status = $tab.firstChild.href.split('-');
+        $tab.addEventListener('click', () => this.tabOnClick(status[status.length - 1]));
+      });
+
       let $orderIdTds = document.getElementsByClassName('order-td');
       Array.from($orderIdTds).forEach(($td) => {
         $td.parentNode.addEventListener('click', () => this.rowOnClick($td.firstChild.value))
@@ -93,7 +131,11 @@
         $checkbox.addEventListener('click', (e) => {
           e.stopPropagation();
         });
-      })
+      });
+    },
+
+    updated() {
+
     },
 
     beforeDestroy() {
@@ -105,10 +147,13 @@
 
     data () {
       return {
+        status: '',
+        isInbound: false,
+        items: [],
+
         headers: [{
           text: 'Order #',
           left: true,
-          sortable: false,
           value: 'orderNum',
         }, {
           text: 'Supplier',
@@ -147,7 +192,6 @@
           value: 'updated',
           left: true
         }],
-        e3: ''
       }
     }
   }

@@ -74,10 +74,10 @@
 
         <v-col xs1 offset-xs1>
           <v-row>
-            <v-col xs12><v-btn v-if="isView" outline small error>Void</v-btn></v-col>
+            <v-col xs12><v-btn v-if="isView && !isInbound" outline small error>Void</v-btn></v-col>
           </v-row>
           <v-row>
-            <v-col xs12><v-btn v-if="isView" small primary @click.native="editClicked">Edit</v-btn></v-col>
+            <v-col xs12><v-btn v-if="isView && !isInbound" small primary @click.native="editClicked">Edit</v-btn></v-col>
           </v-row>
         </v-col>
 
@@ -86,22 +86,41 @@
     <v-row>
       <v-col xs10>
         <v-container fluid id="items-container">
+
+          <to-receive-items
+              v-if="isInbound"
+              :to-receive-items="toReceiveItems"
+              :isView="isView"
+          >
+          </to-receive-items>
+
+          <h6 class="item-header">Received Items</h6>
+
+          <v-expansion-panel class="item-panel">
+            <v-expansion-panel-content v-for="(item,i) in 1" :key="i">
+              <div slot="header">Ordered Items</div>
+              <!--<received-items></received-items>-->
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+
+          <v-divider class="items-divider"></v-divider>
+
           <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
-          <!--<received-items></received-items>-->
+
           <!--<adjust-items></adjust-items>-->
         </v-container>
       </v-col>
       <v-col xs2>
         <v-card id="order-summary-card">
 
-        <purchase-summary
-            :ordered-items="orderedItems"
-            :order-details="order"
-            :isEdit="isEdit"
-            :isCreate="isCreate"
-            v-on:createPurchase="validateOrder"
-        >
-        </purchase-summary>
+          <purchase-summary
+              :ordered-items="orderedItems"
+              :order-details="order"
+              :isEdit="isEdit"
+              :isCreate="isCreate"
+              v-on:createPurchase="validateOrder"
+          >
+          </purchase-summary>
         </v-card>
 
       </v-col>
@@ -113,6 +132,7 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
+  import ToReceiveItems from './components/to-receive-items.vue'
   import OrderItems from './components/order-items.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
   import { mapGetters, mapActions } from 'vuex'
@@ -120,14 +140,13 @@
 
   let _ = require('lodash');
 
-
-
   export default {
 
     name: 'createPurchaseOrder',
 
     components: {
       Breadcrumbs,
+      ToReceiveItems,
       OrderItems,
       PurchaseSummary
     },
@@ -205,32 +224,42 @@
         let urlsParts = window.location.href.split('/');
         urlsParts.pop();
         let action = urlsParts.pop();
-        let breadCrumbText = '';
+        let personnel = urlsParts[urlsParts.length - 1];
+        let parentText = '';
+        let childText = '';
+
+        if (personnel === 'purchaseOrders') {
+          parentText = 'Purchase Orders';
+          this.isInbound = false;
+        } else if (personnel === 'inbound'){
+          parentText = 'Inbound';
+          this.isInbound = true;
+        }
 
         if (action === 'view') {
           this.isView = true;
           this.isEdit = false;
           this.isCreate = false;
-          breadCrumbText = 'View purchase order';
+          childText = 'View purchase order';
         } else if (action === 'edit') {
           this.isEdit = true;
           this.isView = false;
           this.isCreate = false;
-          breadCrumbText = 'Edit purchase order';
+          childText = 'Edit purchase order';
         } else {
           this.isCreate = true;
           this.isView = false;
           this.isEdit = false;
-          breadCrumbText = 'Create New Purchase Order';
+          childText = 'Create New Purchase Order';
         }
 
         this.breadcrumbs = [
           {
-            text: 'Purchase Order',
+            text: parentText,
             href: urlsParts.join('/'),
             target: '_self'
           },
-          { text: breadCrumbText }
+          { text: childText }
         ];
       },
 
@@ -248,13 +277,16 @@
       initOrder(purchaseOrder) {
         // init order
         this.order = {
+          supplierId: purchaseOrder.supplierId,
           supplier: this.$store.getters.getSupplierById(purchaseOrder.supplierId).name,
+          supplierContactId: purchaseOrder.supplierContactId,
           contact: this.$store.getters.getObjectByAttr(
             s.MODULE_SUPPLIER, s.OBJ_SUPPLIER_CONTACTS, 'id', purchaseOrder.supplierContactId
           ).email,
           warehouse: this.$store.getters.getObjectByAttr(
             s.MODULE_WAREHOUSE, s.OBJ_WAREHOUSE, 'id', purchaseOrder.warehouseId
           ).location,
+          warehouseId: purchaseOrder.warehouseId,
           orderNumber: purchaseOrder.orderNumber
         };
 
@@ -262,8 +294,17 @@
         for (let i = 0; i < purchaseOrder.variants.length; i++) {
           let variant = purchaseOrder.variants[i];
           Object.assign(variant, this.$store.getters.getVariantById(variant.variantId));
+          variant.value = false;
           this.orderedItems.push(variant);
         }
+
+        // init toReceiveItems
+        this.toReceiveItems = this.orderedItems.slice(0);
+        this.toReceiveItems = this.toReceiveItems.map(item => {
+          item.value = false;
+          item.toReceive = item.quantity;
+          return item;
+        });
       },
     },
 
@@ -271,18 +312,23 @@
       return {
         breadcrumbs: [],
         order: {
+          supplierId: '',
           supplier: '',
           contact: '',
+          supplierContactId: '',
           warehouse: '',
+          warehouseId: '',
           orderNumber: ''
         },
         orderedItems: [],
+        toReceiveItems: [],
         rules: {
           supplier:[]
         },
         isView: false,
         isEdit: false,
         isCreate: false,
+        isInbound: false,
         orderId: ''
       }
     },
@@ -292,10 +338,12 @@
       this.$store.dispatch('initSupplier');
       this.$store.dispatch('initInventory');
       this.$store.dispatch('initPurchasing');
+      this.init();
+
     },
 
     mounted () {
-      this.init();
+//      this.init();
     },
 
     updated () {
@@ -318,5 +366,18 @@
   .edit-icon {
     margin-left: 2px;
     font-size: 1.5rem;
+  }
+
+  .item-panel {
+    margin: 30px 0 0 20px;
+    width: 98%
+  }
+
+  .items-divider {
+    margin: 30px 0 0 0;
+  }
+
+  .item-header {
+    margin: 30px 0 0 30px;
   }
 </style>

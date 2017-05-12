@@ -43,6 +43,12 @@ export default {
       meta: {
         link: 'stock-control/outbound.vue'
       }
-    }
+    },
+    {
+      path: '/inbound/view/:id',
+      canReuse: false,
+      isMenu: false,
+      component: lazyLoading('purchasing/purchase-order-details')
+    },
   ]
 }

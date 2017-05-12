@@ -25,6 +25,7 @@ export const PURCHASE_ORDER_ATTR = [
   "orderNumber",
   "supplierId",
   "warehouseId",
+  "supplierContactId",
   "variants",
   "price",
   "status",
@@ -47,6 +48,7 @@ export const PURCHASING_DASHBOARD_UNITS = [
   '$'
 ];
 
+export const ALL = 'all';
 export const STATUS_PURCHASED = 'purchased';
 export const STATUS_RECEIVED = 'received';
 export const STATUS_ACTIVE = 'active';

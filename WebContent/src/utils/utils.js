@@ -108,6 +108,18 @@ function calculateDistance(array1, array2, start, end) {
   return sum;
 }
 
+function setSameAttributeValues(input, attributes) {
+  let output = {};
+  Array.from(attributes).forEach(attr => {
+    if (input.hasOwnProperty(attr)) {
+      output[attr] = order[attr];
+    } else {
+      output[attr] = ""
+    }
+  });
+  return output;
+}
+
 export {
   log,
   newIdOfArray,
@@ -118,5 +130,6 @@ export {
   getFirstCharOfEachWord,
   dashToCamelCase,
   removeArrayDuplicates,
-  calculateDistance
+  calculateDistance,
+  setSameAttributeValues
   };

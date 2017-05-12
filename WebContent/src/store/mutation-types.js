@@ -20,5 +20,9 @@ export const CREATE_VARIANT = 'CREATE_VARIANT'
 // Purchasing
 export const ADD_PURCHASE = 'ADD_PURCHASE'
 
+export const EDIT_PURCHASE = 'EDIT_PURCHASE'
+
+export const RECEIVE_PURCHASE = 'RECEIVE_PURCHASE'
+
 export const SAVE_PURCHASE = 'SAVE_PURCHASE'
 

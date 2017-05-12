@@ -1,5 +1,7 @@
 <template>
   <v-container fluid>
+    <h6 class="item-header">All Ordered Items</h6>
+
     <table class="datatable">
       <thead>
       <tr>
@@ -191,20 +193,20 @@
         headers: [{
           text: '',
         },{
-          text: 'Item name',
+          text: 'Item Name',
         }, {
           text: 'Quantity',
         }, {
-          text: 'Stock after purchase',
+          text: 'Stock After Purchase',
         }, {
-          text: 'Item unit cost',
+          text: 'Item Unit Cost',
         },
 //          {
 //          text: 'Tax',
 //        },
           {
-          text: 'Total Cost($)',
-        }],
+            text: 'Total Cost($)',
+          }],
 
         isKeyup: true,
         hasNewItem: false,
@@ -251,5 +253,9 @@
   .delete-td {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .item-header {
+    margin: 30px 0 0 30px;
   }
 </style>

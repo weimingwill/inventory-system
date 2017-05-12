@@ -7,7 +7,7 @@ import {
   currentDateTime,
   getFormatedDate,
   getDateRangeOfWeek,
-  getFirstCharOfEachWord,
+  setSameAttributeValues,
   log} from '../../utils/utils';
 
 import {
@@ -29,6 +29,7 @@ const getters = {
 
   getOrderByNumber: (state, getters) => (orderNumber) => state.purchaseOrders.find((order) => order.orderNumber === orderNumber),
 
+  // Get total received quantity of purchase order
   getTotalReceiveQuantity: (state, getters) => (orderNumber) => {
     let order = getters.getOrderByNumber(orderNumber);
     return order.variants.map(variant => variant.receivedQuantity).reduce((sum, quantity) => {
@@ -36,6 +37,7 @@ const getters = {
     });
   },
 
+  // Get total quantity of a purchase order
   getTotalQuantity: (state, getters) => (orderNumber) => {
     let order = getters.getOrderByNumber(orderNumber);
     return order.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
@@ -43,6 +45,7 @@ const getters = {
     });
   },
 
+  // Get total cost of a purchase order
   getTotalCost: (state, getters) => (orderNumber) => {
     let order = getters.getOrderByNumber(orderNumber);
     return order.variants.map(variant => {
@@ -52,18 +55,21 @@ const getters = {
     });
   },
 
+  // Generate new order number based on existing purchase orders' order number
   getNewOrderNumber: (state) => {
     let orderNumberDigits = state.purchaseOrders.map(p => parseInt(p.orderNumber.charAt(p.orderNumber.length - 1)));
     let newOrderNumberDigit = Math.max.apply(Math, orderNumberDigits) + 1;
     return `P0000${newOrderNumberDigit}`;
   },
   
+  // Get purchase order suppliers
   purchaseOrderSuppliers: (state, getters) => {
     return state.purchaseOrders.filter(order => order.status === s.STATUS_PURCHASED).map(p => {
       return getters.getSupplierById(p.supplierId);
     })
   },
 
+  // Get purchase order variants of supplier
   purchaseOrderVariantsBySupplierName: (state, getters) => (supplierName) => {
     let purchaseOrders = state.purchaseOrders.filter(p => p.supplierId === getters.getSupplierByName(supplierName).id)
     let variants = [];
@@ -81,6 +87,7 @@ const getters = {
     return variants;
   },
 
+  // Get incoming stock purchase quantity of supplier
   quantityBySupplier: (state) => (supplierId) => {
     return state.purchaseOrders.filter(
       order => order.status === s.STATUS_PURCHASED && order.supplierId === supplierId).map(
@@ -89,6 +96,7 @@ const getters = {
     });
   },
 
+  // Get incoming stock purchase cost of supplier
   costBySupplier: (state) => (supplierId) => {
     return state.purchaseOrders.filter(
       order => order.status === s.STATUS_PURCHASED && order.supplierId === supplierId).map(
@@ -97,6 +105,10 @@ const getters = {
     });
   },
 
+  // Get information for top 3 metrics in purchasing dashboard
+  // 1. Total purchase units
+  // 2. Total purchase costs
+  // 3. Avg unit cost
   getDashboardInfo: (state, getters) => {
     let totalUnits = 0;
     let totalCost = 0;
@@ -126,7 +138,7 @@ const getters = {
       }
       totalUnits += quantity;
       totalCost += cost;
-    })
+    });
     
     let avgUnitCost = totalCost / totalUnits;
     let avgPreCost = preTotalCost / preTotalUnits;
@@ -136,10 +148,10 @@ const getters = {
       Math.round((currPurchaseUnits - lastWeekPurchaseUnits) / lastWeekPurchaseUnits * 100),
       Math.round((currCost - lastWeekCost) / lastWeekCost  * 100),
       Math.round((avgUnitCost - avgPreCost) / avgPreCost * 100)
-    ]
+    ];
     
     for (let i = 0; i < 3; i++) {
-      let data = {}
+      let data = {};
       data.id = i + 1;
       data.title = s.PURCHASING_DASHBOARD_TITLES[i];
       data.unit = s.PURCHASING_DASHBOARD_UNITS[i];
@@ -152,6 +164,13 @@ const getters = {
     log(info);
     return info
   },
+  
+  // Get statuses
+  getInboundStatuses() {
+    return [s.ALL, s.STATUS_PURCHASED, s.STATUS_RECEIVED, s.STATUS_CHECKED, s.STATUS_STORED]
+  },
+  
+  
 };
 
 const mutations = {
@@ -171,20 +190,13 @@ const mutations = {
       });
       
       return p;
-    })
+    });
     
     log(state.purchaseOrders)
   },
 
   [types.ADD_PURCHASE] (state, {order, items}) {
-    let purchaseOrder = {};
-    Array.from(s.PURCHASE_ORDER_ATTR).forEach(attr => {
-      if (order.hasOwnProperty(attr)) {
-        purchaseOrder[attr] = order[attr];
-      } else {
-        purchaseOrder[attr] = ""
-      }
-    });
+    let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
 
     let datetime = currentDateTime();
     let date = new Date();
@@ -215,6 +227,14 @@ const mutations = {
     addPurchaseOrder(purchaseOrder);
 
     // Todo: bug with variant number in display (add? or display? )
+  },
+  
+  [types.EDIT_PURCHASE] (state, {order, items}) {
+    let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
+  },
+  
+  [types.RECEIVE_PURCHASE] (state, {order, items}) {
+    let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
   }
 };
 
@@ -251,7 +271,16 @@ const actions = {
     // Todo calculate due date
     commit(types.ADD_PURCHASE, {order, items});
   },
-
+  
+  editPurchase ({commit}, {order, items}) {
+    log('edit purchase');
+    commit(types.EDIT_PURCHASE, {order, items});
+  },
+  
+  receivePurchaseOrder ({commit}, {order, items}) {
+    log('receive purchase');
+    commit(types.RECEIVE_PURCHASE, {order, items});
+  }
 
 };
 
