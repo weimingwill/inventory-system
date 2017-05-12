@@ -11,40 +11,44 @@
       </v-col>
     </v-row>
 
+    <table class="datatable table">
+      <thead>
+      <tr>
+        <th v-for="header in headers">
+          {{ header.text }}
+        </th>
+      </tr>
+      </thead>
 
-    <v-data-table
-        v-bind:headers="headers"
-        v-model="items"
-        hide-actions
-        select-all
-    >
-      <template slot="items" scope="props">
+      <tbody ref="itemTbody">
+      <tr v-for="(item, index) in items" :key="item.id">
         <td>
           <v-checkbox
               hide-details
               primary
-              v-model="props.item.value"
+              v-model="item.value"
           ></v-checkbox>
         </td>
         <td class="image-td">
-          <img class="product-image" :src="props.item.image">
+          <img class="product-image" :src="item.image">
         </td>
-        <td>{{ props.item.fullname }} </td>
-        <td>{{ props.item.quantity }} </td>
+        <td>{{ item.fullname }} </td>
+        <td>{{ item.quantity }} </td>
         <td>
           <v-text-field
               v-on:keyup.native="onReceiveQuantityChange"
               class="to-receive-input"
               type="number"
-              name="to-receive"
-              v-model="props.item.toReceive"
+              :name="item.id.toString()"
+              v-model="item.toReceive"
           ></v-text-field>
         </td>
-        <td>{{ calculateStockAftPurchase(props.item.toReceive, props.item.available) }}</td>
-        <td>{{ props.item.costPrice }}</td>
-        <td>{{ calculateCost(props.item.toReceive, props.item.costPrice) }}</td>
-      </template>
-    </v-data-table>
+        <td>{{ calculateStockAftReceive(item.toReceive, item.available) }}</td>
+        <td>{{ item.costPrice }}</td>
+        <td>{{ calculateCost(item.toReceive, item.costPrice) }}</td>
+      </tr>
+      </tbody>
+    </table>
   </v-container>
 </template>
 
@@ -54,23 +58,13 @@
   export default {
     name: 'ToReceiveItems',
 
-    props: ['toReceiveItems', 'isView'],
+    props: ['toReceiveItems'],
 
     computed: {
       ...mapGetters ([
         'getVariantById',
         'variants'
       ]),
-    },
-
-    watch: {
-      test () {
-        console.log(this.test);
-      },
-
-      items () {
-        console.log(this.items)
-      }
     },
 
     methods: {
@@ -82,23 +76,34 @@
         }
       },
 
-      calculateStockAftPurchase: function (quantity, available) {
+      calculateStockAftReceive: function (quantity, available) {
         if (quantity === '') {
           return 0
         } else {
           return parseInt(quantity) + available;
         }
       },
-  
+
       onReceiveQuantityChange: function (e) {
+        let toReceive = e.target.value;
+        let id = parseInt(e.target.name);
+        console.log(toReceive);
+
+        if (toReceive === "0" || !toReceive) {
+          this.items.find(item => item.id === id).value = false;
+        } else if (toReceive) {
+          this.items.find(item => item.id === id).value = true;
+        }
       }
     },
 
     mounted() {
-      this.items = this.toReceiveItems.slice();
-
-
-
+      Array.from(this.toReceiveItems).forEach(item => {
+        Object.keys(this.item).forEach(key => {
+          this.item[key] = item[key]
+        });
+        this.items.push(Object.assign({}, this.item))
+      });
     },
 
     beforeDestroy() {
@@ -106,14 +111,27 @@
 
     data() {
       return {
-        test: '',
         items: [],
+        item: {
+          id: 0,
+          fullname: '',
+          quantity: 0,
+          toReceive: 0,
+          available: 0,
+          costPrice: 0,
+          image: '',
+          value: false
+        },
 //        toReceiveItems: [],
         headers: [{
           text: '',
           left: true,
           sortable: false
-        },{
+        }, {
+          text: '',
+          left: true,
+          sortable: false
+        }, {
           text: 'Item Name',
           left: true,
           sortable: false

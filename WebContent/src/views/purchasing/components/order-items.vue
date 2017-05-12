@@ -2,7 +2,7 @@
   <v-container fluid>
     <h6 class="item-header">All Ordered Items</h6>
 
-    <table class="datatable">
+    <table class="datatable table">
       <thead>
       <tr>
         <th v-for="header in headers">

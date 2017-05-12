@@ -90,7 +90,6 @@
           <to-receive-items
               v-if="isInbound"
               :to-receive-items="toReceiveItems"
-              :isView="isView"
           >
           </to-receive-items>
 
@@ -301,10 +300,11 @@
         // init toReceiveItems
         this.toReceiveItems = this.orderedItems.slice(0);
         this.toReceiveItems = this.toReceiveItems.map(item => {
-          item.value = false;
+          item.value = true;
           item.toReceive = item.quantity;
           return item;
         });
+        console.log(this.toReceiveItems);
       },
     },
 
