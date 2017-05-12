@@ -85,13 +85,15 @@
     </v-card>
     <v-row>
       <v-col xs10>
-        <v-container fluid class="items-container">
+        <v-container fluid id="items-container">
           <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
           <!--<received-items></received-items>-->
           <!--<adjust-items></adjust-items>-->
         </v-container>
       </v-col>
       <v-col xs2>
+        <v-card id="order-summary-card">
+
         <purchase-summary
             :ordered-items="orderedItems"
             :order-details="order"
@@ -100,6 +102,8 @@
             v-on:createPurchase="validateOrder"
         >
         </purchase-summary>
+        </v-card>
+
       </v-col>
     </v-row>
   </div>
@@ -140,6 +144,7 @@
 
       '$route' (to, from) {
         this.setAction();
+        this.setSameHeight();
       }
     },
 
@@ -229,6 +234,17 @@
         ];
       },
 
+      setSameHeight() {
+        // Set height of items container equal to summary container
+        let $container = document.getElementById('items-container');
+        let $card = document.getElementById('order-summary-card');
+        let containerHeight = $container.offsetHeight;
+        let cardHeight = $card.offsetHeight;
+        if (containerHeight > cardHeight) {
+          $card.style.height = containerHeight + 'px';
+        }
+      },
+
       initOrder(purchaseOrder) {
         // init order
         this.order = {
@@ -282,10 +298,19 @@
       this.init();
     },
 
+    updated () {
+      this.setSameHeight();
+    }
+
   }
 </script>
 
 <style scoped>
+  #order-summary-card {
+    /*min-height: 350px;*/
+    margin-top: -8px;
+  }
+
   .purchase-header-row {
     padding: 10px 5px 5px 0;
   }

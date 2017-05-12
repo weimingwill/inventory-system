@@ -299,7 +299,6 @@
 
       // Set height of variant container equal to map container
       let height = document.getElementById('warehouse-card').offsetHeight;
-      console.log(height)
       document.getElementById('variant-container').style.height = height + 'px';
     },
 

@@ -91,6 +91,10 @@
 </script>
 
 <style scoped>
+  .detail-container {
+    padding: 10px 20px 20px 20px;
+  }
+
   .row {
     font-weight: bold;
   }
