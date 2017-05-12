@@ -33,15 +33,16 @@
         <td>{{ props.item.quantity }} </td>
         <td>
           <v-text-field
+              v-on:keyup.native="onReceiveQuantityChange"
               class="to-receive-input"
               type="number"
               name="to-receive"
               v-model="props.item.toReceive"
           ></v-text-field>
         </td>
-        <td>{{ calculateStockAftPurchase(props.item.quantity, props.item.available) }}</td>
+        <td>{{ calculateStockAftPurchase(props.item.toReceive, props.item.available) }}</td>
         <td>{{ props.item.costPrice }}</td>
-        <td>{{ calculateCost(props.item.quantity, props.item.costPrice) }}</td>
+        <td>{{ calculateCost(props.item.toReceive, props.item.costPrice) }}</td>
       </template>
     </v-data-table>
   </v-container>
@@ -62,6 +63,16 @@
       ]),
     },
 
+    watch: {
+      test () {
+        console.log(this.test);
+      },
+
+      items () {
+        console.log(this.items)
+      }
+    },
+
     methods: {
       calculateCost: function (quantity, unitCost) {
         if (quantity === '') {
@@ -78,11 +89,16 @@
           return parseInt(quantity) + available;
         }
       },
-
+  
+      onReceiveQuantityChange: function (e) {
+      }
     },
 
     mounted() {
       this.items = this.toReceiveItems.slice();
+
+
+
     },
 
     beforeDestroy() {
@@ -90,6 +106,7 @@
 
     data() {
       return {
+        test: '',
         items: [],
 //        toReceiveItems: [],
         headers: [{
