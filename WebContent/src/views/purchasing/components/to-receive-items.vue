@@ -6,7 +6,12 @@
         <h6 class="item-header">Not Yet Received Items</h6>
       </v-col>
       <v-col xs6 class="text-xl-right">
-        <v-btn light success outline class="mt-4">Receive Selected</v-btn>
+        <v-btn light success outline class="mt-4"
+               :disabled="!canReceive"
+               @click.native="receiveSelected"
+        >
+          Receive Selected
+        </v-btn>
         <!--<v-btn>Receive All</v-btn>-->
       </v-col>
     </v-row>
@@ -53,12 +58,12 @@
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'ToReceiveItems',
 
-    props: ['toReceiveItems'],
+    props: ['toReceiveItems', 'order'],
 
     computed: {
       ...mapGetters ([
@@ -68,6 +73,10 @@
     },
 
     methods: {
+      ...mapActions([
+        'receivePurchaseOrder'
+      ]),
+
       calculateCost: function (quantity, unitCost) {
         if (quantity === '') {
           return 0;
@@ -94,6 +103,17 @@
         } else if (toReceive) {
           this.items.find(item => item.id === id).value = true;
         }
+
+        this.canReceive = false;
+        Array.from(this.items).forEach(item => {
+          if (item.value) {
+            this.canReceive = true;
+          }
+        })
+      },
+
+      receiveSelected () {
+        this.receivePurchaseOrder(this.items, this.order);
       }
     },
 
@@ -122,7 +142,8 @@
           image: '',
           value: false
         },
-//        toReceiveItems: [],
+        canReceive: true,
+
         headers: [{
           text: '',
           left: true,

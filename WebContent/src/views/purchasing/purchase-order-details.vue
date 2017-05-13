@@ -90,6 +90,7 @@
           <to-receive-items
               v-if="isInbound"
               :to-receive-items="toReceiveItems"
+              :order="order"
           >
           </to-receive-items>
 

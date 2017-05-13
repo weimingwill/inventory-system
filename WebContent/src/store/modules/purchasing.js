@@ -235,6 +235,11 @@ const mutations = {
   
   [types.RECEIVE_PURCHASE] (state, {order, items}) {
     let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
+
+    // Update variants in purchaseOrder
+
+    // Create new receive attribute, received: [{},...]
+    // variantIds, quantity, datetime
   }
 };
 
