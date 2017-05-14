@@ -41,6 +41,8 @@
         <td class="image-td">
         </td>
         <td>
+
+          <!-- Todo: refactor to use variant-list.vue -->
           <v-text-field
               v-on:keyup.native="searchVariants"
               name="name"
@@ -199,7 +201,7 @@
         }, {
           text: 'Stock After Purchase',
         }, {
-          text: 'Item Unit Cost',
+          text: 'Unit Cost',
         },
 //          {
 //          text: 'Tax',

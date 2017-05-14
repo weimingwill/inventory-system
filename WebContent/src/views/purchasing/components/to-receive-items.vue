@@ -198,7 +198,7 @@
           left: true,
           sortable: false
         }, {
-          text: 'Item Unit Cost',
+          text: 'Unit Cost',
           left: true,
           sortable: false
         }, {

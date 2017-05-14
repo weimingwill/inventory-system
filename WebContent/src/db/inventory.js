@@ -16,7 +16,13 @@ function addVariants(newVariants) {
   localStorage.setItem(dbKey.VARIANTS, JSON.stringify(variants));
 }
 
+function updateVariants(variants) {
+  localStorage.setItem(dbKey.VARIANTS, JSON.stringify(variants));
+}
+
+
 export {
   addProduct,
-  addVariants
+  addVariants,
+  updateVariants
 }

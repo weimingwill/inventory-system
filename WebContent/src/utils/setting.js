@@ -56,3 +56,16 @@ export const STATUS_PICKED = 'picked';
 export const STATUS_PACKED = 'packed';
 export const STATUS_STORED = 'stored';
 export const STATUS_CHECKED = 'checked';
+
+export const PROCESS_RECEIVING = 'Receiving';
+export const PROCESS_CHECKING = 'Checking';
+export const PROCESS_STORING = 'Storing';
+export const PROCESS_PICKING = 'Picking';
+export const PROCESS_REGULAR_CHECK = 'Regular check';
+export const ADJUST_STATUSES = [PROCESS_RECEIVING, PROCESS_CHECKING, PROCESS_STORING, PROCESS_PICKING, PROCESS_REGULAR_CHECK];
+
+export const ADJUST_REASONS = [
+  'Damaged',
+  'Wrong Item',
+  'Quality Issue'
+];

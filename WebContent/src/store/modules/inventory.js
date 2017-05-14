@@ -12,7 +12,8 @@ import {
 
 import {
   addProduct,
-  addVariants
+  addVariants,
+  updateVariants
 } from '../../db/inventory'
 
 import {
@@ -167,6 +168,31 @@ const mutations = {
     log(variants);
     state.variants.concat(variants);
     addVariants(variants);
+  },
+
+  [types.INCREASE_INCOMING_STOCK] (state, items) {
+    // let i;
+    // let length = items.length;
+    // let variants = state.variants.filter(variant => {
+    //   for (i = 0; i < length; i++) {
+    //     if (variant.id === items[i].id) {
+    //       return true;
+    //     }
+    //   }
+    //   return false;
+    // });
+
+    Array.from(items).forEach(item => {
+      state.variants.find(variant => variant.id === item.id).quantity += parseInt(item.quantity);
+    });
+    updateVariants(state.variants);
+  },
+
+  [types.INCREASE_INCOMING_STOCK] (state, items) {
+    Array.from(items).forEach(item => {
+      state.variants.find(variant => variant.id === item.id).quantity -= parseInt(item.quantity);
+    });
+    updateVariants(state.variants);
   },
 };
 

@@ -80,7 +80,7 @@
         }, {
           text: 'Quantity',
         }, {
-          text: 'Item Unit Cost',
+          text: 'Unit Cost',
         }, {
           text: 'Total Cost($)',
         }]

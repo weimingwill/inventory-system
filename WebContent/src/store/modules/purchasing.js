@@ -280,7 +280,6 @@ const mutations = {
 
         toReceives = toReceives.filter(t => t.quantity > 0);
       }
-      // Todo: update available and incoming stock of variants
     });
 
     received.variants = variants;
@@ -291,27 +290,8 @@ const mutations = {
     updatePurchaseOrder(purchaseOrder);
   },
 
-  [types.ADJUST_PURCHASE] (state, {purchaseOrder, items}) {
-    // Todo: implement this function...
-    let toReceives = purchaseOrder.toReceives;
-
-    let received = {};
-    received.datetime = currentDateTime();
-
-    let variants = [];
-    Array.from(items).forEach(item => {
-      let variant = {};
-      variant.variantId = item.id;
-      variant.quantity = parseInt(item.toReceive);
-      variants.push(variant);
-
-      toReceives.find(t => t.variantId === variant.variantId).toReceive -= variant.toReceive;
-    });
-    received.variants = variants;
-
-    purchaseOrder.receives.push(received);
-    purchaseOrder.toReceives = toReceives;
-
+  [types.ADJUST_PURCHASE] (state, {purchaseOrder, adjustment}) {
+    purchaseOrder.adjustments.push(adjustment);
     updatePurchaseOrder(purchaseOrder);
   }
 
@@ -349,6 +329,7 @@ const actions = {
 
     // Todo calculate due date
     commit(types.ADD_PURCHASE, {order, items});
+    commit(types.INCREASE_INCOMING_STOCK, items);
   },
   
   editPurchase ({commit}, {order, items}) {
@@ -362,10 +343,11 @@ const actions = {
     commit(types.RECEIVE_PURCHASE, {purchaseOrder, items});
   },
 
-  adjustPurchaseOrder ({commit, getters}, {order, items}) {
+  adjustPurchaseOrder ({commit, getters}, {order, adjustment}) {
     log('adjust purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
-    commit(types.ADJUST_PURCHASE, {purchaseOrder, items});
+    commit(types.ADJUST_PURCHASE, {purchaseOrder, adjustment});
+    commit(types.DECREASE_INCOMING_STOCK, adjustment.items);
   }
 
 };

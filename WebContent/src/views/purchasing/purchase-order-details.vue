@@ -69,11 +69,15 @@
               />
             </v-col>
           </v-row>
-
         </v-col>
 
         <v-col xs2 class="text-xs-right" v-if="isInbound">
-          <v-btn error>Adjustment</v-btn>
+
+          <adjustment-dialog
+            :order="order"
+            v-on:addAdjustment="reloadData"
+          ></adjustment-dialog>
+
         </v-col>
 
         <v-col xs1 offset-xs1 v-else>
@@ -111,7 +115,12 @@
 
           <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
 
-          <!--<adjust-items></adjust-items>-->
+          <received-items
+              v-if="adjustedItems.length > 0"
+              :adjusted-items="adjustedItems"
+          >
+          </received-items>
+
         </v-container>
       </v-col>
       <v-col xs2>
@@ -139,6 +148,7 @@
   import ToReceiveItems from './components/to-receive-items.vue'
   import OrderItems from './components/order-items.vue'
   import ReceivedItems from './components/received-items.vue'
+  import AdjustmentDialog from './components/adjustment-dialog.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
@@ -154,6 +164,7 @@
       ToReceiveItems,
       OrderItems,
       ReceivedItems,
+      AdjustmentDialog,
       PurchaseSummary
     },
 
@@ -307,21 +318,27 @@
         };
 
         // init orderedItems
-        this.orderedItems = this.fullfillVariants(purchaseOrder.variants);
+        this.orderedItems = this.fulfillVariants(purchaseOrder.variants);
 
         // init toReceiveItems
-        this.toReceiveItems = this.fullfillVariants(purchaseOrder.toReceives);
+        this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
 
         this.receivedItems = purchaseOrder.receives;
 
         this.receivedItems = this.receivedItems.map(item => {
-          item.variants = this.fullfillVariants(item.variants);
+          item.variants = this.fulfillVariants(item.variants);
+          return item;
+        });
+
+        this.adjustedItems = purchaseOrder.adjustments;
+        this.adjustedItems = this.adjustedItems.map(item => {
+          item.variants = this.fulfillVariants(item.variants);
           return item;
         });
 
       },
 
-      fullfillVariants (items, value=true) {
+      fulfillVariants (items, value=true) {
         return items.map(item => {
           Object.assign(item, this.getVariantById(item.variantId));
           item.value = value;
@@ -375,6 +392,8 @@
 </script>
 
 <style scoped>
+  @import "../../css/main.css";
+
   #order-summary-card {
     /*min-height: 350px;*/
     margin-top: -8px;
