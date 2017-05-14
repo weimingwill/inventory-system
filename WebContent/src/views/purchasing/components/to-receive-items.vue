@@ -12,7 +12,6 @@
         >
           Receive Selected
         </v-btn>
-        <!--<v-btn>Receive All</v-btn>-->
       </v-col>
     </v-row>
 
@@ -46,12 +45,16 @@
               type="number"
               :name="item.id.toString()"
               v-model="item.toReceive"
+              min="0"
+              max="item.quantity"
           ></v-text-field>
         </td>
         <td>{{ calculateStockAftReceive(item.toReceive, item.available) }}</td>
         <td>{{ item.costPrice }}</td>
         <td>{{ calculateCost(item.toReceive, item.costPrice) }}</td>
       </tr>
+
+      <tr v-if="allReceived"><td colspan="100%" class="text-xs-center">All received</td></tr>
       </tbody>
     </table>
   </v-container>
@@ -96,7 +99,6 @@
       onReceiveQuantityChange: function (e) {
         let toReceive = e.target.value;
         let id = parseInt(e.target.name);
-        console.log(toReceive);
 
         if (toReceive === "0" || !toReceive) {
           this.items.find(item => item.id === id).value = false;
@@ -113,7 +115,29 @@
       },
 
       receiveSelected () {
-        this.receivePurchaseOrder(this.items, this.order);
+        // update purchase order
+        this.receivePurchaseOrder({
+          order: this.order,
+          items: this.items
+        });
+
+        this.items = this.items.map(item => {
+          if (item.value) {
+            item.quantity -= item.toReceive;
+          }
+          item.value = true;
+          return item;
+        });
+
+        this.items = this.items.filter(item => item.quantity > 0);
+
+        if (this.items.length === 0) {
+          this.canReceive = false;
+          this.allReceived = true;
+        }
+
+        // reload data
+        this.$emit('receivePurchase');
       }
     },
 
@@ -124,6 +148,10 @@
         });
         this.items.push(Object.assign({}, this.item))
       });
+
+      if (this.items.length === 0) {
+        this.allReceived = true;
+      }
     },
 
     beforeDestroy() {
@@ -143,6 +171,7 @@
           value: false
         },
         canReceive: true,
+        allReceived: false,
 
         headers: [{
           text: '',

@@ -13,6 +13,17 @@ function addPurchaseOrder(purchaseOrder) {
   localStorage.setItem(PURCHASE_ORDERS, JSON.stringify(purchaseOrders));
 }
 
+function updatePurchaseOrder(purchaseOrder) {
+  let purchaseOrders = JSON.parse(localStorage.getItem(PURCHASE_ORDERS));
+  for (let i = 0; i < purchaseOrders.length; i++) {
+    if (purchaseOrders[i].id === purchaseOrder.id) {
+      purchaseOrders[i] = purchaseOrder;
+    }
+  }
+  localStorage.setItem(PURCHASE_ORDERS, JSON.stringify(purchaseOrders));
+}
+
 export {
-  addPurchaseOrder
+  addPurchaseOrder,
+  updatePurchaseOrder
 }

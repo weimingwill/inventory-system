@@ -159,6 +159,7 @@ const mutations = {
         variant.isReleased = false;
         variant.created = product.created;
         variant.updated = product.updated;
+        variant.value = false;
         id++;
         variants.push(variant);
       })

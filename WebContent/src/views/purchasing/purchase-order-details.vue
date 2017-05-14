@@ -72,7 +72,11 @@
 
         </v-col>
 
-        <v-col xs1 offset-xs1>
+        <v-col xs2 class="text-xs-right" v-if="isInbound">
+          <v-btn error>Adjustment</v-btn>
+        </v-col>
+
+        <v-col xs1 offset-xs1 v-else>
           <v-row>
             <v-col xs12><v-btn v-if="isView && !isInbound" outline small error>Void</v-btn></v-col>
           </v-row>
@@ -91,17 +95,17 @@
               v-if="isInbound"
               :to-receive-items="toReceiveItems"
               :order="order"
+              v-on:receivePurchase="reloadData"
           >
           </to-receive-items>
 
-          <h6 class="item-header">Received Items</h6>
+          <v-divider class="items-divider"></v-divider>
 
-          <v-expansion-panel class="item-panel">
-            <v-expansion-panel-content v-for="(item,i) in 1" :key="i">
-              <div slot="header">Ordered Items</div>
-              <!--<received-items></received-items>-->
-            </v-expansion-panel-content>
-          </v-expansion-panel>
+          <received-items
+              v-if="receivedItems.length > 0"
+              :received-items="receivedItems"
+          >
+          </received-items>
 
           <v-divider class="items-divider"></v-divider>
 
@@ -134,6 +138,7 @@
   import Breadcrumbs from '../components/breadcrumbs.vue'
   import ToReceiveItems from './components/to-receive-items.vue'
   import OrderItems from './components/order-items.vue'
+  import ReceivedItems from './components/received-items.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
@@ -148,6 +153,7 @@
       Breadcrumbs,
       ToReceiveItems,
       OrderItems,
+      ReceivedItems,
       PurchaseSummary
     },
 
@@ -171,7 +177,9 @@
       ...mapGetters([
         'supplierNames',
         'warehouseLocations',
-        'getNewOrderNumber'
+        'getNewOrderNumber',
+        'getVariantById',
+        'getSupplierById'
       ]),
       supplierContacts() {
         if (this.order.supplier) {
@@ -188,6 +196,7 @@
       ]),
 
       validateOrder() {
+        console.log('validate order')
         this.$validator.validateAll()
         .then(() => {
           if (this.order.orderNumber === '') {
@@ -210,14 +219,7 @@
 
       init() {
         this.setAction();
-
-        if (this.$route.params.id) {
-          this.orderId = parseInt(this.$route.params.id);
-          let purchaseOrder = this.$store.getters.getObjectByAttr(
-            s.MODULE_PURCHASING, s.OBJ_PURCHASE_ORDERS, 'id', this.orderId
-          );
-          this.initOrder(purchaseOrder);
-        }
+        this.reloadData();
       },
 
       setAction() {
@@ -263,7 +265,7 @@
         ];
       },
 
-      setSameHeight() {
+      setSameHeight () {
         // Set height of items container equal to summary container
         let $container = document.getElementById('items-container');
         let $card = document.getElementById('order-summary-card');
@@ -274,11 +276,25 @@
         }
       },
 
-      initOrder(purchaseOrder) {
+      reloadData () {
+        console.log('reload data')
+        this.$store.dispatch('initInventory');
+        this.$store.dispatch('initPurchasing');
+
+        if (this.$route.params.id) {
+          this.orderId = parseInt(this.$route.params.id);
+          let purchaseOrder = this.$store.getters.getObjectByAttr(
+            s.MODULE_PURCHASING, s.OBJ_PURCHASE_ORDERS, 'id', this.orderId
+          );
+          this.initOrder(purchaseOrder);
+        }
+      },
+
+      initOrder (purchaseOrder) {
         // init order
         this.order = {
           supplierId: purchaseOrder.supplierId,
-          supplier: this.$store.getters.getSupplierById(purchaseOrder.supplierId).name,
+          supplier: this.getSupplierById(purchaseOrder.supplierId).name,
           supplierContactId: purchaseOrder.supplierContactId,
           contact: this.$store.getters.getObjectByAttr(
             s.MODULE_SUPPLIER, s.OBJ_SUPPLIER_CONTACTS, 'id', purchaseOrder.supplierContactId
@@ -291,22 +307,27 @@
         };
 
         // init orderedItems
-        for (let i = 0; i < purchaseOrder.variants.length; i++) {
-          let variant = purchaseOrder.variants[i];
-          Object.assign(variant, this.$store.getters.getVariantById(variant.variantId));
-          variant.value = false;
-          this.orderedItems.push(variant);
-        }
+        this.orderedItems = this.fullfillVariants(purchaseOrder.variants);
 
         // init toReceiveItems
-        this.toReceiveItems = this.orderedItems.slice(0);
-        this.toReceiveItems = this.toReceiveItems.map(item => {
-          item.value = true;
-          item.toReceive = item.quantity;
+        this.toReceiveItems = this.fullfillVariants(purchaseOrder.toReceives);
+
+        this.receivedItems = purchaseOrder.receives;
+
+        this.receivedItems = this.receivedItems.map(item => {
+          item.variants = this.fullfillVariants(item.variants);
           return item;
         });
-        console.log(this.toReceiveItems);
+
       },
+
+      fullfillVariants (items, value=true) {
+        return items.map(item => {
+          Object.assign(item, this.getVariantById(item.variantId));
+          item.value = value;
+          return item;
+        });
+      }
     },
 
     data () {
@@ -323,6 +344,8 @@
         },
         orderedItems: [],
         toReceiveItems: [],
+        receivedItems: [],
+        adjustedItems: [],
         rules: {
           supplier:[]
         },
@@ -337,10 +360,7 @@
     created() {
       this.$store.dispatch('initWarehouse');
       this.$store.dispatch('initSupplier');
-      this.$store.dispatch('initInventory');
-      this.$store.dispatch('initPurchasing');
       this.init();
-
     },
 
     mounted () {
@@ -367,11 +387,6 @@
   .edit-icon {
     margin-left: 2px;
     font-size: 1.5rem;
-  }
-
-  .item-panel {
-    margin: 30px 0 0 20px;
-    width: 98%
   }
 
   .items-divider {

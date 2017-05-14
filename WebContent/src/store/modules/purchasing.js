@@ -15,7 +15,8 @@ import {
 } from '../../db/init-data'
 
 import {
-  addPurchaseOrder
+  addPurchaseOrder,
+  updatePurchaseOrder
 } from '../../db/purchasing'
 
 import * as s from '../../utils/setting'
@@ -169,8 +170,6 @@ const getters = {
   getInboundStatuses() {
     return [s.ALL, s.STATUS_PURCHASED, s.STATUS_RECEIVED, s.STATUS_CHECKED, s.STATUS_STORED]
   },
-  
-  
 };
 
 const mutations = {
@@ -188,11 +187,23 @@ const mutations = {
       }).reduce((sum, cost) => {
         return sum + cost;
       });
-      
+
+      // For data load from csv file
+      if (!p.hasOwnProperty('toReceives')) {
+        let variants  = p.variants.slice();
+        p.toReceives = variants.map(variant => {
+          variant.toReceive = variant.quantity;
+          return Object.assign({}, variant);
+        });
+        p.receives = [];
+        p.adjustments = [];
+      }
+
       return p;
     });
-    
-    log(state.purchaseOrders)
+
+
+    log(state.purchaseOrders);
   },
 
   [types.ADD_PURCHASE] (state, {order, items}) {
@@ -210,6 +221,8 @@ const mutations = {
     purchaseOrder.due = due;
     purchaseOrder.isReceived = false;
 
+    let variants = [];
+
     Array.from(items).forEach(item => {
       let variant = {};
       variant.variantId = item.id;
@@ -220,27 +233,89 @@ const mutations = {
       variant.adjusted = false;
       variant.receivedAt = "";
       variant.receivedQuantity = 0;
-      purchaseOrder.variants.push(variant);
+      variants.push(variant);
     });
+
+    purchaseOrder.variants = variants;
+    purchaseOrder.toReceives = variants.slice(0).map(variant => {
+      variant.toReceive = variant.quantity;
+      return variant;
+    });
+    purchaseOrder.receives = [];
+    purchaseOrder.adjustments = [];
 
     log(purchaseOrder);
     addPurchaseOrder(purchaseOrder);
 
     // Todo: bug with variant number in display (add? or display? )
+
+    // Todo: update incoming stock of variants
   },
   
   [types.EDIT_PURCHASE] (state, {order, items}) {
     let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
   },
   
-  [types.RECEIVE_PURCHASE] (state, {order, items}) {
-    let purchaseOrder = setSameAttributeValues(order, s.PURCHASE_ORDER_ATTR);
+  [types.RECEIVE_PURCHASE] (state, {purchaseOrder, items}) {
+    let toReceives = purchaseOrder.toReceives;
 
-    // Update variants in purchaseOrder
+    let received = {};
+    received.datetime = currentDateTime();
 
-    // Create new receive attribute, received: [{},...]
-    // variantIds, quantity, datetime
+    let variants = [];
+
+    Array.from(items).forEach(item => {
+      let variant = {};
+      variant.variantId = item.id;
+      variant.quantity = parseInt(item.toReceive);
+
+      if (item.value && variant.quantity > 0) {
+        variants.push(variant);
+        toReceives = toReceives.map(t => {
+          if (t.variantId === variant.variantId) {
+            t.quantity -= variant.quantity;
+          }
+          return t;
+        });
+
+        toReceives = toReceives.filter(t => t.quantity > 0);
+      }
+      // Todo: update available and incoming stock of variants
+    });
+
+    received.variants = variants;
+
+    purchaseOrder.receives.push(received);
+    purchaseOrder.toReceives = toReceives;
+
+    updatePurchaseOrder(purchaseOrder);
+  },
+
+  [types.ADJUST_PURCHASE] (state, {purchaseOrder, items}) {
+    // Todo: implement this function...
+    let toReceives = purchaseOrder.toReceives;
+
+    let received = {};
+    received.datetime = currentDateTime();
+
+    let variants = [];
+    Array.from(items).forEach(item => {
+      let variant = {};
+      variant.variantId = item.id;
+      variant.quantity = parseInt(item.toReceive);
+      variants.push(variant);
+
+      toReceives.find(t => t.variantId === variant.variantId).toReceive -= variant.toReceive;
+    });
+    received.variants = variants;
+
+    purchaseOrder.receives.push(received);
+    purchaseOrder.toReceives = toReceives;
+
+    updatePurchaseOrder(purchaseOrder);
   }
+
+
 };
 
 const actions = {
@@ -262,7 +337,6 @@ const actions = {
   },
 
   addPurchase ({commit, getters}, {order, items}) {
-
     log('add purchase');
     order.supplierId = getters.getObjectByAttr(
       s.MODULE_SUPPLIER, s.OBJ_SUPPLIER, 'name', order.supplier).id;
@@ -282,9 +356,16 @@ const actions = {
     commit(types.EDIT_PURCHASE, {order, items});
   },
   
-  receivePurchaseOrder ({commit}, {order, items}) {
+  receivePurchaseOrder ({commit, getters}, {order, items}) {
     log('receive purchase');
-    commit(types.RECEIVE_PURCHASE, {order, items});
+    let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
+    commit(types.RECEIVE_PURCHASE, {purchaseOrder, items});
+  },
+
+  adjustPurchaseOrder ({commit, getters}, {order, items}) {
+    log('adjust purchase');
+    let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
+    commit(types.ADJUST_PURCHASE, {purchaseOrder, items});
   }
 
 };
