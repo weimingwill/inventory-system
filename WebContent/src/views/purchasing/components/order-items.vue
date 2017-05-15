@@ -29,7 +29,7 @@
         <td>{{ calculateStockAftPurchase(item.quantity, item.available) }}</td>
         <td>{{ item.costPrice }}</td>
         <!--<td>{{ item.tax }}</td>-->
-        <td>{{ calculateCost(item.quantity, item.costPrice) }}</td>
+        <td>{{ calculateTotalCost(item.quantity, item.costPrice) }}</td>
         <td class="delete-td" v-if="!isView">
           <v-btn icon="icon" class="black--text" @click.native="deleteItem(item.id)">
             <v-icon>delete</v-icon>
@@ -41,35 +41,12 @@
         <td class="image-td">
         </td>
         <td>
-
-          <!-- Todo: refactor to use variant-list.vue -->
-          <v-text-field
-              v-on:keyup.native="searchVariants"
-              name="name"
-              v-model="newItem.searchContent"
-          ></v-text-field>
-
-          <v-card class="item-list" v-if="isKeyup">
-            <v-list>
-              <template v-for="variant in filteredVariants">
-                <v-list-item
-                    v-bind:key="variant.id"
-                    ref="listItem"
-                    class="list-item"
-                >
-                  <input type="hidden" v-model="variant.id" name="0">
-                  <v-list-tile avatar>
-                    <v-list-tile-avatar>
-                      <img v-bind:src="variant.image" />
-                    </v-list-tile-avatar>
-                    <v-list-tile-content>
-                      <v-list-tile-title v-html="variant.fullname" />
-                    </v-list-tile-content>
-                  </v-list-tile>
-                </v-list-item>
-              </template>
-            </v-list>
-          </v-card>
+          <variant-list
+              :searchContent="newItem.searchContent"
+              :items="orderedItems"
+              :variants="variants"
+              v-on:itemClicked="setItem"
+          ></variant-list>
         </td>
         <td>
           <v-text-field
@@ -99,11 +76,17 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { calculateCost, calculateStockAft } from '../../../utils/utils'
+  import VariantList from '../components/variant-list.vue'
 
   export default {
     name: 'OrderItems',
 
     props: ['orderedItems', 'isView'],
+
+    components: {
+      VariantList
+    },
 
     computed: {
       ...mapGetters ([
@@ -123,25 +106,6 @@
 
       deleteItem: function (id) {
         this.orderedItems = this.orderedItems.filter(item => item.id !== id);
-      },
-
-      searchVariants: function () {
-        // Todo: onkeyup has problem when deleting input
-        this.isKeyup = true;
-
-        // Filtered added orderedItems
-        this.filteredVariants = this.variants.filter(variant => this.orderedItems.filter(item => item.id === variant.id).length === 0)
-        this.filteredVariants = this.filteredVariants.filter(v => v.fullname.includes(this.newItem.searchContent)).slice(0,5);
-
-
-        Array.from(document.getElementsByClassName('list-item')).forEach(($list) => {
-          let $input = $list.firstChild;
-          // use name as boolean value to add event listener only once
-          if ($input.name === "0") {
-            $list.addEventListener('click', () => this.setItem(parseInt($input.value)));
-            $input.name = "1";
-          }
-        });
       },
 
       setItem: function (variantId) {
@@ -167,27 +131,13 @@
         this.hasNewItem = false;
       },
 
-      calculateCost: function (quantity, unitCost) {
-        if (quantity === '') {
-          return 0;
-        } else {
-          return parseInt(quantity) * unitCost;
-        }
+      calculateTotalCost: function (quantity, unitCost) {
+        return calculateCost(quantity, unitCost);
       },
 
       calculateStockAftPurchase: function (quantity, available) {
-        if (quantity === '') {
-          return 0
-        } else {
-          return parseInt(quantity) + available;
-        }
+        return calculateStockAft(quantity, available)
       }
-    },
-
-    beforeDestroy() {
-      this.$refs.listItem.forEach(($list) => {
-        $list.removeEventListener('click', () => this.setItem($list.firstChild.value))
-      });
     },
 
     data() {

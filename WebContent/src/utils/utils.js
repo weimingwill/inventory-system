@@ -120,6 +120,24 @@ function setSameAttributeValues(input, attributes) {
   return output;
 }
 
+// calculate cost by quantity and price
+function calculateCost(quantity, unitCost) {
+  if (quantity === '') {
+    return 0;
+  } else {
+    return parseInt(quantity) * unitCost;
+  }
+}
+
+// calculate stock after action
+function calculateStockAft(quantity, available, receivedQuantity=0) {
+  if (quantity === '') {
+    return 0
+  } else {
+    return parseInt(quantity) + available + receivedQuantity;
+  }
+}
+
 export {
   log,
   newIdOfArray,
@@ -131,5 +149,7 @@ export {
   dashToCamelCase,
   removeArrayDuplicates,
   calculateDistance,
-  setSameAttributeValues
+  setSameAttributeValues,
+  calculateCost,
+  calculateStockAft
   };

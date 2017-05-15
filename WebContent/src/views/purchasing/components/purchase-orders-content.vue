@@ -57,7 +57,7 @@
             <td>{{ totalQuantity(props.item.orderNumber) }}</td>
             <td>{{ totalCost(props.item.orderNumber) }}</td>
             <td>{{ props.item.due }}</td>
-            <td>{{ props.item.allReceivedAt }}</td>
+            <td>{{ props.item.receivedAt }}</td>
             <td>{{ props.item.created }}</td>
             <td>{{ props.item.updated }}</td>
           </template>

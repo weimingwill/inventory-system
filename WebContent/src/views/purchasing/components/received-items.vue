@@ -25,12 +25,12 @@
             <td>{{ variant.fullname }}</td>
             <td>{{ variant.quantity }}</td>
             <td>{{ variant.costPrice }}</td>
-            <td>{{ calculateCost(variant.quantity, variant.costPrice) }}</td>
-            <td class="delete-td">
-              <v-btn icon="icon" class="black--text" @click.native="deleteItem(variant.id)">
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </td>
+            <td>{{ calculateTotalCost(variant.quantity, variant.costPrice) }}</td>
+            <!--<td class="delete-td">-->
+              <!--<v-btn icon="icon" class="black&#45;&#45;text" @click.native="deleteItem(variant.id)">-->
+                <!--<v-icon>delete</v-icon>-->
+              <!--</v-btn>-->
+            <!--</td>-->
           </tr>
           </tbody>
         </table>
@@ -41,6 +41,7 @@
 
 <script>
   import { mapGetters } from 'vuex'
+  import { calculateCost } from '../../../utils/utils'
 
   export default {
     name: 'ReceivedItems',
@@ -56,12 +57,8 @@
 
     methods: {
       // Todo: refactor this function
-      calculateCost: function (quantity, unitCost) {
-        if (quantity === '') {
-          return 0;
-        } else {
-          return parseInt(quantity) * unitCost;
-        }
+      calculateTotalCost: function (quantity, unitCost) {
+        return calculateCost(quantity, unitCost);
       },
     },
 

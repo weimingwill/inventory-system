@@ -3,14 +3,14 @@
 
     <v-row>
       <v-col xs6>
-        <h6 class="item-header">Not Yet Received Items</h6>
+        <h6 class="item-header">Not Yet Stored Items</h6>
       </v-col>
       <v-col xs6 class="text-xl-right">
         <v-btn light success outline class="mt-4"
-               :disabled="!canReceive"
-               @click.native="receiveSelected"
+               :disabled="!canStore"
+               @click.native="storeSelected"
         >
-          Receive Selected
+          Store Selected
         </v-btn>
       </v-col>
     </v-row>
@@ -40,21 +40,20 @@
         <td>{{ item.quantity }} </td>
         <td>
           <v-text-field
-              v-on:keyup.native="onReceiveQuantityChange"
-              class="to-receive-input"
+              v-on:keyup.native="onStoreQuantityChange"
+              class="to-do-input"
               type="number"
               :name="item.id.toString()"
-              v-model="item.toReceive"
+              v-model="item.toStore"
               min="0"
               max="item.quantity"
           ></v-text-field>
         </td>
-        <td>{{ calculateStockAftReceive(item.toReceive, item.available, item.receivedQuantity) }}</td>
         <td>{{ item.costPrice }}</td>
-        <td>{{ calculateTotalCost(item.toReceive, item.costPrice) }}</td>
+        <td>{{ calculateTotalCost(item.toStore, item.costPrice) }}</td>
       </tr>
 
-      <tr v-if="allReceived"><td colspan="100%" class="text-xs-center">All received</td></tr>
+      <tr v-if="items.length === 0"><td colspan="100%" class="text-xs-center">All stored</td></tr>
       </tbody>
     </table>
   </v-container>
@@ -64,10 +63,17 @@
   import { mapGetters, mapActions } from 'vuex'
   import { calculateCost, calculateStockAft } from '../../../utils/utils'
 
-  export default {
-    name: 'ToReceiveItems',
 
-    props: ['toReceiveItems', 'order'],
+  export default {
+    name: 'ToStoreItems',
+
+    props: ['toStoreItems', 'order'],
+
+    watch: {
+      toStoreItems() {
+        this.setData();
+      }
+    },
 
     computed: {
       ...mapGetters ([
@@ -78,38 +84,34 @@
 
     methods: {
       ...mapActions([
-        'receivePurchaseOrder'
+        'storePurchaseOrder'
       ]),
 
       calculateTotalCost: function (quantity, unitCost) {
         return calculateCost(quantity, unitCost);
       },
 
-      calculateStockAftReceive: function (quantity, available, receivedQuantity=0) {
-        return calculateStockAft(quantity, available, receivedQuantity);
-      },
-
-      onReceiveQuantityChange: function (e) {
-        let toReceive = e.target.value;
+      onStoreQuantityChange: function (e) {
+        let toStore = e.target.value;
         let id = parseInt(e.target.name);
 
-        if (toReceive === "0" || !toReceive) {
+        if (toStore === "0" || !toStore) {
           this.items.find(item => item.id === id).value = false;
-        } else if (toReceive) {
+        } else if (toStore) {
           this.items.find(item => item.id === id).value = true;
         }
 
-        this.canReceive = false;
+        this.canStore = false;
         Array.from(this.items).forEach(item => {
           if (item.value) {
-            this.canReceive = true;
+            this.canStore = true;
           }
         })
       },
 
-      receiveSelected () {
+      storeSelected () {
         // update purchase order
-        this.receivePurchaseOrder({
+        this.storePurchaseOrder({
           order: this.order,
           items: this.items
         });
@@ -117,10 +119,10 @@
         this.items = this.items.map(item => {
           item = Object.assign({}, item);
           if (item.value) {
-            let toReceive = parseInt(item.toReceive);
-            item.quantity -= toReceive;
-            item.receivedQuantity += toReceive;
-            item.toReceive = item.quantity;
+            let toStore = parseInt(item.toStore);
+            item.quantity -= toStore;
+            item.storedQuantity += toStore;
+            item.toStore = item.quantity;
           }
           item.value = true;
           return item;
@@ -129,26 +131,25 @@
         this.items = this.items.filter(item => item.quantity > 0);
 
         if (this.items.length === 0) {
-          this.canReceive = false;
-          this.allReceived = true;
+          this.canStore = false;
         }
 
         // reload data
-        this.$emit('receivePurchase');
+        this.$emit('storePurchase');
+      },
+
+      setData() {
+        Array.from(this.toStoreItems).forEach(item => {
+          Object.keys(this.item).forEach(key => {
+            this.item[key] = item[key]
+          });
+          this.items.push(Object.assign({}, this.item))
+        });
       }
     },
 
     mounted() {
-      Array.from(this.toReceiveItems).forEach(item => {
-        Object.keys(this.item).forEach(key => {
-          this.item[key] = item[key]
-        });
-        this.items.push(Object.assign({}, this.item))
-      });
-
-      if (this.items.length === 0) {
-        this.allReceived = true;
-      }
+      this.setData();
     },
 
     beforeDestroy() {
@@ -161,15 +162,15 @@
           id: 0,
           fullname: '',
           quantity: 0,
-          toReceive: 0,
-          receivedQuantity: 0,
+          toStore: 0,
+          storedQuantity: 0,
           available: 0,
           costPrice: 0,
           image: '',
           value: false
         },
-        canReceive: true,
-        allReceived: false,
+        canStore: true,
+        allStored: false,
 
         headers: [{
           text: '',
@@ -188,11 +189,7 @@
           left: true,
           sortable: false
         }, {
-          text: 'To Receive',
-          left: true,
-          sortable: false
-        }, {
-          text: 'Stock After Receive',
+          text: 'To Store',
           left: true,
           sortable: false
         }, {
@@ -201,6 +198,10 @@
           sortable: false
         }, {
           text: 'Total Cost($)',
+          left: true,
+          sortable: false
+        }, {
+          text: 'Location',
           left: true,
           sortable: false
         }],
@@ -223,7 +224,13 @@
     margin: 30px 0 0 30px;
   }
 
-  .to-receive-input {
+  .to-do-input {
     margin: 1rem 0 0 0;
+  }
+
+  .checkbox-text {
+    line-height: 25px;
+    padding-left: 0;
+    padding-right: 0;
   }
 </style>

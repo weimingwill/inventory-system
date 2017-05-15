@@ -96,19 +96,106 @@
       <v-col xs10>
         <v-container fluid id="items-container">
 
-          <to-receive-items
-              v-if="isInbound"
-              :to-receive-items="toReceiveItems"
-              :order="order"
-              v-on:receivePurchase="reloadData"
-          >
-          </to-receive-items>
+          <v-stepper v-model="step" v-if="isInbound">
+            <v-stepper-header>
+              <v-stepper-step step="1" v-bind:complete="step > 1" editable edit-icon="input">
+                Receiving
+              </v-stepper-step>
+              <v-divider />
+              <v-stepper-step step="2" v-bind:complete="step > 2" editable edit-icon="security">
+                Quality Check
+              </v-stepper-step>
+              <v-divider />
+              <v-stepper-step step="3" editable edit-icon="dashboard">Storing</v-stepper-step>
+            </v-stepper-header>
 
-          <received-items
-              v-if="receivedItems.length > 0"
-              :received-items="receivedItems"
-          >
-          </received-items>
+            <!-- Receiving -->
+            <v-stepper-content step="1">
+              <to-receive-items
+                  v-if="toReceiveItems.length > 0"
+                  :to-receive-items="toReceiveItems"
+                  :order="order"
+                  v-on:receivePurchase="reloadData"
+              >
+              </to-receive-items>
+
+              <div v-else>
+                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+                <h6 class="completed-text">
+                  <span>All items are received at {{ order.receivedAt }}</span>
+                </h6>
+              </div>
+
+              <received-items
+                  v-if="receivedItems.length > 0"
+                  :received-items="receivedItems"
+              >
+              </received-items>
+
+            </v-stepper-content>
+
+            <!-- Quality Check -->
+            <v-stepper-content step="2">
+              <to-check-items
+                  v-if="toCheckItems.length > 0"
+                  :to-check-items="toCheckItems"
+                  :order="order"
+                  v-on:checkPurchase="reloadData"
+              >
+              </to-check-items>
+
+              <div v-else-if="toReceiveItems.length > 0">
+                <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
+                <h6 class="not-completed-text">
+                  <span>Some items are not received</span>
+                </h6>
+              </div>
+
+              <div v-else>
+                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+                <h6 class="completed-text">
+                  <span>All items are checked at {{ order.checkedAt }}</span>
+                </h6>
+              </div>
+
+              <checked-items
+                  v-if="checkedItems.length > 0"
+                  :checked-items="checkedItems"
+              >
+              </checked-items>
+            </v-stepper-content>
+
+            <!-- Storing -->
+            <v-stepper-content step="3">
+              <to-store-items
+                  v-if="toStoreItems.length > 0"
+                  :to-store-items="toStoreItems"
+                  :order="order"
+                  v-on:storePurchase="reloadData"
+              >
+              </to-store-items>
+
+              <div v-else-if="toReceiveItems.length > 0 || toCheckItems.length > 0">
+                <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
+                <h6 class="not-completed-text">
+                  <span>Some items are not received or checked</span>
+                </h6>
+              </div>
+
+              <div v-else>
+                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+                <h6 class="completed-text">
+                  <span>All items are stored at {{ order.storedAt }}</span>
+                </h6>
+              </div>
+
+              <stored-items
+                  v-if="storedItems.length > 0"
+                  :stored-items="storedItems"
+              >
+              </stored-items>
+            </v-stepper-content>
+          </v-stepper>
 
           <adjusted-items
               v-if="adjustedItems.length > 0"
@@ -125,8 +212,10 @@
           <purchase-summary
               :ordered-items="orderedItems"
               :order-details="order"
-              :isEdit="isEdit"
-              :isCreate="isCreate"
+              :is-edit="isEdit"
+              :is-create="isCreate"
+              :is-inbound="isInbound"
+              :status="order.status"
               v-on:createPurchase="validateOrder"
           >
           </purchase-summary>
@@ -141,9 +230,13 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import ToReceiveItems from './components/to-receive-items.vue'
   import OrderItems from './components/order-items.vue'
+  import ToReceiveItems from './components/to-receive-items.vue'
   import ReceivedItems from './components/received-items.vue'
+  import ToCheckItems from './components/to-check-items.vue'
+  import CheckedItems from './components/checked-items.vue'
+  import ToStoreItems from './components/to-store-items.vue'
+  import StoredItems from './components/stored-items.vue'
   import AdjustmentDialog from './components/adjustment-dialog.vue'
   import AdjustedItems from './components/adjusted-items.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
@@ -158,9 +251,13 @@
 
     components: {
       Breadcrumbs,
-      ToReceiveItems,
       OrderItems,
+      ToReceiveItems,
       ReceivedItems,
+      ToCheckItems,
+      CheckedItems,
+      ToStoreItems,
+      StoredItems,
       AdjustmentDialog,
       AdjustedItems,
       PurchaseSummary
@@ -286,7 +383,8 @@
       },
 
       reloadData () {
-        console.log('reload data')
+        // Todo: optimize the function by set reloading in condition: receive, check, adjust ...
+        console.log('reload data');
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing');
@@ -313,7 +411,11 @@
             s.MODULE_WAREHOUSE, s.OBJ_WAREHOUSE, 'id', purchaseOrder.warehouseId
           ).location,
           warehouseId: purchaseOrder.warehouseId,
-          orderNumber: purchaseOrder.orderNumber
+          orderNumber: purchaseOrder.orderNumber,
+          status: purchaseOrder.status,
+          receivedAt: purchaseOrder.receivedAt,
+          checkedAt: purchaseOrder.checkedAt,
+          storedAt: purchaseOrder.storedAt
         };
 
         // init orderedItems
@@ -321,19 +423,32 @@
 
         // init toReceiveItems
         this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
+        this.receivedItems = this.fulfillNestedVariants(purchaseOrder.receives);
 
-        this.receivedItems = purchaseOrder.receives;
+        // init toCheckItems
+        this.toCheckItems = this.fulfillVariants(purchaseOrder.toChecks);
+        this.checkedItems = this.fulfillNestedVariants(purchaseOrder.checkedItems);
 
-        this.receivedItems = this.receivedItems.map(item => {
-          item.variants = this.fulfillVariants(item.variants);
-          return item;
-        });
+        // init toStoreItems
+        this.toStoreItems = this.fulfillVariants(purchaseOrder.toStores);
+        this.storedItems = this.fulfillNestedVariants(purchaseOrder.storedItems);
 
-        this.adjustedItems = purchaseOrder.adjustments;
-        this.adjustedItems = this.adjustedItems.map(item => {
-          item.variants = this.fulfillVariants(item.variants);
-          return item;
-        });
+        this.adjustedItems = this.fulfillNestedVariants(purchaseOrder.adjustments);
+
+        // init step
+        switch (purchaseOrder.status) {
+          case s.STATUS_RECEIVED:
+            this.step = 2;
+            break;
+          case s.STATUS_CHECKED:
+            this.step = 3;
+            break;
+          case s.STATUS_STORED:
+            this.step = 3;
+            break;
+          default:
+            this.step = 1;
+        }
       },
 
       fulfillVariants (items, value=true) {
@@ -342,7 +457,14 @@
           item.value = value;
           return item;
         });
-      }
+      },
+
+      fulfillNestedVariants (items) {
+        return items.map(item => {
+          item.variants = this.fulfillVariants(item.variants);
+          return item;
+        });
+      },
     },
 
     data () {
@@ -355,11 +477,19 @@
           supplierContactId: '',
           warehouse: '',
           warehouseId: '',
-          orderNumber: ''
+          orderNumber: '',
+          status: '',
+          receivedAt: '',
+          checkedAt: '',
+          storedAt: ''
         },
         orderedItems: [],
         toReceiveItems: [],
         receivedItems: [],
+        toCheckItems: [],
+        checkedItems: [],
+        toStoreItems: [],
+        storedItems: [],
         adjustedItems: [],
         rules: {
           supplier:[]
@@ -368,7 +498,8 @@
         isEdit: false,
         isCreate: false,
         isInbound: false,
-        orderId: ''
+        orderId: '',
+        step: ''
       }
     },
 
@@ -410,7 +541,21 @@
     margin: 30px 0 0 0;
   }
 
-  .item-header {
-    margin: 30px 0 0 30px;
+  .completed-text, .not-completed-text {
+    margin: 11px 0 0 2px;
+    float: left;
+  }
+
+  .completed-text {
+    color: #388e3c;
+  }
+
+  .not-completed-text {
+    color: orange ;
+  }
+
+  .completed-icon {
+    float: left;
+    margin-left: 20px;
   }
 </style>

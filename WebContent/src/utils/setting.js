@@ -29,9 +29,9 @@ export const PURCHASE_ORDER_ATTR = [
   "variants",
   "price",
   "status",
-  "isReceived",
+  "received",
   "due",
-  "allReceivedAt",
+  "receivedAt",
   "created",
   "updated",
   "value"];

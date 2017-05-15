@@ -3,15 +3,32 @@
 
     <v-row>
       <v-col xs6>
-        <h6 class="item-header">Not Yet Received Items</h6>
+        <h6 class="item-header">Not Yet Checked Items</h6>
       </v-col>
       <v-col xs6 class="text-xl-right">
-        <v-btn light success outline class="mt-4"
-               :disabled="!canReceive"
-               @click.native="receiveSelected"
-        >
-          Receive Selected
-        </v-btn>
+        <v-row>
+          <v-col xs1 offset-xs3>
+            <v-checkbox
+                hide-details
+                primary
+                disabled
+                v-model="autoAllocation"
+                pt-1
+            >
+            </v-checkbox>
+          </v-col>
+          <v-col xs4 class="text-xs-left" pt-4 pl-0>
+            <p class="checkbox-text"><b>Auto store allocation</b></p>
+          </v-col>
+          <v-col xs4>
+            <v-btn light success outline class="mt-4"
+                   :disabled="!canCheck"
+                   @click.native="checkSelected"
+            >
+              Check Selected
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -40,21 +57,20 @@
         <td>{{ item.quantity }} </td>
         <td>
           <v-text-field
-              v-on:keyup.native="onReceiveQuantityChange"
-              class="to-receive-input"
+              v-on:keyup.native="onCheckQuantityChange"
+              class="to-do-input"
               type="number"
               :name="item.id.toString()"
-              v-model="item.toReceive"
+              v-model="item.toCheck"
               min="0"
               max="item.quantity"
           ></v-text-field>
         </td>
-        <td>{{ calculateStockAftReceive(item.toReceive, item.available, item.receivedQuantity) }}</td>
         <td>{{ item.costPrice }}</td>
-        <td>{{ calculateTotalCost(item.toReceive, item.costPrice) }}</td>
+        <td>{{ calculateTotalCost(item.toCheck, item.costPrice) }}</td>
       </tr>
 
-      <tr v-if="allReceived"><td colspan="100%" class="text-xs-center">All received</td></tr>
+      <tr v-if="items.length === 0"><td colspan="100%" class="text-xs-center">All checked</td></tr>
       </tbody>
     </table>
   </v-container>
@@ -64,10 +80,17 @@
   import { mapGetters, mapActions } from 'vuex'
   import { calculateCost, calculateStockAft } from '../../../utils/utils'
 
-  export default {
-    name: 'ToReceiveItems',
 
-    props: ['toReceiveItems', 'order'],
+  export default {
+    name: 'toCheckItems',
+
+    props: ['toCheckItems', 'order'],
+
+    watch: {
+      toCheckItems() {
+        this.setData();
+      }
+    },
 
     computed: {
       ...mapGetters ([
@@ -78,38 +101,34 @@
 
     methods: {
       ...mapActions([
-        'receivePurchaseOrder'
+        'checkPurchaseOrder'
       ]),
 
       calculateTotalCost: function (quantity, unitCost) {
         return calculateCost(quantity, unitCost);
       },
 
-      calculateStockAftReceive: function (quantity, available, receivedQuantity=0) {
-        return calculateStockAft(quantity, available, receivedQuantity);
-      },
-
-      onReceiveQuantityChange: function (e) {
-        let toReceive = e.target.value;
+      onCheckQuantityChange: function (e) {
+        let toCheck = e.target.value;
         let id = parseInt(e.target.name);
 
-        if (toReceive === "0" || !toReceive) {
+        if (toCheck === "0" || !toCheck) {
           this.items.find(item => item.id === id).value = false;
-        } else if (toReceive) {
+        } else if (toCheck) {
           this.items.find(item => item.id === id).value = true;
         }
 
-        this.canReceive = false;
+        this.canCheck = false;
         Array.from(this.items).forEach(item => {
           if (item.value) {
-            this.canReceive = true;
+            this.canCheck = true;
           }
         })
       },
 
-      receiveSelected () {
+      checkSelected () {
         // update purchase order
-        this.receivePurchaseOrder({
+        this.checkPurchaseOrder({
           order: this.order,
           items: this.items
         });
@@ -117,10 +136,10 @@
         this.items = this.items.map(item => {
           item = Object.assign({}, item);
           if (item.value) {
-            let toReceive = parseInt(item.toReceive);
-            item.quantity -= toReceive;
-            item.receivedQuantity += toReceive;
-            item.toReceive = item.quantity;
+            let toCheck = parseInt(item.toCheck);
+            item.quantity -= toCheck;
+            item.checkedQuantity += toCheck;
+            item.toCheck = item.quantity;
           }
           item.value = true;
           return item;
@@ -129,26 +148,25 @@
         this.items = this.items.filter(item => item.quantity > 0);
 
         if (this.items.length === 0) {
-          this.canReceive = false;
-          this.allReceived = true;
+          this.canCheck = false;
         }
 
         // reload data
-        this.$emit('receivePurchase');
+        this.$emit('checkPurchase');
+      },
+
+      setData() {
+        Array.from(this.toCheckItems).forEach(item => {
+          Object.keys(this.item).forEach(key => {
+            this.item[key] = item[key]
+          });
+          this.items.push(Object.assign({}, this.item))
+        });
       }
     },
 
     mounted() {
-      Array.from(this.toReceiveItems).forEach(item => {
-        Object.keys(this.item).forEach(key => {
-          this.item[key] = item[key]
-        });
-        this.items.push(Object.assign({}, this.item))
-      });
-
-      if (this.items.length === 0) {
-        this.allReceived = true;
-      }
+      this.setData();
     },
 
     beforeDestroy() {
@@ -161,15 +179,16 @@
           id: 0,
           fullname: '',
           quantity: 0,
-          toReceive: 0,
-          receivedQuantity: 0,
+          toCheck: 0,
+          checkedQuantity: 0,
           available: 0,
           costPrice: 0,
           image: '',
           value: false
         },
-        canReceive: true,
-        allReceived: false,
+        canCheck: true,
+        allChecked: false,
+        autoAllocation: true,
 
         headers: [{
           text: '',
@@ -188,11 +207,7 @@
           left: true,
           sortable: false
         }, {
-          text: 'To Receive',
-          left: true,
-          sortable: false
-        }, {
-          text: 'Stock After Receive',
+          text: 'To Check',
           left: true,
           sortable: false
         }, {
@@ -223,7 +238,13 @@
     margin: 30px 0 0 30px;
   }
 
-  .to-receive-input {
+  .to-do-input {
     margin: 1rem 0 0 0;
+  }
+
+  .checkbox-text {
+    line-height: 25px;
+    padding-left: 0;
+    padding-right: 0;
   }
 </style>

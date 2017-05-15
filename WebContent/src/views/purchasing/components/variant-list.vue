@@ -64,6 +64,12 @@
       },
     },
 
+    beforeDestroy() {
+      Array.from(document.getElementsByClassName('list-item')).forEach(($list) => {
+        $list.removeEventListener('click', () => this.$emit('itemClicked', parseInt($list.firstChild.value)))
+      });
+    },
+
     data() {
       return {
         isKeyup: false,

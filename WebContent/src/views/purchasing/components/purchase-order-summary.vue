@@ -37,7 +37,7 @@
   export default {
     name: 'PurchaseSummary',
 
-    props: ['orderedItems', 'orderDetails', 'isEdit', 'isCreate'],
+    props: ['orderedItems', 'orderDetails', 'isEdit', 'isCreate', 'isInbound', 'status'],
 
     computed: {
       ...mapGetters({
@@ -79,7 +79,7 @@
 
       editOrder() {
         // Todo: add function to update order
-      }
+      },
     },
 
     data() {

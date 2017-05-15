@@ -217,6 +217,10 @@ const mutations = {
         });
         p.receives = [];
         p.adjustments = [];
+        p.toChecks = [];
+        p.checkedItems = [];
+        p.toStores = [];
+        p.storedItems = [];
       }
       return p;
     });
@@ -237,7 +241,7 @@ const mutations = {
     purchaseOrder.created = datetime;
     purchaseOrder.updated = datetime;
     purchaseOrder.due = due;
-    purchaseOrder.isReceived = false;
+    purchaseOrder.received = false;
 
     let variants = [];
 
@@ -246,12 +250,12 @@ const mutations = {
       variant.variantId = item.id;
       variant.quantity = parseInt(item.quantity);
       variant.costPrice = item.costPrice;
-      variant.adjustCost = "";
-      variant.adjustQuantity = "";
-      variant.adjustReason = "";
-      variant.adjusted = false;
-      variant.receivedAt = "";
-      variant.receivedQuantity = 0;
+      // variant.adjustCost = "";
+      // variant.adjustQuantity = "";
+      // variant.adjustReason = "";
+      // variant.adjusted = false;
+      // variant.receivedAt = "";
+      // variant.receivedQuantity = 0;
       variants.push(variant);
     });
 
@@ -270,7 +274,11 @@ const mutations = {
     purchaseOrder.receives = [];
     purchaseOrder.adjustments = [];
     purchaseOrder.receivedPercentage = 0;
-
+    purchaseOrder.toChecks = [];
+    purchaseOrder.checkedItems = [];
+    purchaseOrder.toStores = [];
+    purchaseOrder.storedItems = [];
+    
     log(purchaseOrder);
     addPurchaseOrder(purchaseOrder);
 
@@ -317,12 +325,17 @@ const mutations = {
     purchaseOrder.toReceives = toReceives;
     if (toReceives.length === 0) {
       purchaseOrder.status = s.STATUS_RECEIVED;
-      purchaseOrder.isReceived = true;
       purchaseOrder.received = true;
-      purchaseOrder.allReceivedAt = currentDateTime();
+      purchaseOrder.receivedAt = received.datetime;
     }
     
-    // Set received percentage
+    // init toChecks
+    Array.from(variants).forEach(variant => {
+      variant.toCheck = variant.quantity;
+      purchaseOrder.toChecks.push(Object.assign({}, variant));
+    });
+    
+    // Update received percentage
     let receivedQuantity = purchaseOrder.receives.map(item => item.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
       return sum + quantity;
     })).reduce((sum, quantity) => {
@@ -332,7 +345,97 @@ const mutations = {
     
     updatePurchaseOrder(purchaseOrder);
   },
-
+  
+  [types.CHECK_PURCHASE] (state, {purchaseOrder, items}) {
+    let toChecks = purchaseOrder.toChecks;
+    
+    let checked = {};
+    checked.datetime = currentDateTime();
+    
+    let variants = [];
+    
+    Array.from(items).forEach(item => {
+      let variant = {};
+      variant.variantId = item.id;
+      variant.quantity = parseInt(item.toCheck);
+      
+      if (item.value && variant.quantity > 0) {
+        variants.push(variant);
+        toChecks = toChecks.map(t => {
+          if (t.variantId === variant.variantId) {
+            t.quantity -= variant.quantity;
+            t.checkedQuantity += variant.quantity;
+            t.toCheck = t.quantity;
+          }
+          return t;
+        });
+        
+        toChecks = toChecks.filter(t => t.quantity > 0);
+      }
+    });
+    
+    checked.variants = variants;
+    
+    purchaseOrder.checkedItems.push(checked);
+    purchaseOrder.toChecks = toChecks;
+    if (toChecks.length === 0 && purchaseOrder.toReceives.length === 0) {
+      purchaseOrder.status = s.STATUS_CHECKED;
+      purchaseOrder.checked = true;
+      purchaseOrder.checkedAt = checked.datetime;
+    }
+  
+    // init toStores
+    Array.from(variants).forEach(variant => {
+      variant.toStore = variant.quantity;
+      purchaseOrder.toStores.push(Object.assign({}, variant));
+    });
+    
+    updatePurchaseOrder(purchaseOrder);
+  },
+  
+  [types.STORE_PURCHASE] (state, {purchaseOrder, items}) {
+    let toStores = purchaseOrder.toStores;
+    
+    let stored = {};
+    stored.datetime = currentDateTime();
+    
+    let variants = [];
+    
+    Array.from(items).forEach(item => {
+      let variant = {};
+      variant.variantId = item.id;
+      variant.quantity = parseInt(item.toStore);
+      
+      if (item.value && variant.quantity > 0) {
+        variants.push(variant);
+        toStores = toStores.map(t => {
+          if (t.variantId === variant.variantId) {
+            t.quantity -= variant.quantity;
+            t.storeedQuantity += variant.quantity;
+            t.toStore = t.quantity;
+          }
+          return t;
+        });
+        
+        toStores = toStores.filter(t => t.quantity > 0);
+      }
+    });
+    
+    stored.variants = variants;
+    
+    purchaseOrder.storedItems.push(stored);
+    purchaseOrder.toStores = toStores;
+    if (toStores.length === 0
+      && purchaseOrder.toReceives.length === 0
+      && purchaseOrder.toChecks.length === 0) {
+      purchaseOrder.status = s.STATUS_STORED;
+      purchaseOrder.stored = true;
+      purchaseOrder.storedAt = stored.datetime;
+    }
+    
+    updatePurchaseOrder(purchaseOrder);
+  },
+  
   [types.ADJUST_PURCHASE] (state, {purchaseOrder, adjustment}) {
     purchaseOrder.adjustments.push(adjustment);
     updatePurchaseOrder(purchaseOrder);
@@ -389,6 +492,22 @@ const actions = {
     commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
   },
 
+  checkPurchaseOrder ({commit, getters}, {order, items}) {
+    log('check purchase');
+    let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
+    commit(types.CHECK_PURCHASE, {purchaseOrder, items});
+  },
+
+  storePurchaseOrder ({commit, getters}, {order, items}) {
+    log('store purchase');
+    let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
+    commit(types.STORE_PURCHASE, {purchaseOrder, items});
+    let increaseAttr = s.AVAILABLE;
+    let decreaseAttr = s.INBOUNDING;
+    let itemAttr = 'toStore';
+    commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
+  },
+  
   adjustPurchaseOrder ({commit, getters}, {order, adjustment}) {
     log('adjust purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
