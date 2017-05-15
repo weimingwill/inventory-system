@@ -49,7 +49,7 @@
               max="item.quantity"
           ></v-text-field>
         </td>
-        <td>{{ calculateStockAftReceive(item.toReceive, item.available) }}</td>
+        <td>{{ calculateStockAftReceive(item.toReceive, item.available, item.receivedQuantity) }}</td>
         <td>{{ item.costPrice }}</td>
         <td>{{ calculateCost(item.toReceive, item.costPrice) }}</td>
       </tr>
@@ -88,11 +88,11 @@
         }
       },
 
-      calculateStockAftReceive: function (quantity, available) {
+      calculateStockAftReceive: function (quantity, available, receivedQuantity=0) {
         if (quantity === '') {
           return 0
         } else {
-          return parseInt(quantity) + available;
+          return parseInt(quantity) + available + receivedQuantity;
         }
       },
 
@@ -123,7 +123,10 @@
 
         this.items = this.items.map(item => {
           if (item.value) {
-            item.quantity -= item.toReceive;
+            let toReceive = parseInt(item.toReceive);
+            item.quantity -= toReceive;
+            item.receivedQuantity += toReceive;
+            item.toReceive = item.quantity;
           }
           item.value = true;
           return item;
@@ -165,6 +168,7 @@
           fullname: '',
           quantity: 0,
           toReceive: 0,
+          receivedQuantity: 0,
           available: 0,
           costPrice: 0,
           image: '',

@@ -60,9 +60,16 @@
                   <img class="product-image" :src="item.image">
                 </td>
                 <td>{{ item.fullname }} </td>
-                <td class="quantity-td">{{ item.quantity }}</td>
-                <td class="delete-td" v-if="!isView">
-                  <v-btn icon="icon" class="black--text" @click.native="deleteItem(item.id)">
+                <td class="quantity-td">
+                  <v-text-field
+                      class="quantity-input"
+                      type="number"
+                      name="quantity"
+                      v-model="item.quantity"
+                  ></v-text-field>
+                </td>
+                <td class="delete-td">
+                  <v-btn icon="icon" class="black--text" @click.native="deleteItem(item.variantId)">
                     <v-icon>delete</v-icon>
                   </v-btn>
                 </td>
@@ -104,7 +111,7 @@
       </v-card-row>
       <v-card-row actions>
         <v-btn class="blue--text darken-1" flat @click.native="isDialogOpen = false">Close</v-btn>
-        <v-btn class="blue--text darken-1" flat @click.native="addAdjustment">Add</v-btn>
+        <v-btn class="blue--text darken-1" flat @click.native="addAdjustment">Save</v-btn>
       </v-card-row>
     </v-card>
   </v-dialog>
@@ -120,7 +127,7 @@
   export default {
     name: 'AdjustmentDialog',
 
-    props: ['order'],
+    props: ['order', 'variants'],
 
     components: {
       DatePicker,
@@ -129,8 +136,7 @@
 
     computed: {
       ...mapGetters([
-        'getVariantById',
-        'variants'
+        'getVariantById'
       ])
     },
 
@@ -147,18 +153,17 @@
         this.hasNewItem = false;
       },
 
-      deleteItem: function (id) {
-        this.adjustment.variants = this.adjustment.variants.filter(item => item.id !== id);
+      deleteItem: function (variantId) {
+        this.adjustment.variants = this.adjustment.variants.filter(v => v.variantId !== variantId);
       },
 
       setDate (date) {
-        console.log('SetDate')
         this.adjustment.date = date;
       },
 
       setItem: function (variantId) {
         let variant = this.getVariantById(variantId);
-        this.newItem.id = variantId;
+        this.newItem.variantId = variantId;
         this.newItem.image = variant.image;
         this.newItem.fullname = variant.fullname;
         this.newItem.quantity = 1;
@@ -169,7 +174,10 @@
 
       addAdjustment () {
         this.isDialogOpen = false;
-        this.adjustPurchaseOrder(this.order, this.adjustment);
+        this.adjustPurchaseOrder({
+          order: this.order,
+          adjustment: this.adjustment
+        });
         this.$emit('addAdjustment');
       }
     },
@@ -187,7 +195,7 @@
       this.hasNewItem = false;
       this.filteredVariants = [];
       this.newItem = {
-        id: 0,
+        variantId: 0,
         fullname: '',
         quantity: '',
         searchContent: ''
@@ -207,7 +215,7 @@
         hasNewItem: false,
         filteredVariants: [],
         newItem: {
-          id: 0,
+          variantId: 0,
           fullname: '',
           quantity: '',
           searchContent: ''

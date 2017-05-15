@@ -67,7 +67,8 @@
     data() {
       return {
         isKeyup: false,
-        filteredVariants: this.variants ,
+        filteredVariants: this.variants,
+        menu: ''
       }
     }
   }

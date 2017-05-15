@@ -6,18 +6,22 @@
       <v-expansion-panel-content v-for="(item, i) in adjustedItems" :key="i">
         <div slot="header">Adjusted At {{ item.date }}</div>
 
-        <v-row>
-          <v-col xs6>
-            Adjusted status: {{ item.status }}
-          </v-col>
-          <v-col xs6>
-            Adjusted reason: {{ item.reason }}
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col xs12 v-if="item.shouldReturn">Remark: return to suppliers</v-col>
-        </v-row>
+        <v-container>
+          <v-row>
+            <v-col xs4 pt-4 pb-2>
+              Adjusted status: <b> {{ item.status }} </b>
+            </v-col>
+            <v-col xs4 pt-4 pb-2>
+              Adjusted reason: <b> {{ item.reason }} </b>
+            </v-col>
+            <v-col xs4 pt-4 pb-2 v-if="item.shouldReturn">
+              Remark: <b> Return to suppliers </b>
+            </v-col>
+            <v-col xs4 pt-4 pb-2 v-else>
+              Remark: <b> Cost </b>
+            </v-col>
+          </v-row>
+        </v-container>
 
         <table class="datatable table">
           <thead>
@@ -42,11 +46,11 @@
             <td v-if="item.shouldReturn">0</td>
             <td v-else>{{ calculateCost(variant.quantity, variant.costPrice) }}</td>
 
-            <td class="delete-td">
-              <v-btn icon="icon" class="black--text" @click.native="deleteItem(variant.id)">
-                <v-icon>delete</v-icon>
-              </v-btn>
-            </td>
+            <!--<td class="delete-td">-->
+              <!--<v-btn icon="icon" class="black&#45;&#45;text" @click.native="deleteItem(variant.id)">-->
+                <!--<v-icon>delete</v-icon>-->
+              <!--</v-btn>-->
+            <!--</td>-->
           </tr>
           </tbody>
         </table>

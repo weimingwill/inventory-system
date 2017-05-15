@@ -75,6 +75,7 @@
 
           <adjustment-dialog
             :order="order"
+            :variants="orderedItems"
             v-on:addAdjustment="reloadData"
           ></adjustment-dialog>
 
@@ -113,19 +114,18 @@
 
           <v-divider class="items-divider"></v-divider>
 
-          <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
-
-          <received-items
+          <adjusted-items
               v-if="adjustedItems.length > 0"
               :adjusted-items="adjustedItems"
           >
-          </received-items>
+          </adjusted-items>
+
+          <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
 
         </v-container>
       </v-col>
       <v-col xs2>
         <v-card id="order-summary-card">
-
           <purchase-summary
               :ordered-items="orderedItems"
               :order-details="order"
@@ -149,6 +149,7 @@
   import OrderItems from './components/order-items.vue'
   import ReceivedItems from './components/received-items.vue'
   import AdjustmentDialog from './components/adjustment-dialog.vue'
+  import AdjustedItems from './components/adjusted-items.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
@@ -165,6 +166,7 @@
       OrderItems,
       ReceivedItems,
       AdjustmentDialog,
+      AdjustedItems,
       PurchaseSummary
     },
 
@@ -290,6 +292,7 @@
       reloadData () {
         console.log('reload data')
         this.$store.dispatch('initInventory');
+        this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing');
 
         if (this.$route.params.id) {
@@ -335,7 +338,7 @@
           item.variants = this.fulfillVariants(item.variants);
           return item;
         });
-
+        console.log(this.toReceiveItems);
       },
 
       fulfillVariants (items, value=true) {

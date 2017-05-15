@@ -22,14 +22,14 @@
 
     watch: {
       date () {
-        // Todo: bug with this function
-        this.$emit('setDate', date);
+        this.$emit('setDate', this.date);
       }
     },
 
-    date() {
+    data() {
       return {
-        date: ''
+        date: '',
+        menu: ''
       }
     }
 

@@ -30,6 +30,23 @@ const getters = {
 
   getOrderByNumber: (state, getters) => (orderNumber) => state.purchaseOrders.find((order) => order.orderNumber === orderNumber),
 
+  receivedQuantityPercentage: (state, getters) => (orderNumber) => {
+    return (getters.totalReceivedQuantity(orderNumber) / getters.getTotalQuantity(orderNumber)).toFixed(2) * 100;
+  },
+  
+  totalReceivedQuantity: (state, getters) => (orderNumber) => {
+    let order = getters.getOrderByNumber(orderNumber);
+    if (order.receives.length > 0) {
+      return order.receives.map(item => item.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
+        return sum + quantity;
+      })).reduce((sum, quantity) => {
+        return sum + quantity;
+      });
+    } else {
+      return 0;
+    }
+  },
+  
   // Get total received quantity of purchase order
   getTotalReceiveQuantity: (state, getters) => (orderNumber) => {
     let order = getters.getOrderByNumber(orderNumber);
@@ -198,11 +215,12 @@ const mutations = {
         p.receives = [];
         p.adjustments = [];
       }
-
+      if (!p.receivedPercentage) {
+        p.receivedPercentage = 0;
+      }
       return p;
     });
-
-
+    
     log(state.purchaseOrders);
   },
 
@@ -243,6 +261,7 @@ const mutations = {
     });
     purchaseOrder.receives = [];
     purchaseOrder.adjustments = [];
+    purchaseOrder.receivedPercentage = 0;
 
     log(purchaseOrder);
     addPurchaseOrder(purchaseOrder);
@@ -274,6 +293,8 @@ const mutations = {
         toReceives = toReceives.map(t => {
           if (t.variantId === variant.variantId) {
             t.quantity -= variant.quantity;
+            t.receivedQuantity += variant.quantity;
+            t.toReceive = t.quantity;
           }
           return t;
         });
@@ -286,7 +307,20 @@ const mutations = {
 
     purchaseOrder.receives.push(received);
     purchaseOrder.toReceives = toReceives;
-
+    if (toReceives.length === 0) {
+      purchaseOrder.status = s.STATUS_RECEIVED;
+      purchaseOrder.isReceived = true;
+      purchaseOrder.allReceivedAt = currentDateTime();
+    }
+    
+    // Set received percentage
+    let receivedQuantity = purchaseOrder.receives.map(item => item.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
+      return sum + quantity;
+    })).reduce((sum, quantity) => {
+      return sum + quantity;
+    });
+    purchaseOrder.receivedPercentage = (receivedQuantity / purchaseOrder.quantity).toFixed(2) * 100;
+    
     updatePurchaseOrder(purchaseOrder);
   },
 
@@ -347,7 +381,7 @@ const actions = {
     log('adjust purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.ADJUST_PURCHASE, {purchaseOrder, adjustment});
-    commit(types.DECREASE_INCOMING_STOCK, adjustment.items);
+    // commit(types.DECREASE_INCOMING_STOCK, adjustment.items);
   }
 
 };

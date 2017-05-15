@@ -44,7 +44,16 @@
                 {{ props.item.status }}
               </v-chip>
             </td>
-            <td>{{ totalReceivedQuantity(props.item.orderNumber) }}</td>
+            <td>
+              <v-row>
+                <v-col xs9>
+                  <v-progress-linear v-model="props.item.receivedPercentage" height="10" info></v-progress-linear>
+                </v-col>
+                <v-col xs3 pt-2>
+                  {{ props.item.receivedPercentage }}%
+                </v-col>
+              </v-row>
+            </td>
             <td>{{ totalQuantity(props.item.orderNumber) }}</td>
             <td>{{ totalCost(props.item.orderNumber) }}</td>
             <td>{{ props.item.due }}</td>
@@ -69,6 +78,7 @@
       ...mapGetters({
         purchaseOrders: 'purchaseOrders',
         getSupplierName: 'getSupplierNameById',
+        getReceivedPercentage: 'receivedQuantityPercentage',
         totalReceivedQuantity: 'getTotalReceiveQuantity',
         totalQuantity: 'getTotalQuantity',
         totalCost: 'getTotalCost',
@@ -97,6 +107,10 @@
         let urlsParts = window.location.href.split('/');
         // Two conditions: inbound and purchasing
         this.isInbound = urlsParts.pop() === 'inbound';
+      },
+
+      receivedPercentage (orderNumber) {
+        return this.getReceivedPercentage(orderNumber);
       }
     },
 
@@ -107,7 +121,6 @@
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing')
       }
-
       this.items = this.purchaseOrders;
     },
 
@@ -164,8 +177,8 @@
           value: 'status',
           left: true
         }, {
-          text: 'Receive',
-          value: 'receive',
+          text: 'Received',
+          value: 'received',
           left: true
         }, {
           text: 'Quantity',
