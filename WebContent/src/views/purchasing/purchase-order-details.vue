@@ -104,15 +104,11 @@
           >
           </to-receive-items>
 
-          <v-divider class="items-divider"></v-divider>
-
           <received-items
               v-if="receivedItems.length > 0"
               :received-items="receivedItems"
           >
           </received-items>
-
-          <v-divider class="items-divider"></v-divider>
 
           <adjusted-items
               v-if="adjustedItems.length > 0"
@@ -338,7 +334,6 @@
           item.variants = this.fulfillVariants(item.variants);
           return item;
         });
-        console.log(this.toReceiveItems);
       },
 
       fulfillVariants (items, value=true) {

@@ -222,7 +222,7 @@
           tax: '7%',
           total: '',
           searchContent: ''
-        },
+        }
       }
     }
   }

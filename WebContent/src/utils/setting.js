@@ -69,3 +69,14 @@ export const ADJUST_REASONS = [
   'Wrong Item',
   'Quality Issue'
 ];
+
+export const INCREASE= 'increase'
+export const DECREASE = 'decrease'
+
+export const AVAILABLE = 'available'
+export const ONHAND = 'onHand'
+export const COMMITTED = 'committed'
+export const SOLD = 'sold'
+export const INCOMING = 'incoming'
+export const INBOUNDING = 'inbounding'
+export const OUTBOUNDING = 'outbounding'

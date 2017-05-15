@@ -34,7 +34,7 @@ function initPurchasing() {
       'receivedAt',
       'receivedQuantity',
       'quantity',
-      'price'
+      'costPrice'
     ],
     identifier: 'orderNumber',
     combinedKey: 'variants'

@@ -1,5 +1,7 @@
 <template>
   <v-container fluid>
+    <v-divider class="items-divider"></v-divider>
+
     <h6 class="item-header">Received Items</h6>
 
     <v-expansion-panel class="item-panel" expand>
@@ -112,4 +114,9 @@
   .item-header {
     margin: 30px 0 20px 30px;
   }
+
+  .items-divider {
+    margin: 30px 0 0 0;
+  }
+
 </style>

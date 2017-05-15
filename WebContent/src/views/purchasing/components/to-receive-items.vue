@@ -122,6 +122,7 @@
         });
 
         this.items = this.items.map(item => {
+          item = Object.assign({}, item);
           if (item.value) {
             let toReceive = parseInt(item.toReceive);
             item.quantity -= toReceive;

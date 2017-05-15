@@ -2,6 +2,7 @@
  * Created by zhuang_w-pc on 4/27/2017.
  */
 import * as types from '../mutation-types'
+import * as s from '../../utils/setting'
 import {
   newIdOfArray,
   currentDateTime,
@@ -100,6 +101,7 @@ const mutations = {
       variant.fullname = [product.sku, product.name, variant.name].join(" ");
       return variant;
     });
+    log('variants', state.variants);
   },
   
   [types.CREATE_PRODUCT] (state, product) {
@@ -170,30 +172,29 @@ const mutations = {
     addVariants(variants);
   },
 
-  [types.INCREASE_INCOMING_STOCK] (state, items) {
-    // let i;
-    // let length = items.length;
-    // let variants = state.variants.filter(variant => {
-    //   for (i = 0; i < length; i++) {
-    //     if (variant.id === items[i].id) {
-    //       return true;
-    //     }
-    //   }
-    //   return false;
-    // });
-
+  [types.UPDATE_STOCK] (state, { increaseAttr, decreaseAttr, items, itemAttr }) {
     Array.from(items).forEach(item => {
-      state.variants.find(variant => variant.id === item.id).quantity += parseInt(item.quantity);
+      state.variants.find(variant => variant.id === item.id)[increaseAttr] += parseInt(item[itemAttr]);
+      state.variants.find(variant => variant.id === item.id)[decreaseAttr] -= parseInt(item[itemAttr]);
+    });
+    updateVariants(state.variants);
+  },
+  
+  [types.INCREASE_STOCK] (state, { attribute, items }) {
+    Array.from(items).forEach(item => {
+      state.variants.find(variant => variant.id === item.id)[attribute] += parseInt(item.quantity);
     });
     updateVariants(state.variants);
   },
 
-  [types.INCREASE_INCOMING_STOCK] (state, items) {
+  [types.DECREASE_STOCK] (state, { attribute, items }) {
     Array.from(items).forEach(item => {
-      state.variants.find(variant => variant.id === item.id).quantity -= parseInt(item.quantity);
+      state.variants.find(variant => variant.id === item.id)[attribute] -= parseInt(item.quantity);
     });
     updateVariants(state.variants);
   },
+  
+  
 };
 
 const actions = {

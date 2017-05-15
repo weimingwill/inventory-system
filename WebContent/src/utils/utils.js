@@ -5,8 +5,8 @@ function newIdOfArray(array) {
   return Math.max.apply(Math, array.map(a => a.id)) + 1
 }
 
-function log(message) {
-  return console.log.apply(console, [message]);
+function log() {
+  return console.log.apply(console, arguments);
 }
 
 // Dates
@@ -112,7 +112,7 @@ function setSameAttributeValues(input, attributes) {
   let output = {};
   Array.from(attributes).forEach(attr => {
     if (input.hasOwnProperty(attr)) {
-      output[attr] = order[attr];
+      output[attr] = input[attr];
     } else {
       output[attr] = ""
     }

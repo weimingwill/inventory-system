@@ -255,6 +255,7 @@
           this.incomingStockLabels = this.supplierNames;
           this.stockChartData = this.supplierQuantity;
           this.costChartData = this.supplierCost;
+          console.log('costChart', this.costChartData)
         }
         this.setIncomingStock();
       }

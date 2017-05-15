@@ -8,6 +8,7 @@ import {
   getFormatedDate,
   getDateRangeOfWeek,
   setSameAttributeValues,
+  removeArrayDuplicates,
   log} from '../../utils/utils';
 
 import {
@@ -82,9 +83,11 @@ const getters = {
   
   // Get purchase order suppliers
   purchaseOrderSuppliers: (state, getters) => {
-    return state.purchaseOrders.filter(order => order.status === s.STATUS_PURCHASED).map(p => {
-      return getters.getSupplierById(p.supplierId);
-    })
+    let supplierIds = state.purchaseOrders.filter(order => order.status === s.STATUS_PURCHASED).map(p => p.supplierId);
+    supplierIds = removeArrayDuplicates(supplierIds);
+    return supplierIds.map(supplierId => {
+      return getters.getSupplierById(supplierId);
+    });
   },
 
   // Get purchase order variants of supplier
@@ -198,9 +201,9 @@ const mutations = {
       p.quantity = p.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
         return sum + quantity;
       });
-      
+
       p.cost = p.variants.map(variant => {
-        return variant.quantity * variant.price
+        return variant.quantity * variant.costPrice
       }).reduce((sum, cost) => {
         return sum + cost;
       });
@@ -215,13 +218,10 @@ const mutations = {
         p.receives = [];
         p.adjustments = [];
       }
-      if (!p.receivedPercentage) {
-        p.receivedPercentage = 0;
-      }
       return p;
     });
     
-    log(state.purchaseOrders);
+    log('purchaseOrders', state.purchaseOrders);
   },
 
   [types.ADD_PURCHASE] (state, {order, items}) {
@@ -245,6 +245,7 @@ const mutations = {
       let variant = {};
       variant.variantId = item.id;
       variant.quantity = parseInt(item.quantity);
+      variant.costPrice = item.costPrice;
       variant.adjustCost = "";
       variant.adjustQuantity = "";
       variant.adjustReason = "";
@@ -255,6 +256,13 @@ const mutations = {
     });
 
     purchaseOrder.variants = variants;
+    
+    purchaseOrder.cost = variants.map(v => {
+      return v.quantity * v.costPrice
+    }).reduce((sum, cost) => {
+      return sum + cost
+    });
+    
     purchaseOrder.toReceives = variants.slice(0).map(variant => {
       variant.toReceive = variant.quantity;
       return variant;
@@ -310,6 +318,7 @@ const mutations = {
     if (toReceives.length === 0) {
       purchaseOrder.status = s.STATUS_RECEIVED;
       purchaseOrder.isReceived = true;
+      purchaseOrder.received = true;
       purchaseOrder.allReceivedAt = currentDateTime();
     }
     
@@ -328,8 +337,6 @@ const mutations = {
     purchaseOrder.adjustments.push(adjustment);
     updatePurchaseOrder(purchaseOrder);
   }
-
-
 };
 
 const actions = {
@@ -362,8 +369,9 @@ const actions = {
       s.MODULE_WAREHOUSE, s.OBJ_WAREHOUSE, 'location', order.warehouse).id;
 
     // Todo calculate due date
-    commit(types.ADD_PURCHASE, {order, items});
-    commit(types.INCREASE_INCOMING_STOCK, items);
+    commit(types.ADD_PURCHASE, { order, items });
+    let attribute = s.INCOMING;
+    commit(types.INCREASE_STOCK, { attribute, items });
   },
   
   editPurchase ({commit}, {order, items}) {
@@ -375,13 +383,26 @@ const actions = {
     log('receive purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.RECEIVE_PURCHASE, {purchaseOrder, items});
+    let increaseAttr = s.INBOUNDING;
+    let decreaseAttr = s.INCOMING;
+    let itemAttr = 'toReceive';
+    commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
   },
 
   adjustPurchaseOrder ({commit, getters}, {order, adjustment}) {
     log('adjust purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.ADJUST_PURCHASE, {purchaseOrder, adjustment});
-    // commit(types.DECREASE_INCOMING_STOCK, adjustment.items);
+    
+    if (adjustment.status === s.PROCESS_CHECKING) {
+      let increaseAttr = s.INCOMING;
+      let decreaseAttr = s.INBOUNDING;
+      let items = adjustment.items;
+      let itemAttr = 'quantity';
+      commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
+      // Todo: send message to purchasing crew to create new order
+    }
+    
   }
 
 };
