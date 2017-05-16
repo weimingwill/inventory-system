@@ -63,9 +63,7 @@
         </td>
         <td>{{ item.costPrice }}</td>
         <td>{{ calculateTotalCost(item.toStore, item.costPrice) }}</td>
-        <td>
-
-        </td>
+        <td class="location-td">{{ item.location }}</td>
       </tr>
 
       <tr v-if="items.length === 0"><td colspan="100%" class="text-xs-center">All stored</td></tr>
@@ -98,7 +96,8 @@
       ...mapGetters ([
         'getVariantById',
         'variants',
-        'getVariantAllocations'
+        'getVariantAllocations',
+        'getVariantAllocationsShelves'
       ]),
     },
 
@@ -166,6 +165,7 @@
               this.item[key] = item[key]
             }
           });
+          this.item.location = this.getVariantAllocationsShelves(this.item.id, this.order.id);
           this.item.allocations = this.getVariantAllocations(this.item.id);
           this.items.push(Object.assign({}, this.item))
         });
@@ -173,7 +173,7 @@
 
       itemsAllocated () {
         this.$emit('storePurchase');
-      }
+      },
     },
 
     mounted() {
@@ -196,6 +196,7 @@
           available: 0,
           costPrice: 0,
           image: '',
+          location: '',
           allocations: [],
           value: false
         },
@@ -231,7 +232,7 @@
           left: true,
           sortable: false
         }, {
-          text: 'Location',
+          text: 'Shelf',
           left: true,
           sortable: false
         }],

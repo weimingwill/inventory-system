@@ -1,8 +1,12 @@
 <template>
-  <v-dialog v-model="isDialogOpen" fullscreen transition="v-dialog-bottom-transition" :overlay=false>
-    <v-btn primary light outline slot="activator" class="mt-4">
+  <v-dialog
+      v-model="isDialogOpen"
+      fullscreen
+      lazy
+      transition="v-dialog-bottom-transition" :overlay=false>
+    <v-btn primary light outline slot="activator" id="dialog-activate-btn" class="mt-4">
       <v-icon left>replay</v-icon>
-      Stock Allocation
+      Change Allocation
     </v-btn>
     <v-card>
       <v-card-row>
@@ -330,6 +334,7 @@
           this.allocateItems({
             variant: this.variant,
             quantity: this.quantity,
+            orderId: this.order.id,
             shelfName: this.shelfName,
             layerName: this.layerName,
             cellName: this.cellName

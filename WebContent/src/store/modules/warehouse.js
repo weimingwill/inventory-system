@@ -110,6 +110,13 @@ const getters = {
     let shelf = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'id', layer.shelfId);
     return [shelf.fullname, layer.fullname, cell.name].join(' - ');
   },
+
+  getShelfByCellId: (state, getters) => (cellId) => {
+    let cell = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELLS, 'id', cellId);
+    let layer = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'id', cell.layerId);
+    let shelf = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'id', layer.shelfId);
+    return shelf;
+  },
   
   getVariantAllocations: (state, getters) => (variantId) => {
     let allocations = [];
@@ -122,6 +129,18 @@ const getters = {
       allocations.push(allocation);
     });
     return allocations;
+  },
+
+  getVariantAllocationsShelves: (state, getters) => (variantId, purchaseOrderId) => {
+    let shelveNames = [];
+    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && cv.purchaseOrderId === purchaseOrderId);
+    Array.from(cellVariantJoins).forEach(cv => {
+      let shelf = getters.getShelfByCellId((cv.cellId));
+      if (!shelveNames.includes(shelf.name)) {
+        shelveNames.push(shelf.name);
+      }
+    });
+    return shelveNames.join(', ');
   }
 };
 
@@ -135,7 +154,7 @@ const mutations = {
     state.cellVariantJoins = warehouseObj.cellVariantJoins;
   },
   
-  [types.ALLOCATE_ITEMS] (state, { variant, quantity, cells, cellVariantJoins }) {
+  [types.ALLOCATE_ITEMS] (state, { variant, quantity, orderId, cells, cellVariantJoins }) {
     for (let i = 0; i < cells.length; i++) {
       let cell = cells[i];
       let cellVariantJoin = cellVariantJoins.find(cv => cv.variantId === variant.id && cv.cellId === cell.id);
@@ -144,6 +163,7 @@ const mutations = {
         cellVariantJoin = {
           cellId: cell.id,
           variantId: variant.id,
+          purchaseOrderId: orderId,
           quantity: 0
         };
         cellVariantJoins.push(cellVariantJoin);
@@ -173,7 +193,7 @@ const actions = {
     commit(types.INIT_WAREHOUSE)
   },
   
-  allocateItems ({ commit, getters }, { variant, quantity, shelfName, layerName='', cellName=''}) {
+  allocateItems ({ commit, getters }, { variant, quantity, orderId, shelfName, layerName='', cellName=''}) {
     log('allocate items');
     let cells = [];
     let cellVariantJoins = [];
@@ -190,7 +210,7 @@ const actions = {
       });
       cellVariantJoins = getters.getCellVariantByShelf(shelfName);
     }
-    commit(types.ALLOCATE_ITEMS, { variant, quantity, cells, cellVariantJoins })
+    commit(types.ALLOCATE_ITEMS, { variant, quantity, orderId, cells, cellVariantJoins })
   }
 };
 

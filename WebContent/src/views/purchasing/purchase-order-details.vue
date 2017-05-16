@@ -404,6 +404,7 @@
       initOrder (purchaseOrder) {
         // init order
         this.order = {
+          id: purchaseOrder.id,
           supplierId: purchaseOrder.supplierId,
           supplier: this.getSupplierById(purchaseOrder.supplierId).name,
           supplierContactId: purchaseOrder.supplierContactId,
@@ -459,6 +460,7 @@
       return {
         breadcrumbs: [],
         order: {
+          id: '',
           supplierId: '',
           supplier: '',
           contact: '',
