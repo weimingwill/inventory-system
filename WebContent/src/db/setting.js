@@ -4,3 +4,5 @@
 export const PRODUCTS = 'products';
 export const VARIANTS = 'variants';
 export const PURCHASE_ORDERS = 'purchaseOrders';
+export const WAREHOUSE = 'warehouses';
+export const CELL_VARAINT_JOINS = 'cellVariantJoins';

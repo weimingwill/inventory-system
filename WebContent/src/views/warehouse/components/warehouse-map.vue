@@ -1,0 +1,242 @@
+<template>
+  <v-card id="warehouse-card">
+    <v-toolbar class="warehouse-toolbar">
+      <v-toolbar-title class="warehouse-title text-xs-left">Warehouse Map</v-toolbar-title>
+
+      <v-select
+          v-if="showWarehouseSelection"
+          class="warehouse-select"
+          v-bind:items="warehouseLocations"
+          v-model="warehouse"
+          dark
+      />
+    </v-toolbar>
+
+    <v-container class="warehouse-container" fluid>
+      <v-row>
+        <v-col xs12>
+          <!-- Warehouse common shelves-->
+          <v-row v-for="(row, index) in commonShelves" :key="index">
+            <v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">
+              {{ shelf.name }}
+            </v-col>
+          </v-row>
+
+          <v-row class="bounding-area">
+            <!-- Inbound areas-->
+            <v-col xs2>
+              <v-row>
+                <v-col xs12 class="functional-area">
+                  Quality Check
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col xs12 class="functional-area">
+                  Receiving
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col offset-xs2 xs8 class="functional-area">
+                  Inbound Entrance
+                </v-col>
+              </v-row>
+            </v-col>
+
+            <v-col xs10 class="outbound-area">
+              <!-- Popular area and Cross docking area-->
+              <v-row>
+                <v-col xs1 v-for="shelf in popularShelves" :key="shelf.id" class="shelf">
+                  {{ shelf.name }}
+                </v-col>
+              </v-row>
+
+              <v-row>
+                <v-col xs1 v-for="shelf in crossDockingShelves" :key="shelf.id" class="shelf">
+                  {{ shelf.name }}
+                </v-col>
+              </v-row>
+
+              <!-- Outbound area -->
+              <v-row>
+                <v-col xs12>
+                  <v-row>
+                    <v-col offset-xs5 xs5 class="functional-area">
+                      Packing
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col offset-xs8 xs2 class="functional-area">
+                      Shipping
+                    </v-col>
+                  </v-row>
+
+                  <v-row>
+                    <v-col offset-xs8 xs2 class="functional-area">
+                      Outbound Entrance
+                    </v-col>
+                  </v-row>
+                </v-col>
+              </v-row>
+
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
+  </v-card>
+</template>
+
+<script>
+  import { mapGetters, mapActions } from 'vuex'
+
+  import * as s from '../../../utils/setting'
+
+  export default {
+    name: 'WarehouseMap',
+
+    props: ['selectedShelfName', 'showWarehouseSelection'],
+
+    watch: {
+      selectedShelfName () {
+        let shelf = this.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'fullname', this.selectedShelfName);
+        let $shelves = document.getElementsByClassName('shelf');
+        let i;
+
+        for (i = 0; i < $shelves.length; i++) {
+          if ($shelves[i].textContent.trim() === shelf.name) {
+            break;
+          }
+        }
+        $shelves[i].click();
+      }
+    },
+
+    computed: {
+      ...mapGetters([
+        'shelves',
+        'warehouseLocations',
+        'getObjectByAttr'
+      ]),
+
+      commonShelves() {
+        let rows = [];
+        let shelves = this.shelves.filter(shelve => shelve.name.charAt(0) === 'C');
+        let numOfRow = shelves.length / 10;
+        for (let i = 0; i < numOfRow; i++) {
+          let row = [];
+          for (let j = 0; j < 10; j++) {
+            row.push(this.shelves[i * 10 + j]);
+          }
+          rows.push(row);
+        }
+        return rows;
+      },
+
+      popularShelves() {
+        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'P');
+      },
+
+      crossDockingShelves() {
+        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'T');
+      }
+    },
+
+    methods: {
+      selectShelf: function (shelfName) {
+        let shelf = this.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'name', shelfName.trim());
+        this.shelfName = shelf.fullname;
+        this.$emit('shelfSelected', this.shelfName);
+      }
+    },
+
+    data() {
+      return {
+        breadcrumbs: [
+          { text: 'Warehouse' }
+        ],
+        warehouse: '',
+        shelfName: '',
+      }
+    },
+
+    created() {
+      this.$store.dispatch('initWarehouse');
+      this.$store.dispatch('initInventory');
+    },
+
+    mounted() {
+      this.warehouse = this.warehouseLocations[0];
+      let $shelves = document.getElementsByClassName('shelf');
+      Array.from($shelves).forEach($shelf => $shelf.addEventListener('click', () => {
+        // remove existing active class and add to the clicked one
+        let $activeShelves = document.getElementsByClassName('active');
+        if ($activeShelves.length > 0) {
+          Array.from($activeShelves).forEach($shelf => {
+            $shelf.className = $shelf.className.replace(/\bactive\b/,'');
+          })
+        }
+        $shelf.className += " active";
+        this.selectShelf($shelf.textContent);
+      }));
+    },
+
+    beforeDestory() {
+      let $shelves = document.getElementsByClassName('shelf');
+      Array.from($shelves).forEach($shelf => $shelf.removeEventListener('click', () => this.selectShelf($shelf.textContent)));
+    }
+  }
+</script>
+
+<style scoped>
+  .warehouse-container {
+    padding: 10px 20px 10px 20px;
+  }
+
+  #warehouse-card {
+    margin-bottom: 4rem;
+  }
+
+  .shelf, .functional-area {
+    border: 1px solid lightgray;
+    padding: 1rem;
+    margin: 0.5rem 0.65rem 0.5rem 0.65rem;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+  .shelf:hover {
+    background-color: lightgray;
+    cursor: pointer;
+  }
+
+  .active {
+    background-color: lightgray;
+  }
+
+  .shelf:active {
+    background-color: lightgray;
+  }
+
+  .bounding-area {
+    margin-top: 1rem;
+  }
+
+  .outbound-area {
+    padding-left: 2rem;
+    padding-right: 0;
+  }
+
+
+  /* Toolbar */
+  .warehouse-toolbar {
+    position: relative;
+    padding: 0 14px !important;
+  }
+
+  .warehouse-select {
+    margin: 16px 0 0 16px;
+  }
+</style>

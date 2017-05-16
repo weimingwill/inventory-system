@@ -57,7 +57,7 @@ function initWarehouses() {
     'shelves',
     'layers',
     'cells',
-    'cell-variant-join'
+    'cell-variant-joins'
   ];
 
   return init(objects);

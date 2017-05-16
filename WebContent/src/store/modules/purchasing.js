@@ -387,13 +387,25 @@ const mutations = {
     // init toStores
     Array.from(variants).forEach(variant => {
       variant.toStore = variant.quantity;
+      variant.toAllocate = variant.quantity;
       purchaseOrder.toStores.push(Object.assign({}, variant));
     });
     
     updatePurchaseOrder(purchaseOrder);
   },
   
-  [types.STORE_PURCHASE] (state, {purchaseOrder, items}) {
+  [types.ALLOCATE_PURCHASE] (state, { purchaseOrder, variant, quantity }) {
+    purchaseOrder.toStores = purchaseOrder.toStores.map(t => {
+      if (t.variantId === variant.id) {
+        t.toAllocate -= quantity;
+      }
+      return t;
+    });
+    
+    updatePurchaseOrder(purchaseOrder)
+  },
+  
+  [types.STORE_PURCHASE] (state, { purchaseOrder, items }) {
     let toStores = purchaseOrder.toStores;
     
     let stored = {};
@@ -498,6 +510,12 @@ const actions = {
     commit(types.CHECK_PURCHASE, {purchaseOrder, items});
   },
 
+  allocatePurchaseOrder ({commit, getters}, {order, variant, quantity}) {
+    log('allocate purchase order');
+    let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
+    commit(types.ALLOCATE_PURCHASE, {purchaseOrder, variant, quantity});
+  },
+  
   storePurchaseOrder ({commit, getters}, {order, items}) {
     log('store purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);

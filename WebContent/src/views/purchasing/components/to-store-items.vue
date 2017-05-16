@@ -6,12 +6,24 @@
         <h6 class="item-header">Not Yet Stored Items</h6>
       </v-col>
       <v-col xs6 class="text-xl-right">
-        <v-btn light success outline class="mt-4"
-               :disabled="!canStore"
-               @click.native="storeSelected"
-        >
-          Store Selected
-        </v-btn>
+        <v-row>
+          <v-col xs4 offset-xs5>
+            <warehouse-map-dialog
+              :variants="items"
+              :order="order"
+              v-on:itemsAllocated="itemsAllocated"
+            >
+            </warehouse-map-dialog>
+          </v-col>
+          <v-col xs2>
+            <v-btn light success outline class="mt-4"
+                   :disabled="!canStore"
+                   @click.native="storeSelected"
+            >
+              Store Selected
+            </v-btn>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
 
@@ -51,6 +63,9 @@
         </td>
         <td>{{ item.costPrice }}</td>
         <td>{{ calculateTotalCost(item.toStore, item.costPrice) }}</td>
+        <td>
+
+        </td>
       </tr>
 
       <tr v-if="items.length === 0"><td colspan="100%" class="text-xs-center">All stored</td></tr>
@@ -62,12 +77,16 @@
 <script>
   import { mapGetters, mapActions } from 'vuex'
   import { calculateCost, calculateStockAft } from '../../../utils/utils'
-
+  import WarehouseMapDialog from './warehouse-map-dialog.vue'
 
   export default {
     name: 'ToStoreItems',
 
     props: ['toStoreItems', 'order'],
+
+    components: {
+      WarehouseMapDialog
+    },
 
     watch: {
       toStoreItems() {
@@ -78,7 +97,8 @@
     computed: {
       ...mapGetters ([
         'getVariantById',
-        'variants'
+        'variants',
+        'getVariantAllocations'
       ]),
     },
 
@@ -139,12 +159,20 @@
       },
 
       setData() {
+        this.items = [];
         Array.from(this.toStoreItems).forEach(item => {
           Object.keys(this.item).forEach(key => {
-            this.item[key] = item[key]
+            if (item.hasOwnProperty(key)) {
+              this.item[key] = item[key]
+            }
           });
+          this.item.allocations = this.getVariantAllocations(this.item.id);
           this.items.push(Object.assign({}, this.item))
         });
+      },
+
+      itemsAllocated () {
+        this.$emit('storePurchase');
       }
     },
 
@@ -164,9 +192,11 @@
           quantity: 0,
           toStore: 0,
           storedQuantity: 0,
+          toAllocate: 0,
           available: 0,
           costPrice: 0,
           image: '',
+          allocations: [],
           value: false
         },
         canStore: true,

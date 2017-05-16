@@ -11,6 +11,8 @@ import {
   initWarehouses
 } from '../../db/init-data'
 
+import { updateCellVariantJoins } from '../../db/warehouse'
+
 import * as s from '../../utils/setting'
 
 const state = {
@@ -18,7 +20,7 @@ const state = {
   shelves: [],
   layers: [],
   cells: [],
-  cellVariantJoin: []
+  cellVariantJoins: []
 };
 
 const getters = {
@@ -36,19 +38,91 @@ const getters = {
     return getters.getObjectListByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'shelfId', shelf.id);
   },
   
-  getCells: (state, getters) => (layerName, layers) => {
+  getCells: (state, getters) => (shelfName, layerName) => {
+    let layers = getters.getLayers(shelfName);
     let layer = layers.find(layer => layer.fullname === layerName);
     return getters.getObjectListByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELLS, 'layerId', layer.id)
   },
   
-  getCellVariantJoinByCell: (state, getters) => (cellName, cells) => {
-    let cell = cells.find(cell => cell.name === cellName);
-    console.log(cells);
-    return state.cellVariantJoin.filter(cv => cv.cellId === cell.id).map(c => {
-      c.cellName = cellName;
-      return c;
+  getCell: (state, getters) => (shelfName, layerName, cellName) => {
+    let cells = getters.getCells(shelfName, layerName);
+    return cells.find(c => c.name === cellName);
+  },
+  
+  getLayerCapacity: (state, getters) => (shelfName, layerName) => {
+    let cells = getters.getCells(shelfName, layerName);
+    return cells.map(cell => cell.capacity).reduce((sum, capacity) => {
+      return sum + capacity;
     });
   },
+  
+  getShelfCapacity: (state, getters) => (shelfName) => {
+    let layers = getters.getLayers(shelfName);
+    return layers.map(layer => getters.getLayerCapacity(shelfName, layer.fullname)).reduce((sum, capacity) => {
+      return sum + capacity;
+    })
+  },
+  
+  getCellVariantByShelf: (state, getters) => (shelfName) => {
+    let layers = getters.getLayers(shelfName);
+    let cellVariantJoins = [];
+    for (let i = 0; i < layers.length; i++) {
+      let cellVariantJoin = getters.getCellVariantJoinByLayer(shelfName, layers[i].fullname);
+      cellVariantJoins = cellVariantJoins.concat(cellVariantJoin);
+    }
+    return cellVariantJoins;
+  },
+  
+  getCellVariantJoinByLayer: (state, getters) => (shelfName, layerName) => {
+    let cells = getters.getCells(shelfName, layerName);
+    let cellVariantJoins = [];
+    for (let i = 0; i < cells.length; i++) {
+      let cellVariantJoin = getters.getCellVariantJoinByCell(shelfName, layerName, cells[i].name);
+      cellVariantJoins = cellVariantJoins.concat(cellVariantJoin);
+    }
+    return cellVariantJoins;
+  },
+  
+  getCellVariantJoinByCell: (state, getters) => (shelfName, layerName, cellName) => {
+    let cell = getters.getCell(shelfName, layerName, cellName);
+    let cellVariantJoins = getters.getObjectListByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELL_VARIANT, 'cellId', cell.id);
+    cellVariantJoins = cellVariantJoins.map(cv => {
+      cv.cellName = cell.name;
+      cv.layerName = layerName;
+      cv.shelfName = shelfName;
+      return cv;
+    });
+    return getters.fulfillCellVariantJoins(cellVariantJoins);
+  },
+  
+  fulfillCellVariantJoins: (state, getters) => (cellVariantJoins) => {
+    return cellVariantJoins.map(cv => {
+      let variant = getters.getVariantById(cv.variantId);
+      cv.fullname = variant.fullname;
+      cv.image = variant.image;
+      return cv
+    });
+  },
+  
+  getLocationByCellId: (state, getters) => (cellId) => {
+    let cell = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELLS, 'id', cellId);
+    let layer = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'id', cell.layerId);
+    let shelf = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'id', layer.shelfId);
+    return [shelf.fullname, layer.fullname, cell.name].join(' - ');
+  },
+  
+  getVariantAllocations: (state, getters) => (variantId) => {
+    let allocations = [];
+    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId);
+    Array.from(cellVariantJoins).forEach(cv => {
+      let allocation = {
+        location: getters.getLocationByCellId(cv.cellId),
+        quantity: cv.quantity
+      };
+      allocations.push(allocation);
+    });
+    return allocations;
+  }
 };
 
 const mutations = {
@@ -58,8 +132,39 @@ const mutations = {
     state.shelves = warehouseObj.shelves;
     state.layers = warehouseObj.layers;
     state.cells = warehouseObj.cells;
-    state.cellVariantJoin = warehouseObj.cellVariantJoin;
+    state.cellVariantJoins = warehouseObj.cellVariantJoins;
   },
+  
+  [types.ALLOCATE_ITEMS] (state, { variant, quantity, cells, cellVariantJoins }) {
+    for (let i = 0; i < cells.length; i++) {
+      let cell = cells[i];
+      let cellVariantJoin = cellVariantJoins.find(cv => cv.variantId === variant.id && cv.cellId === cell.id);
+      
+      if (!cellVariantJoin) {
+        cellVariantJoin = {
+          cellId: cell.id,
+          variantId: variant.id,
+          quantity: 0
+        };
+        cellVariantJoins.push(cellVariantJoin);
+      }
+      
+      let capacity = cell.capacity - cellVariantJoin.quantity;
+      if (capacity > 0 && quantity >= capacity) {
+        quantity -= capacity;
+        cellVariantJoin.quantity += capacity;
+      } else if (capacity > 0 && quantity < capacity) {
+        quantity = 0;
+        cellVariantJoin.quantity += quantity;
+      }
+      
+      if (quantity === 0) {
+        break;
+      }
+    }
+    
+    updateCellVariantJoins(cellVariantJoins);
+  }
 };
 
 const actions = {
@@ -68,6 +173,25 @@ const actions = {
     commit(types.INIT_WAREHOUSE)
   },
   
+  allocateItems ({ commit, getters }, { variant, quantity, shelfName, layerName='', cellName=''}) {
+    log('allocate items');
+    let cells = [];
+    let cellVariantJoins = [];
+    if (shelfName && layerName && cellName) {
+      cells.push(getters.getCell(shelfName, layerName, cellName));
+      cellVariantJoins = getters.getCellVariantJoinByCell(shelfName, layerName, cellName)
+    } else if (shelfName && layerName) {
+      cells = getters.getCells(shelfName, layerName);
+      cellVariantJoins = getters.getCellVariantJoinByLayer(shelfName, layerName);
+    } else if (shelfName) {
+      let layers = getters.getLayers(shelfName);
+      Array.from(layers).forEach(layer => {
+        cells = cells.concat(getters.getCells(shelfName, layer.fullname))
+      });
+      cellVariantJoins = getters.getCellVariantByShelf(shelfName);
+    }
+    commit(types.ALLOCATE_ITEMS, { variant, quantity, cells, cellVariantJoins })
+  }
 };
 
 export default {

@@ -80,15 +80,22 @@ const getters = {
     // Todo: find all related instead of one
     return filteredVariants.find(v => v.size === size && v.color === color).id;
     // return filteredVariants.find(v => v.size === size && v.color === color).map(v => v.id);
-  }
+  },
   
-  //
-  // itemNames: (state, getters) => {
-  //   return state.variants.map(variant => {
-  //     let product = getters.getProductById(variant.productId);
-  //     product.sku + " " + product.name + " " + variant.name;
-  //   })
-  // }
+  fulfillVariants: (state, getters) => (items, value=true) => {
+    return items.map(item => {
+      Object.assign(item, getters.getVariantById(item.variantId));
+      item.value = value;
+      return item;
+    });
+  },
+  
+  fulfillNestedVariants: (state, getters) => (items) => {
+    return items.map(item => {
+      item.variants = getters.fulfillVariants(item.variants);
+      return item;
+    });
+  },
 };
 
 const mutations = {

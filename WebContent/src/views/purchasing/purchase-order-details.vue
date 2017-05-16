@@ -286,7 +286,9 @@
         'warehouseLocations',
         'getNewOrderNumber',
         'getVariantById',
-        'getSupplierById'
+        'getSupplierById',
+        'fulfillVariants',
+        'fulfillNestedVariants'
       ]),
       supplierContacts() {
         if (this.order.supplier) {
@@ -386,7 +388,7 @@
       reloadData () {
         // Todo: optimize the function by set reloading in condition: receive, check, adjust ...
         console.log('reload data');
-        this.$store.dispatch('initInventory');
+        this.$store.dispatch('initWarehouse');
         this.$store.dispatch('initInventory');
         this.$store.dispatch('initPurchasing');
 
@@ -450,22 +452,7 @@
           default:
             this.step = 1;
         }
-      },
-
-      fulfillVariants (items, value=true) {
-        return items.map(item => {
-          Object.assign(item, this.getVariantById(item.variantId));
-          item.value = value;
-          return item;
-        });
-      },
-
-      fulfillNestedVariants (items) {
-        return items.map(item => {
-          item.variants = this.fulfillVariants(item.variants);
-          return item;
-        });
-      },
+      }
     },
 
     data () {
@@ -505,7 +492,6 @@
     },
 
     created() {
-      this.$store.dispatch('initWarehouse');
       this.$store.dispatch('initSupplier');
       this.init();
     },
