@@ -1,6 +1,9 @@
 <template>
   <v-container fluid class="detail-container">
-    <v-row><p class="detail-content">Total Units: {{ totalUnits }}</p></v-row>
+    <v-row>
+      <v-col xs6>Total Units: </v-col>
+      <v-col xs6 class="text-xs-right">{{ totalUnits }}</v-col>
+    </v-row>
     <v-row><v-divider class="detail-divider"></v-divider></v-row>
 
     <!--<v-row><p class="detail-content">Sub Total: </p></v-row>-->
@@ -9,10 +12,17 @@
     <!--<v-row><p class="detail-content">Tax(7%): </p></v-row>-->
     <!--<v-row><v-divider class="detail-divider"></v-divider></v-row>-->
 
-    <v-row><p class="detail-content">Total Cost: ${{ totalCost }}</p></v-row>
+    <v-row>
+      <v-col xs6>Total Cost: </v-col>
+      <v-col xs6 class="text-xs-right">${{ totalCost }}</v-col>
+    </v-row>
     <v-row><v-divider class="detail-divider"></v-divider></v-row>
 
-    <v-row><p class="detail-content">*Currency: USD</p></v-row>
+    <v-row>
+      <v-col xs12>
+        *Currency: USD
+      </v-col>
+    </v-row>
 
     <v-row class="btn-row">
       <v-btn v-if="isCreate" class="fn-btn" success light @click.native="createOrder">Create</v-btn>
@@ -96,6 +106,7 @@
   }
 
   .row {
+    font-size: 15px;
     font-weight: bold;
   }
 
@@ -105,10 +116,14 @@
   }
 
   .btn-row:first-of-type {
-    margin-top: 20px;
+    margin-top: 30px;
   }
 
   .fn-btn {
     width: 100%;
+  }
+
+  .detail-divider {
+    margin: 15px 0 15px 0;
   }
 </style>

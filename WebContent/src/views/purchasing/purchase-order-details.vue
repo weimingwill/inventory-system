@@ -93,7 +93,7 @@
       </v-row>
     </v-card>
     <v-row>
-      <v-col xs10>
+      <v-col xs12>
         <v-container fluid id="items-container">
 
           <v-stepper v-model="step" v-if="isInbound">
@@ -207,8 +207,10 @@
 
         </v-container>
       </v-col>
-      <v-col xs2>
-        <v-card id="order-summary-card">
+    </v-row>
+    <v-row>
+      <v-col xs2 offset-xs10>
+        <v-card id="order-summary-card" class="elevation-0">
           <purchase-summary
               :ordered-items="orderedItems"
               :order-details="order"
@@ -220,7 +222,6 @@
           >
           </purchase-summary>
         </v-card>
-
       </v-col>
     </v-row>
   </div>
