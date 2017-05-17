@@ -11,17 +11,12 @@
             hide-details
             v-model="searchContent"
         ></v-text-field>
-        <v-btn outline success dark to="/purchaseOrders/create/purchaseOrderDetails" router>
-          <v-icon left>add</v-icon>
-          New Purchase Order
-        </v-btn>
       </v-card-title>
     </div>
-    <header></header>
     <purchase-order-content
         :search-content="searchContent"
-        :purchaseOrders="purchaseOrders"
-        :statuses="getInboundStatuses"
+        :purchaseOrders="toReceiveOrders"
+        :statuses="statuses"
     ></purchase-order-content>
   </div>
 
@@ -30,12 +25,14 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import PurchaseOrderContent from './components/purchase-orders-content.vue'
+  import PurchaseOrderContent from '../purchasing/components/purchase-orders-content.vue'
+
   import { mapGetters, mapActions } from 'vuex'
+  import * as s from '../../utils/setting'
 
   export default {
 
-    name: 'purchaseOrder',
+    name: 'Receiving',
 
     components: {
       Breadcrumbs,
@@ -45,16 +42,21 @@
     computed: {
       ...mapGetters([
         'purchaseOrders',
-        'getInboundStatuses'
-      ])
+      ]),
+
+      toReceiveOrders() {
+        return this.purchaseOrders.filter(p => p.status === s.STATUS_PURCHASED);
+      }
     },
-    
+
     data () {
       return {
         breadcrumbs: [
-          { text: 'Purchasing Orders' }
+          { text: 'Inbound' },
+          { text: 'Receiving' }
         ],
         searchContent: '',
+        statuses: ['To Receive']
       }
     },
 

@@ -8,6 +8,7 @@ import purchasing from './purchasing'
 import warehouse from './warehouse'
 import supplier from './supplier'
 import stockControl from './stock-control'
+import inbound from './inbound'
 
 // show: meta.label -> name
 // name: component name
@@ -18,6 +19,7 @@ const state = {
     inventoryControl,
     purchasing,
     stockControl,
+    inbound,
     warehouse,
     supplier,
   ]

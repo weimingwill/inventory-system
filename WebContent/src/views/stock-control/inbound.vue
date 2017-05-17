@@ -13,7 +13,11 @@
         ></v-text-field>
       </v-card-title>
     </div>
-    <purchase-order-content :search-content="searchContent"></purchase-order-content>
+    <purchase-order-content
+        :search-content="searchContent"
+        :purchaseOrders="purchaseOrders"
+        :statuses="getInboundStatuses"
+    ></purchase-order-content>
   </div>
 
 
@@ -22,6 +26,7 @@
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
   import PurchaseOrderContent from '../purchasing/components/purchase-orders-content.vue'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
 
@@ -30,6 +35,13 @@
     components: {
       Breadcrumbs,
       PurchaseOrderContent
+    },
+
+    computed: {
+      ...mapGetters([
+        'purchaseOrders',
+        'getInboundStatuses'
+      ])
     },
 
     data () {

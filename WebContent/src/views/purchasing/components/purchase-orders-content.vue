@@ -12,6 +12,7 @@
         v-for="status in statuses" :key="status"
         v-bind:id="'tab-' + status"
         slot="content"
+        class="tab-content"
     >
       <v-card>
         <v-data-table
@@ -74,17 +75,19 @@
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
-    props: ['searchContent'],
+    name: 'PurchaseOrderDetails',
+
+    props: ['searchContent', 'purchaseOrders', 'statuses'],
 
     computed: {
       ...mapGetters({
-        purchaseOrders: 'purchaseOrders',
+//        purchaseOrders: 'purchaseOrders',
         getSupplierName: 'getSupplierNameById',
         getReceivedPercentage: 'receivedQuantityPercentage',
         totalReceivedQuantity: 'getTotalReceiveQuantity',
         totalQuantity: 'getTotalQuantity',
         totalCost: 'getTotalCost',
-        statuses: 'getInboundStatuses'
+//        statuses: 'getInboundStatuses'
       })
     },
 
@@ -231,5 +234,15 @@
 
   table tbody tr:hover td {
     cursor: pointer !important;
+  }
+
+  .table__overflow {
+    margin-bottom: 12rem !important;
+  }
+</style>
+
+<style>
+  .tabs__items{
+    border: none !important;
   }
 </style>
