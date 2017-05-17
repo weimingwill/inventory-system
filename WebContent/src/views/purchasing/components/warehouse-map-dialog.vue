@@ -26,7 +26,14 @@
           <v-col xs3>
             <v-card>
               <v-container id="variant-container" fluid>
-                <p class="text-xs-left"><b>Allocated Variants</b></p>
+                <v-row>
+                  <v-col xs6>
+                    <p class="text-xs-left allocate-subheader"><b>Allocated Variants</b></p>
+                  </v-col>
+                  <v-col xs6>
+                    <!--<v-btn error small dark class="text-xs-right">Reset All Locations</v-btn>-->
+                  </v-col>
+                </v-row>
                 <v-expansion-panel expand class="variant-panel">
                   <v-expansion-panel-content v-for="(variant,i) in variants" :key="i">
                     <div slot="header">
@@ -40,6 +47,7 @@
                       </v-row>
                     </div>
                     <v-card>
+                      <!--<v-btn error small dark outline class="ml-3">Reset Locations</v-btn>-->
                       <v-data-table
                           v-bind:headers="variantHeaders"
                           v-model="variant.allocations"
@@ -55,6 +63,8 @@
                     </v-card>
                   </v-expansion-panel-content>
                 </v-expansion-panel>
+
+                <p class="text-xs-left allocate-subheader"><b>To Allocate</b></p>
 
                 <variant-selection-list
                     :variants="selectionVariants"
@@ -121,8 +131,17 @@
                     {{ warningMsg }}
                 </v-alert>
 
+                <v-text-field
+                    v-if="shelfName || layerName || cellName"
+                    append-icon="search"
+                    label="Search"
+                    single-line
+                    hide-details
+                    v-model="searchVariantTable"
+                ></v-text-field>
                 <v-data-table
                     class="variant-table"
+                    v-bind:search="searchVariantTable"
                     v-if="shelfName || layerName || cellName"
                     v-bind:headers="allocationHeaders"
                     v-model="cellVariantJoins"
@@ -172,6 +191,10 @@
     },
 
     watch: {
+      order() {
+        this.resetCellVariantJoins();
+      },
+
       variant() {
         this.resetAlert();
       },
@@ -243,7 +266,7 @@
 
       selectionVariants () {
         return this.variants.filter(v => v.toAllocate > 0);
-      }
+      },
     },
 
     methods: {
@@ -289,8 +312,23 @@
         return 0;
       },
 
+      resetCellVariantJoins() {
+        if (this.shelfName && this.layerName && this.cellName) {
+          this.cellVariantJoins = this.getCellVariantJoinByCell(this.shelfName, this.layerName, this.cellName);
+        } else if (this.shelfName && this.layerName) {
+          this.cellVariantJoins = this.getCellVariantJoinByLayer(this.shelfName, this.layerName)
+        } else if (this.shelfName) {
+          this.cellVariantJoins = this.getCellVariantByShelf(this.shelfName);
+        } else {
+          this.cellVariantJoins = []
+        }
+      },
+
       allocate () {
+        this.resetAlert();
+        this.quantity = parseInt(this.quantity);
         let canAllocate = true;
+
 
         if (Object.keys(this.variant).length === 0) {
           this.warningMsgs.push('Please select a variant');
@@ -298,7 +336,7 @@
           canAllocate = false;
         }
 
-        if (!this.quantity || parseInt(this.quantity) === 0) {
+        if (isNaN(this.quantity) || this.quantity === 0) {
           this.warningMsgs.push('Please set allocation quantity');
           this.warningAlert = true;
           canAllocate = false;
@@ -351,7 +389,6 @@
           this.successAlert = true;
         }
       },
-
     },
 
     data () {
@@ -364,12 +401,13 @@
         cellName: '',
         layers: [],
         cells: [],
+        cellVariantJoins: [],
+        searchVariantTable: '',
         successMsgs: [],
         warningMsgs: [],
         errorMsgs: [],
         warningMsg: '',
         errorMsg: '',
-        cellVariantJoins: [],
         successAlert: false,
         warningAlert: false,
         errorAlert: false,
@@ -436,9 +474,15 @@
     padding: 10px 10px;
   }
 
+  .allocate-subheader {
+    margin-top: 0.75rem;
+    margin-left: 0.5rem;
+    font-size: 15px;
+  }
+
   .variant-panel {
     margin-top: 1rem;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
 
   .variant-table table tbody tr td {
@@ -446,6 +490,10 @@
     padding-right: 5px !important;
   }
 
+  .variant-table table tbody tr td:first-child {
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
 </style>
 
 <style>

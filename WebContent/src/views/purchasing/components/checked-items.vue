@@ -69,17 +69,15 @@
     data() {
       return {
         headers: [{
-          text: '',
+          text: ''
         },{
-          text: 'Item Name',
+          text: 'Item Name'
         }, {
-          text: 'Quantity',
+          text: 'Quantity'
         }, {
-          text: 'Unit Cost',
+          text: 'Unit Cost'
         }, {
-          text: 'Total Cost($)',
-        }, {
-          text: 'Location'
+          text: 'Total Cost($)'
         }]
       }
     }

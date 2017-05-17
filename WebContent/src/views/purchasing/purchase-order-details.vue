@@ -203,7 +203,11 @@
           >
           </adjusted-items>
 
-          <order-items :ordered-items="orderedItems" :isView="isView"></order-items>
+          <order-items
+              :ordered-items="orderedItems"
+              :isView="isView"
+              :order="order"
+          ></order-items>
 
         </v-container>
       </v-col>

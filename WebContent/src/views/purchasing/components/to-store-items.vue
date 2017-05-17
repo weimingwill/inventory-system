@@ -61,6 +61,7 @@
               max="item.quantity"
           ></v-text-field>
         </td>
+        <td>{{ item.toAllocate }}</td>
         <td>{{ item.costPrice }}</td>
         <td>{{ calculateTotalCost(item.toStore, item.costPrice) }}</td>
         <td class="location-td">{{ item.location }}</td>
@@ -166,7 +167,7 @@
             }
           });
           this.item.location = this.getVariantAllocationsShelves(this.item.id, this.order.id);
-          this.item.allocations = this.getVariantAllocations(this.item.id);
+          this.item.allocations = this.getVariantAllocations(this.item.id, this.order.id);
           this.items.push(Object.assign({}, this.item))
         });
       },
@@ -223,6 +224,10 @@
           text: 'To Store',
           left: true,
           sortable: false
+        },{
+          text: 'To Allocate Location',
+          left: true,
+          sortable: false
         }, {
           text: 'Unit Cost',
           left: true,
@@ -232,7 +237,7 @@
           left: true,
           sortable: false
         }, {
-          text: 'Shelf',
+          text: 'Shelves',
           left: true,
           sortable: false
         }],

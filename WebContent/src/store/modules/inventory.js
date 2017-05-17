@@ -46,6 +46,11 @@ const getters = {
     return state.variants.filter(v => v.productId === productId);
   },
   
+  getTypeOfVariant: (state, getters) => (variant) => {
+    let product = getters.getProductById(variant.productId);
+    return product.type;
+  },
+  
   variantsOfType: state => (type) => {
     return state.variants.filter(v => {
       let product = state.products.find(p => p.id === v.productId);

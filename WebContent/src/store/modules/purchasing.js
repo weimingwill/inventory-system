@@ -539,7 +539,6 @@ const actions = {
       commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
       // Todo: send message to purchasing crew to create new order
     }
-    
   }
 
 };

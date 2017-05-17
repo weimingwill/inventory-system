@@ -2,7 +2,7 @@
  * Created by zhuang_w-pc on 5/2/2017.
  */
 export const MODULE_INVENTORY = 'inventory';
-export const OBJ_PRODUCT = 'products';
+export const OBJ_PRODUCTS = 'products';
 export const OBJ_VARIANTS = 'variants';
 
 export const MODULE_SUPPLIER = 'supplier';

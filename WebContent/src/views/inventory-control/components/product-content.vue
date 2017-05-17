@@ -153,13 +153,19 @@
   }
 </script>
 
-<style>
-  .tabs__items {
-    border-bottom-width: 0;
+<style scoped>
+  table tbody tr td:hover {
+    cursor: pointer;
   }
 
   .datatable {
     margin-bottom: 200px;
+  }
+</style>
+
+<style>
+  .tabs__items {
+    border-bottom-width: 0;
   }
 
   .rotate-180 {
@@ -181,9 +187,5 @@
 
   .image-td {
     padding-top: 6px!important;
-  }
-
-  table tbody tr:hover {
-    cursor: pointer;
   }
 </style>

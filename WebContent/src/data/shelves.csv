@@ -1,79 +1,79 @@
-id,warehouseId,name,fullname,layers
-1,1,C1,Common Shelf 1,5
-2,1,C2,Common Shelf 2,5
-3,1,C3,Common Shelf 3,5
-4,1,C4,Common Shelf 4,5
-5,1,C5,Common Shelf 5,5
-6,1,C6,Common Shelf 6,5
-7,1,C7,Common Shelf 7,5
-8,1,C8,Common Shelf 8,5
-9,1,C9,Common Shelf 9,5
-10,1,C10,Common Shelf 10,5
-11,1,C11,Common Shelf 11,5
-12,1,C12,Common Shelf 12,5
-13,1,C13,Common Shelf 13,5
-14,1,C14,Common Shelf 14,5
-15,1,C15,Common Shelf 15,5
-16,1,C16,Common Shelf 16,5
-17,1,C17,Common Shelf 17,5
-18,1,C18,Common Shelf 18,5
-19,1,C19,Common Shelf 19,5
-20,1,C20,Common Shelf 20,5
-21,1,C21,Common Shelf 21,5
-22,1,C22,Common Shelf 22,5
-23,1,C23,Common Shelf 23,5
-24,1,C24,Common Shelf 24,5
-25,1,C25,Common Shelf 25,5
-26,1,C26,Common Shelf 26,5
-27,1,C27,Common Shelf 27,5
-28,1,C28,Common Shelf 28,5
-29,1,C29,Common Shelf 29,5
-30,1,C30,Common Shelf 30,5
-31,1,C31,Common Shelf 31,5
-32,1,C32,Common Shelf 32,5
-33,1,C33,Common Shelf 33,5
-34,1,C34,Common Shelf 34,5
-35,1,C35,Common Shelf 35,5
-36,1,C36,Common Shelf 36,5
-37,1,C37,Common Shelf 37,5
-38,1,C38,Common Shelf 38,5
-39,1,C39,Common Shelf 39,5
-40,1,C40,Common Shelf 40,5
-41,1,C41,Common Shelf 41,5
-42,1,C42,Common Shelf 42,5
-43,1,C43,Common Shelf 43,5
-44,1,C44,Common Shelf 44,5
-45,1,C45,Common Shelf 45,5
-46,1,C46,Common Shelf 46,5
-47,1,C47,Common Shelf 47,5
-48,1,C48,Common Shelf 48,5
-49,1,C49,Common Shelf 49,5
-50,1,C50,Common Shelf 50,5
-51,1,C51,Common Shelf 51,5
-52,1,C52,Common Shelf 52,5
-53,1,C53,Common Shelf 53,5
-54,1,C54,Common Shelf 54,5
-55,1,C55,Common Shelf 55,5
-56,1,C56,Common Shelf 56,5
-57,1,C57,Common Shelf 57,5
-58,1,C58,Common Shelf 58,5
-59,1,C59,Common Shelf 59,5
-60,1,C60,Common Shelf 60,5
-61,1,P1,Popular Shelf 1,5
-62,1,P2,Popular Shelf 2,5
-63,1,P3,Popular Shelf 3,5
-64,1,P4,Popular Shelf 4,5
-65,1,P5,Popular Shelf 5,5
-66,1,P6,Popular Shelf 6,5
-67,1,P7,Popular Shelf 7,5
-68,1,P8,Popular Shelf 8,5
-69,1,P9,Popular Shelf 9,5
-70,1,T1,Cross Docking Shelf 1,5
-71,1,T2,Cross Docking Shelf 2,5
-72,1,T3,Cross Docking Shelf 3,5
-73,1,T4,Cross Docking Shelf 4,5
-74,1,T5,Cross Docking Shelf 5,5
-75,1,T6,Cross Docking Shelf 6,5
-76,1,T7,Cross Docking Shelf 7,5
-77,1,T8,Cross Docking Shelf 8,5
-78,1,T9,Cross Docking Shelf 9,5
+id,warehouseId,name,fullname,layers,category,distance,supplierId
+1,1,C1,Common Shelf 1,5,common,8,1
+2,1,C2,Common Shelf 2,5,common,8,1
+3,1,C3,Common Shelf 3,5,common,8,1
+4,1,C4,Common Shelf 4,5,common,8,2
+5,1,C5,Common Shelf 5,5,common,8,2
+6,1,C6,Common Shelf 6,5,common,8,2
+7,1,C7,Common Shelf 7,5,common,8,3
+8,1,C8,Common Shelf 8,5,common,8,3
+9,1,C9,Common Shelf 9,5,common,8,3
+10,1,C10,Common Shelf 10,5,adjusted,50,
+11,1,C11,Common Shelf 11,5,common,7,1
+12,1,C12,Common Shelf 12,5,common,7,1
+13,1,C13,Common Shelf 13,5,common,7,1
+14,1,C14,Common Shelf 14,5,common,7,2
+15,1,C15,Common Shelf 15,5,common,7,2
+16,1,C16,Common Shelf 16,5,common,7,2
+17,1,C17,Common Shelf 17,5,common,7,3
+18,1,C18,Common Shelf 18,5,common,7,3
+19,1,C19,Common Shelf 19,5,common,7,3
+20,1,C20,Common Shelf 20,5,adjusted,50,
+21,1,C21,Common Shelf 21,5,common,6,1
+22,1,C22,Common Shelf 22,5,common,6,1
+23,1,C23,Common Shelf 23,5,common,6,1
+24,1,C24,Common Shelf 24,5,common,6,2
+25,1,C25,Common Shelf 25,5,common,6,2
+26,1,C26,Common Shelf 26,5,common,6,2
+27,1,C27,Common Shelf 27,5,common,6,3
+28,1,C28,Common Shelf 28,5,common,6,3
+29,1,C29,Common Shelf 29,5,common,6,3
+30,1,C30,Common Shelf 30,5,adjusted,50,
+31,1,C31,Common Shelf 31,5,common,5,1
+32,1,C32,Common Shelf 32,5,common,5,1
+33,1,C33,Common Shelf 33,5,common,5,1
+34,1,C34,Common Shelf 34,5,common,5,2
+35,1,C35,Common Shelf 35,5,common,5,2
+36,1,C36,Common Shelf 36,5,common,5,2
+37,1,C37,Common Shelf 37,5,common,5,3
+38,1,C38,Common Shelf 38,5,common,5,3
+39,1,C39,Common Shelf 39,5,common,5,3
+40,1,C40,Common Shelf 40,5,return,50,
+41,1,C41,Common Shelf 41,5,common,4,1
+42,1,C42,Common Shelf 42,5,common,4,1
+43,1,C43,Common Shelf 43,5,common,4,1
+44,1,C44,Common Shelf 44,5,common,4,2
+45,1,C45,Common Shelf 45,5,common,4,2
+46,1,C46,Common Shelf 46,5,common,4,2
+47,1,C47,Common Shelf 47,5,common,4,3
+48,1,C48,Common Shelf 48,5,common,4,3
+49,1,C49,Common Shelf 49,5,common,4,3
+50,1,C50,Common Shelf 50,5,return,50,
+51,1,C51,Common Shelf 51,5,common,3,1
+52,1,C52,Common Shelf 52,5,common,3,1
+53,1,C53,Common Shelf 53,5,common,3,1
+54,1,C54,Common Shelf 54,5,common,3,2
+55,1,C55,Common Shelf 55,5,common,3,2
+56,1,C56,Common Shelf 56,5,common,3,2
+57,1,C57,Common Shelf 57,5,common,3,3
+58,1,C58,Common Shelf 58,5,common,3,3
+59,1,C59,Common Shelf 59,5,common,3,3
+60,1,C60,Common Shelf 60,5,return,50,
+61,1,P1,Popular Shelf 1,5,popular,2,
+62,1,P2,Popular Shelf 2,5,popular,2,
+63,1,P3,Popular Shelf 3,5,popular,2,
+64,1,P4,Popular Shelf 4,5,popular,2,
+65,1,P5,Popular Shelf 5,5,popular,2,
+66,1,P6,Popular Shelf 6,5,popular,2,
+67,1,P7,Popular Shelf 7,5,popular,2,
+68,1,P8,Popular Shelf 8,5,popular,2,
+69,1,P9,Popular Shelf 9,5,popular,2,
+70,1,T1,Cross Docking Shelf 1,5,cd,1,
+71,1,T2,Cross Docking Shelf 2,5,cd,1,
+72,1,T3,Cross Docking Shelf 3,5,cd,1,
+73,1,T4,Cross Docking Shelf 4,5,cd,1,
+74,1,T5,Cross Docking Shelf 5,5,cd,1,
+75,1,T6,Cross Docking Shelf 6,5,cd,1,
+76,1,T7,Cross Docking Shelf 7,5,cd,1,
+77,1,T8,Cross Docking Shelf 8,5,cd,1,
+78,1,T9,Cross Docking Shelf 9,5,cd,1,

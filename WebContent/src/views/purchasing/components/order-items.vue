@@ -44,7 +44,7 @@
           <variant-list
               :searchContent="newItem.searchContent"
               :items="orderedItems"
-              :variants="variants"
+              :variants="filteredVariants"
               v-on:itemClicked="setItem"
           ></variant-list>
         </td>
@@ -78,21 +78,36 @@
   import { mapGetters } from 'vuex'
   import { calculateCost, calculateStockAft } from '../../../utils/utils'
   import VariantList from '../components/variant-list.vue'
+  import * as s from '../../../utils/setting'
 
   export default {
     name: 'OrderItems',
 
-    props: ['orderedItems', 'isView'],
+    props: ['orderedItems', 'isView', 'order'],
 
     components: {
       VariantList
     },
 
+    watch: {
+      'order.supplier' () {
+        let supplier = this.getSupplierByName(this.order.supplier);
+        let products = this.getObjectListByAttr(s.MODULE_INVENTORY, s.OBJ_PRODUCTS, 'supplierId', supplier.id);
+        this.filteredVariants = [];
+        Array.from(products).forEach(product => {
+          let variants = this.getObjectListByAttr(s.MODULE_INVENTORY, s.OBJ_VARIANTS, 'productId', product.id);
+          this.filteredVariants = this.filteredVariants.concat(variants);
+        });
+      }
+    },
+
     computed: {
       ...mapGetters ([
         'getVariantById',
-        'variants'
-      ]),
+        'variants',
+        'getObjectListByAttr',
+        'getSupplierByName'
+      ])
     },
 
     methods: {
@@ -162,7 +177,7 @@
 
         isKeyup: true,
         hasNewItem: false,
-        filteredVariants: [],
+        filteredVariants: this.variants,
         newItem: {
           id: 0,
           fullname: '',

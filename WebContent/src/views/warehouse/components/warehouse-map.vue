@@ -118,30 +118,12 @@
       ...mapGetters([
         'shelves',
         'warehouseLocations',
-        'getObjectByAttr'
+        'getObjectByAttr',
+        'commonShelves',
+        'popularShelves',
+        'crossDockingShelves'
+        // Todo: fix this bug of shelves
       ]),
-
-      commonShelves() {
-        let rows = [];
-        let shelves = this.shelves.filter(shelve => shelve.name.charAt(0) === 'C');
-        let numOfRow = shelves.length / 10;
-        for (let i = 0; i < numOfRow; i++) {
-          let row = [];
-          for (let j = 0; j < 10; j++) {
-            row.push(this.shelves[i * 10 + j]);
-          }
-          rows.push(row);
-        }
-        return rows;
-      },
-
-      popularShelves() {
-        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'P');
-      },
-
-      crossDockingShelves() {
-        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'T');
-      }
     },
 
     methods: {
@@ -158,7 +140,7 @@
           { text: 'Warehouse' }
         ],
         warehouse: '',
-        shelfName: '',
+        shelfName: ''
       }
     },
 

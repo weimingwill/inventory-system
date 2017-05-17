@@ -43,6 +43,12 @@
 
     props: ['variants', 'searchContent', 'items'],
 
+    watch: {
+      variants () {
+        this.filteredVariants = this.variants;
+      }
+    },
+
     methods: {
       searchVariants: function () {
         // Todo: onkeyup has problem when deleting input

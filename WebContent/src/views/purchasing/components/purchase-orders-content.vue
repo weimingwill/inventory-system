@@ -19,6 +19,8 @@
             v-model="items"
             v-bind:search="searchContent"
             select-all
+            rows-per-page="10"
+            :rows-per-page-items="rowsPerPageItems"
         >
 
           <template slot="items" scope="props" class="template-datatable">
@@ -163,6 +165,7 @@
         status: '',
         isInbound: false,
         items: [],
+        rowsPerPageItems: [10, 15, 25, { text: "All", value: -1 }],
 
         headers: [{
           text: 'Order #',
