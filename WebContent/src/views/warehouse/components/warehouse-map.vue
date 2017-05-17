@@ -122,7 +122,6 @@
         'commonShelves',
         'popularShelves',
         'crossDockingShelves'
-        // Todo: fix this bug of shelves
       ]),
     },
 

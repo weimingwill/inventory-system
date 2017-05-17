@@ -495,7 +495,7 @@ const actions = {
   },
   
   receivePurchaseOrder ({commit, getters}, {order, items}) {
-    log('receive purchase');
+    log('receive purchase', order, items);
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.RECEIVE_PURCHASE, {purchaseOrder, items});
     let increaseAttr = s.INBOUNDING;
@@ -504,10 +504,13 @@ const actions = {
     commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
   },
 
-  checkPurchaseOrder ({commit, getters}, {order, items}) {
+  checkPurchaseOrder ({ dispatch, commit, getters}, {order, items}) {
     log('check purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.CHECK_PURCHASE, {purchaseOrder, items});
+    setTimeout(() => {
+      dispatch('smartAllocation', purchaseOrder);
+    }, 300)
   },
 
   allocatePurchaseOrder ({commit, getters}, {order, variant, quantity}) {

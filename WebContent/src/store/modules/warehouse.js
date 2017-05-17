@@ -33,25 +33,26 @@ const getters = {
     return getters.getObjectList(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'fullname');
   },
   
-  commonShelves (state) {
+  commonShelves: state => {
     let rows = [];
-    let shelves = state.shelves.filter(shelve => shelve.name.charAt(0) === 'C');
+    let shelves = state.shelves.filter(shelf => shelf.name.charAt(0) === 'C');
     let numOfRow = shelves.length / 10;
     for (let i = 0; i < numOfRow; i++) {
       let row = [];
       for (let j = 0; j < 10; j++) {
-        row.push(this.shelves[i * 10 + j]);
+        row.push(shelves[i * 10 + j]);
       }
       rows.push(row);
     }
+    log(rows);
     return rows;
   },
   
-  popularShelves (state) {
+  popularShelves: state => {
     return state.shelves.filter(shelve => shelve.name.charAt(0) === 'P');
   },
   
-  crossDockingShelves (state) {
+  crossDockingShelves: state => {
     return state.shelves.filter(shelve => shelve.name.charAt(0) === 'T');
   },
   
@@ -320,6 +321,7 @@ const actions = {
   },
   
   autoAllocateToShelves ({ dispatch, commit, getters }, { variant, shelves, orderId }) {
+    log('auto allocate to shelves');
     let i
       , numOfShelves
       , cellVariantJoins = []
@@ -344,6 +346,7 @@ const actions = {
   },
   
   autoAllocateToCells ({ dispatch, commit, getters }, { variant, purchaseOrder, cellVariantJoins, joinType }) {
+    log('auto allocate to cells');
     let capacity
       , quantity
       , promise
@@ -399,6 +402,7 @@ const actions = {
   },
   
   smartAllocation ({ dispatch, commit, getters }, { purchaseOrder }) {
+    log('smart allocation', purchaseOrder);
     let variants = purchaseOrder.toStores;
     let i
       , numOfVariants = variants.length
@@ -406,8 +410,6 @@ const actions = {
       , orderId = purchaseOrder.id
       , promise
       , product
-      , capacity
-      , quantity
       , joinType
       , cellVariantJoins
       , sameTypeJoins = []
@@ -486,26 +488,7 @@ const actions = {
     
     // If it is full under the same supplier, allocate it the nearest empty location
     
-    
   },
-  
-  test1 ( {dispatch}) {
-    log('test1');
-    let variant = {'a': 1};
-    let quantity = 1;
-    log('before promise')
-
-    let promise = dispatch('test2', {variant, quantity});
-    promise.then(result => variant = result)
-    log(variant);
-    log('aft promise')
-  },
-  
-  test2 ( {dispatch}, {variant, quantity}) {
-    variant.a += quantity;
-    return variant
-  },
-  
 };
 
 export default {
