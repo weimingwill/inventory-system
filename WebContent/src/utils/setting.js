@@ -142,3 +142,33 @@ export const ALLOCATION_HEADERS = [{
   value: 'cell',
   sortable: false,
 }]
+
+export const WAREHOUSE_COLOR = {
+  common: [{
+    label: 'Levi\'s',
+    color: '#97cd76'
+  }, {
+    label: 'Cotton On',
+    color: '#588eff'
+  }, {
+    label: 'Jack & Jones',
+    color: '#76dbd4'
+  }],
+  popular: {
+    label: 'Popular',
+    color: '#fce473'
+  },
+  crossDocking: {
+    label: 'Cross Docking',
+    color: '#ed6c63'
+  },
+  adjust: {
+    label: 'Adjustment',
+    color: '#ffbb99'
+  },
+  return: {
+    label: 'Return To Supplier',
+    color: '#6666cc'
+  },
+  
+}

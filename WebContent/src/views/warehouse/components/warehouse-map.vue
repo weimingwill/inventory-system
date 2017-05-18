@@ -162,6 +162,8 @@
         $shelf.className += " active";
         this.selectShelf($shelf.textContent);
       }));
+
+
     },
 
     beforeDestory() {
