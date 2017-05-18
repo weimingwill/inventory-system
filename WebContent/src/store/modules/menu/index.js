@@ -18,7 +18,6 @@ const state = {
   items: [
     inventoryControl,
     purchasing,
-    stockControl,
     inbound,
     warehouse,
     supplier,

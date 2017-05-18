@@ -25,7 +25,7 @@
               <!--<v-row>-->
                 <!--<v-col xs12>-->
                   <!--&lt;!&ndash; Warehouse common shelves&ndash;&gt;-->
-                  <!--<v-row v-for="(row, index) in commonShelves" :key="index">-->
+                  <!--<v-row v-for="(row, index) in commonShelvesInRows" :key="index">-->
                     <!--<v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">-->
                       <!--{{ shelf.name }}-->
                     <!--</v-col>-->

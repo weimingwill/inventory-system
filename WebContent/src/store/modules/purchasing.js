@@ -333,7 +333,18 @@ const mutations = {
     // init toChecks
     Array.from(variants).forEach(variant => {
       variant.toCheck = variant.quantity;
-      purchaseOrder.toChecks.push(Object.assign({}, variant));
+      let hasVariant = false;
+      for (let i = 0; i < purchaseOrder.toChecks.length; i++) {
+        if (purchaseOrder.toChecks[i].variantId === variant.variantId) {
+          purchaseOrder.toChecks[i].toCheck += variant.toCheck;
+          purchaseOrder.toChecks[i].quantity += variant.toCheck;
+          hasVariant = true;
+          break;
+        }
+      }
+      if (!hasVariant) {
+        purchaseOrder.toChecks.push(Object.assign({}, variant));
+      }
     });
     
     // Update received percentage
@@ -388,7 +399,19 @@ const mutations = {
     Array.from(variants).forEach(variant => {
       variant.toStore = variant.quantity;
       variant.toAllocate = variant.quantity;
-      purchaseOrder.toStores.push(Object.assign({}, variant));
+      let hasVariant = false;
+      for (let i = 0; i < purchaseOrder.toStores.length; i++) {
+        if (purchaseOrder.toStores[i].variantId === variant.variantId) {
+          purchaseOrder.toStores[i].toStore += variant.toStore;
+          purchaseOrder.toStores[i].quantity += variant.toStore;
+          purchaseOrder.toStores[i].toAllocate += variant.toAllocate;
+          hasVariant = true;
+          break;
+        }
+      }
+      if (!hasVariant) {
+        purchaseOrder.toStores.push(Object.assign({}, variant));
+      }
     });
     
     updatePurchaseOrder(purchaseOrder);
@@ -511,9 +534,9 @@ const actions = {
     log('check purchase');
     let purchaseOrder = getters.getOrderByNumber(order.orderNumber);
     commit(types.CHECK_PURCHASE, {purchaseOrder, items});
-    setTimeout(() => {
-      dispatch('smartAllocation', purchaseOrder);
-    }, 300)
+    dispatch('smartAllocation', { purchaseOrder });
+    // setTimeout(dispatch.bind(null, 'smartAllocation', { purchaseOrder }), 100);
+    // setTimeout(dispatch, 100, 'smartAllocation', { purchaseOrder });
   },
 
   allocatePurchaseOrder ({commit, getters}, {order, variant, quantity}) {

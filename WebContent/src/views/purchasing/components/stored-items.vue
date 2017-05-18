@@ -6,7 +6,7 @@
 
     <v-expansion-panel class="item-panel" expand>
       <v-expansion-panel-content v-for="(item, i) in storedItems" :key="i">
-        <div slot="header">Received At {{ item.datetime }}</div>
+        <div slot="header">Stored At {{ item.datetime }}</div>
 
         <table class="datatable table">
           <thead>

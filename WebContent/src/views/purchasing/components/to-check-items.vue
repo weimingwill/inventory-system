@@ -159,7 +159,9 @@
         this.items = [];
         Array.from(this.toCheckItems).forEach(item => {
           Object.keys(this.item).forEach(key => {
-            this.item[key] = item[key]
+            if (item.hasOwnProperty(key)) {
+              this.item[key] = item[key]
+            }
           });
           this.items.push(Object.assign({}, this.item))
         });

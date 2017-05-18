@@ -33,7 +33,7 @@ const getters = {
     return getters.getObjectList(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'fullname');
   },
   
-  commonShelves: state => {
+  commonShelvesInRows: state => {
     let rows = [];
     let shelves = state.shelves.filter(shelf => shelf.name.charAt(0) === 'C');
     let numOfRow = shelves.length / 10;
@@ -44,8 +44,11 @@ const getters = {
       }
       rows.push(row);
     }
-    log(rows);
     return rows;
+  },
+  
+  commonShelves: state => {
+    return state.shelves.filter(shelf => shelf.name.charAt(0) === 'C');
   },
   
   popularShelves: state => {
@@ -112,12 +115,6 @@ const getters = {
     })
   },
   
-  // getShelvesCapaciy: (state, getters) => (shelves) => {
-  //   return shelves.map(shelf => getters.getShelfCapacity(shelf.fullname)).reduce((sum, capacity) => {
-  //     return sum + capacity;
-  //   })
-  // },
-  
   getCellVariantByShelves: (state, getters) => (shelves) => {
     let cellVariantJoins = [];
     Array.from(shelves).forEach(shelf => {
@@ -158,6 +155,18 @@ const getters = {
     return getters.fulfillCellVariantJoins(cellVariantJoins);
   },
   
+  getCellVariantJoinByCells: (state, getters) => (cells) => {
+    let cellVariantJoins = [];
+    for (let i = 0; i < cells.length; i++) {
+      let cell = cells[i];
+      let layer = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'id', cell.layerId);
+      let shelf = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'id', layer.shelfId);
+      let cellVariantJoin = getters.getCellVariantJoinByCell(shelf.fullname, layer.fullname, cell.name);
+      cellVariantJoins = cellVariantJoins.concat(cellVariantJoin);
+    }
+    return cellVariantJoins;
+  },
+  
   fulfillCellVariantJoins: (state, getters) => (cellVariantJoins) => {
     return cellVariantJoins.map(cv => {
       let variant = getters.getVariantById(cv.variantId);
@@ -174,6 +183,12 @@ const getters = {
     return [shelf.fullname, layer.fullname, cell.name].join(' - ');
   },
 
+  getLayerByCellId: (state, getters) => (cellId) => {
+    let cell = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELLS, 'id', cellId);
+    let layer = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'id', cell.layerId);
+    return layer;
+  },
+  
   getShelfByCellId: (state, getters) => (cellId) => {
     let cell = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELLS, 'id', cellId);
     let layer = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'id', cell.layerId);
@@ -183,11 +198,11 @@ const getters = {
   
   getVariantAllocations: (state, getters) => (variantId, purchaseOrderId) => {
     let allocations = [];
-    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && cv.purchaseOrderId === purchaseOrderId);
+    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && Object.keys(cv.purchases).includes(purchaseOrderId.toString()));
     Array.from(cellVariantJoins).forEach(cv => {
       let allocation = {
         location: getters.getLocationByCellId(cv.cellId),
-        quantity: cv.quantity
+        quantity: cv.purchases[purchaseOrderId]
       };
       allocations.push(allocation);
     });
@@ -196,7 +211,7 @@ const getters = {
 
   getVariantAllocationsShelves: (state, getters) => (variantId, purchaseOrderId) => {
     let shelveNames = [];
-    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && cv.purchaseOrderId === purchaseOrderId);
+    let cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && Object.keys(cv.purchases).includes(purchaseOrderId.toString()));
     Array.from(cellVariantJoins).forEach(cv => {
       let shelf = getters.getShelfByCellId((cv.cellId));
       if (!shelveNames.includes(shelf.name)) {
@@ -214,15 +229,17 @@ const getters = {
   calculateShelvesDistance: (state, getters) => (shelfA, shelfB) => {
     shelfA = shelfA.name;
     shelfB = shelfB.name;
-    let char = shelfA.chartAt(0);
+    
+    let char = shelfA.charAt(0);
     shelfA = parseInt(shelfA.split(char)[1]);
     shelfB = parseInt(shelfB.split(char)[1]);
     
-    let a = shelfA / 10;
-    let b = shelfB / 10;
+    let a = parseInt(shelfA / 10);
+    let b = parseInt(shelfB / 10);
     
     let distance = Math.abs(a - b);
     distance += distance * 10 + Math.min(a, b) - Math.max(a, b);
+    distance /= 10
     return distance;
   },
   
@@ -238,8 +255,10 @@ const getters = {
         for (i = 0; i < allShelves.length; i++) {
           let thisShelf = allShelves[i];
           if (distance === getters.calculateShelvesDistance(thisShelf, shelf)) {
-            shelvesByDistance[distance].push = thisShelf;
-            addedShelveIds.push(thisShelf.id);
+            if (!addedShelveIds.includes(thisShelf.id)) {
+              shelvesByDistance[distance].push(thisShelf);
+              addedShelveIds.push(thisShelf.id);
+            }
           }
         }
       });
@@ -259,30 +278,63 @@ const mutations = {
     state.layers = warehouseObj.layers;
     state.cells = warehouseObj.cells;
     state.cellVariantJoins = warehouseObj.cellVariantJoins;
+  
+    state.cellVariantJoins = state.cellVariantJoins.map(cv => {
+      // cv.purchases, key: purchaseOrderId, value: purchasedQuantity
+      if (!cv.purchases) {
+        cv.purchases = {}
+      }
+      return cv;
+    })
+    
+    log('cellVariantJoins', state.cellVariantJoins);
   },
   
   [types.ALLOCATE_ITEMS] (state, { variant, quantity, orderId, cells, cellVariantJoins }) {
+    
     for (let i = 0; i < cells.length; i++) {
       let cell = cells[i];
-      let cellVariantJoin = cellVariantJoins.find(cv => cv.cellId === cell.id);
+      let cellVariantJoin = {
+        cellId: cell.id,
+        variantId: variant.id? variant.id : variant.variantId,
+        quantity: 0,
+        purchases: {}
+      };
       
-      if (!cellVariantJoin) {
-        cellVariantJoin = {
-          cellId: cell.id,
-          variantId: variant.id,
-          purchaseOrderId: orderId,
-          quantity: 0
-        };
+      let filteredCellVariantJoins = cellVariantJoins.filter(cv => cv.cellId === cell.id);
+      let occupiedCapacity = 0;
+      
+      if (filteredCellVariantJoins.length === 0) {
         cellVariantJoins.push(cellVariantJoin);
+      } else {
+        occupiedCapacity = filteredCellVariantJoins.map(cv => cv.quantity).reduce((sum, quantity) => {
+          return sum + quantity
+        });
+        let filteredCellVariantJoin = cellVariantJoins.find(cv => cv.cellId === cell.id && variant.variantId === cv.variantId);
+        if (!filteredCellVariantJoin) {
+          cellVariantJoins.push(cellVariantJoin);
+        } else {
+          cellVariantJoin = filteredCellVariantJoin;
+        }
       }
       
-      let capacity = cell.capacity - cellVariantJoin.quantity;
-      if (capacity > 0 && quantity >= capacity) {
-        quantity -= capacity;
-        cellVariantJoin.quantity += capacity;
-      } else if (capacity > 0 && quantity < capacity) {
-        cellVariantJoin.quantity += quantity;
-        quantity = 0;
+      let capacity = cell.capacity - occupiedCapacity;
+      if (capacity > 0) {
+        let allocatedQuantity = 0;
+        if (quantity >= capacity) {
+          allocatedQuantity = capacity;
+        } else if (quantity < capacity) {
+          allocatedQuantity = quantity;
+        }
+  
+        quantity -= allocatedQuantity;
+        cellVariantJoin.quantity += allocatedQuantity;
+  
+        if (cellVariantJoin.purchases.hasOwnProperty(orderId)) {
+          cellVariantJoin.purchases[orderId] += allocatedQuantity;
+        } else {
+          cellVariantJoin.purchases[orderId] = allocatedQuantity;
+        }
       }
       
       if (quantity === 0) {
@@ -340,13 +392,52 @@ const actions = {
         quantity = variant.toAllocate;
         variant.toAllocate = 0;
       }
-      dispatch('allocateItems', { variant, quantity, orderId, shelfName });
+      if (quantity > 0) {
+        dispatch('allocateItems', {variant, quantity, orderId, shelfName});
+      }
+    }
+    return variant;
+  },
+  
+  autoAllocateToNearestNewShelf ({ dispatch, commit, getters }, { variant, purchaseOrder, shelves }) {
+    log('auto allocate to nearest new shelf');
+    let i
+      , j
+      , capacity
+      , quantity
+      , cellVariantJoins
+      , promise
+      , orderId = purchaseOrder.id
+      , supplierShelves = getters.commonShelves.filter(shelf => shelf.supplierId === purchaseOrder.supplierId)
+      , shelvesWithDistances = getters.getShelvesWithDistances(shelves, supplierShelves);
+    for (i = 0; i < Object.keys(shelvesWithDistances).length && variant.toAllocate > 0; i++) {
+      let newShelves = shelvesWithDistances[i];
+      for (j = 0; j < newShelves.length && variant.toAllocate > 0; j++) {
+        let shelfName = newShelves[i].fullname;
+        cellVariantJoins = getters.getCellVariantByShelf(shelfName);
+        if (cellVariantJoins.length === 0) {
+          capacity = getters.getShelfCapacity(shelfName);
+          
+          if (variant.toAllocate >= capacity) {
+            quantity = capacity;
+            variant.toAllocate -= quantity;
+          } else {
+            quantity = variant.toAllocate;
+            variant.toAllocate = 0;
+          }
+  
+          if (quantity > 0) {
+            promise = dispatch('allocateItems', {variant, quantity, orderId, shelfName});
+            promise.then(result => variant = result)
+          }
+        }
+      }
     }
     return variant;
   },
   
   autoAllocateToCells ({ dispatch, commit, getters }, { variant, purchaseOrder, cellVariantJoins, joinType }) {
-    log('auto allocate to cells');
+    log('auto allocate to cells', variant, purchaseOrder, cellVariantJoins, joinType);
     let capacity
       , quantity
       , promise
@@ -354,6 +445,7 @@ const actions = {
       , shelves = [];
 
     let cells = getters.getCellByCellVariantJoins(cellVariantJoins);
+    cellVariantJoins = getters.getCellVariantJoinByCells(cells);
     capacity = getters.getCellsCapactiy(cells) - getters.getVariantJoinsCapacity(cellVariantJoins);
     if (variant.toAllocate >= capacity) {
       quantity = capacity;
@@ -362,7 +454,10 @@ const actions = {
       quantity = variant.toAllocate;
       variant.toAllocate = 0;
     }
-    commit(types.ALLOCATE_ITEMS, { variant, quantity, orderId, cells, cellVariantJoins })
+    
+    if (quantity > 0) {
+      commit(types.ALLOCATE_ITEMS, { variant, quantity, orderId, cells, cellVariantJoins })
+    }
   
     // Allocate to shelves of these cells
     if (variant.toAllocate > 0) {
@@ -373,29 +468,8 @@ const actions = {
     
     // Allocate to a nearest new shelf
     if (variant.toAllocate > 0 && (joinType === 'product' || joinType === 'type')) {
-      // Use new shelf to allocate
-      let supplierShelves = getters.commonShelves().filter(shelf => shelf.supplierId === purchaseOrder.supplierId);
-      let shelvesWithDistances = getters.getShelvesWithDistances(shelves, supplierShelves);
-      for (let i = 1; i < Object.keys(shelvesWithDistances).length && variant.toAllocate > 0; i++) {
-        let newShelves = shelvesWithDistances[i];
-        for (let j = 0; j < newShelves.length && variant.toAllocate > 0; j++) {
-          let newShelfName = newShelves[i].fullname;
-          cellVariantJoins = getters.getCellVariantByShelf(newShelfName);
-          if (cellVariantJoins.length === 0) {
-            capacity = getters.getShelfCapacity(newShelfName);
-            
-            if (variant.toAllocate >= capacity) {
-              quantity = capacity;
-              variant.toAllocate -= quantity;
-            } else {
-              quantity = variant.toAllocate;
-              variant.toAllocate = 0;
-            }
-            
-            dispatch('allocateItems', { variant, quantity, orderId, newShelfName });
-          }
-        }
-      }
+      promise = dispatch('autoAllocateToNearestNewShelf', { variant, purchaseOrder, shelves });
+      promise.then(result => variant = result)
     }
     
     return variant;
@@ -411,24 +485,36 @@ const actions = {
       , promise
       , product
       , joinType
+      , quantity
       , cellVariantJoins
       , sameTypeJoins = []
       , sameProductJoins = []
-      , sameVariantJoins = [];
+      , sameVariantJoins = []
+      , totalToAllocate;
     
     for (i = 0; i < numOfVariants; i++) {
       let variant = variants[i];
+      variant.productId = getters.getVariantById(variant.variantId).productId;
+      totalToAllocate = variant.toAllocate;
+      log('totalToAllocate', totalToAllocate);
+      log('variant', variant);
+      
+      if (totalToAllocate <= 0) {
+        continue;
+      }
       
       // Allocate cross docking items
       if (variant.toAllocate > 0 && variant.isCrossDocking) {
-        shelves = getters.crossDockingShelves();
+        log('cross docking item');
+        shelves = getters.crossDockingShelves;
         promise = dispatch('autoAllocateToShelves', { variant, shelves, orderId });
         promise.then(result => variant = result)
       }
   
       // Allocate popular items
       if (variant.toAllocate > 0 && variant.popularity === 1) {
-        shelves = getters.crossDockingShelves();
+        log('popular item');
+        shelves = getters.popularShelves;
         promise = dispatch('autoAllocateToShelves', { variant, shelves, orderId });
         promise.then(result => variant = result)
       }
@@ -436,58 +522,89 @@ const actions = {
       // Allocate common items
       // Allocate items under the same supplier
       if (variant.toAllocate > 0) {
+        log('common item');
         product = getters.getProductById(variant.productId);
-        shelves = getters.commonShelves().filter(shelf => shelf.supplierId === purchaseOrder.supplierId);
+        shelves = getters.commonShelves.filter(shelf => shelf.supplierId === purchaseOrder.supplierId);
         cellVariantJoins = getters.getCellVariantByShelves(shelves);
-         
+        
+        log('shelves', shelves);
+        log('cellVariantJoins', cellVariantJoins);
+        
         for (let j = 0; j < cellVariantJoins.length; j++) {
-          let cellVariantJoin = cellVariantJoins[i];
+          let cellVariantJoin = cellVariantJoins[j];
           let thisVariant = getters.getVariantById(cellVariantJoin.variantId);
           let thisProduct = getters.getProductById(thisVariant.productId);
-
+  
           if (product.type === thisProduct.type) {
-            sameTypeJoins.push(cellVariantJoins);
+            sameTypeJoins.push(cellVariantJoin);
           }
           
           if (product.name === thisProduct.name) {
             sameProductJoins.push(cellVariantJoin);
           }
           
-          if (variant.id === thisVariant.id) {
+          if (variant.variantId === thisVariant.id) {
             sameVariantJoins.push(cellVariantJoin);
           }
         }
-        
+  
+        // log('sameVariantJoins', sameVariantJoins);
+        // log('sameProductJoins', sameProductJoins);
+        // log('sameTypeJoins', sameTypeJoins);
+  
         // Allocate items to locations with same variant, same product, same type
         if (variant.toAllocate > 0 && sameVariantJoins.length > 0) {
+          log('sameVariantJoins');
           joinType = 'variant';
-          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, sameVariantJoins, joinType });
-          promise.then(result => variant = result)
+          cellVariantJoins = sameVariantJoins;
+          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, cellVariantJoins, joinType });
+          promise.then(result => variant = result);
+          log('variant', variant)
         }
         
         if (variant.toAllocate > 0 && sameProductJoins.length > 0) {
+          log('sameProductJoins');
           joinType = 'product';
-          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, sameProductJoins, joinType });
-          promise.then(result => variant = result)
+          cellVariantJoins = sameProductJoins;
+          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, cellVariantJoins, joinType });
+          promise.then(result => variant = result);
+          log('variant', variant)
         }
         
         if (variant.toAllocate > 0 && sameTypeJoins.length > 0) {
+          log('sameTypeJoins');
           joinType = 'type';
-          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, sameTypeJoins, joinType });
-          promise.then(result => variant = result)
+          cellVariantJoins = sameTypeJoins;
+          promise = dispatch('autoAllocateToCells', { variant, purchaseOrder, cellVariantJoins, joinType });
+          promise.then(result => variant = result);
+          log('variant', variant)
         }
-
-        if (variant.toAllocate > 0 && sameTypeJoins.length < 0) {
-           
-        }
-          
+  
         // Allocate to a new shelf outside the supplier shelves
-        
+        if (variant.toAllocate > 0 && sameTypeJoins.length <= 0) {
+          log('allocate to new shelf under supplier shelves');
+          promise = dispatch('autoAllocateToNearestNewShelf', { variant, purchaseOrder, shelves });
+          promise.then(result => variant = result)
+          log('variant', variant)
+        }
+  
+        // Allocate to a new shelf outside the supplier shelves
+        if (variant.toAllocate > 0 && sameTypeJoins.length <= 0) {
+          log('allocate to new shelf outside supplier shelves');
+          shelves = getters.commonShelves.filter(shelf => shelf.supplierId && shelf.supplierId != purchaseOrder.supplierId);
+          promise = dispatch('autoAllocateToNearestNewShelf', { variant, purchaseOrder, shelves });
+          promise.then(result => variant = result)
+          log('variant', variant)
+        }
       }
+      
+      quantity = 0;
+      commit(types.ALLOCATE_PURCHASE, {purchaseOrder, variant, quantity});
+      dispatch('initWarehouse');
     }
     
     // If it is full under the same supplier, allocate it the nearest empty location
-    
+  
   },
 };
 

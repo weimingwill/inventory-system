@@ -16,7 +16,7 @@
       <v-row>
         <v-col xs12>
           <!-- Warehouse common shelves-->
-          <v-row v-for="(row, index) in commonShelves" :key="index">
+          <v-row v-for="(row, index) in commonShelvesInRows" :key="index">
             <v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">
               {{ shelf.name }}
             </v-col>
@@ -119,7 +119,7 @@
         'shelves',
         'warehouseLocations',
         'getObjectByAttr',
-        'commonShelves',
+        'commonShelvesInRows',
         'popularShelves',
         'crossDockingShelves'
       ]),

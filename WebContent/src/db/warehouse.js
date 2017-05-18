@@ -8,7 +8,7 @@ import {
 import { CELL_VARAINT_JOINS } from './setting'
 
 function updateCellVariantJoins(newCellVariantJoins) {
-  log('update cell variant joins');
+  log('update cell variant joins', newCellVariantJoins);
   let cellVariantJoins = JSON.parse(localStorage.getItem(CELL_VARAINT_JOINS));
   Array.from(newCellVariantJoins).forEach(newCellVariantJoin => {
     let isExist = false;
@@ -18,6 +18,7 @@ function updateCellVariantJoins(newCellVariantJoins) {
         && cellVariantJoin.variantId === newCellVariantJoin.variantId) {
         isExist = true;
         cellVariantJoins[i].quantity = newCellVariantJoin.quantity;
+        cellVariantJoins[i].purchases = newCellVariantJoin.purchases;
         break;
       }
     }

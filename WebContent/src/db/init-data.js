@@ -105,6 +105,12 @@ function initObjects(name, nameCamelCase, combinedObjParam) {
           } else if (!isNaN(value) && value) {
             value = parseInt(value);
           }
+          
+          if (value === 'false') {
+            value = false;
+          } else if (value === 'true') {
+            value = true;
+          }
           object[key] = value
         }
       }

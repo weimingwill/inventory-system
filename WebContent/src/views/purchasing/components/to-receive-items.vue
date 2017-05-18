@@ -117,14 +117,17 @@
         this.items = this.items.map(item => {
           item = Object.assign({}, item);
           if (item.value) {
+            console.log(item)
             let toReceive = parseInt(item.toReceive);
             item.quantity -= toReceive;
             item.receivedQuantity += toReceive;
             item.toReceive = item.quantity;
+            console.log(item)
           }
           item.value = true;
           return item;
         });
+
 
         this.items = this.items.filter(item => item.quantity > 0);
 
@@ -141,7 +144,9 @@
     mounted() {
       Array.from(this.toReceiveItems).forEach(item => {
         Object.keys(this.item).forEach(key => {
-          this.item[key] = item[key]
+          if (item.hasOwnProperty(key)) {
+            this.item[key] = item[key]
+          }
         });
         this.items.push(Object.assign({}, this.item))
       });

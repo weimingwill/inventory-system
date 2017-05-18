@@ -432,21 +432,22 @@
         // init orderedItems
         this.orderedItems = this.fulfillVariants(purchaseOrder.variants);
 
-        // init toReceiveItems
+        this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
+        this.toCheckItems = this.fulfillVariants(purchaseOrder.toChecks);
+        this.toStoreItems = this.fulfillVariants(purchaseOrder.toStores);
+
+        // init receivedItems
         if (this.isToReceive) {
-          this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
           this.receivedItems = this.fulfillNestedVariants(purchaseOrder.receives);
         }
 
-        // init toCheckItems
+        // init checkedItems
         if (this.isToCheck) {
-          this.toCheckItems = this.fulfillVariants(purchaseOrder.toChecks);
           this.checkedItems = this.fulfillNestedVariants(purchaseOrder.checkedItems);
         }
 
-        // init toStoreItems
+        // init storedItems
         if (this.isToStore) {
-          this.toStoreItems = this.fulfillVariants(purchaseOrder.toStores);
           this.storedItems = this.fulfillNestedVariants(purchaseOrder.storedItems);
         }
 
