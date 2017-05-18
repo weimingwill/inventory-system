@@ -134,8 +134,16 @@ function calculateStockAft(quantity, available, receivedQuantity=0) {
   if (quantity === '') {
     return 0
   } else {
-    return parseInt(quantity) + available + receivedQuantity;
+    return parseInt(quantity) + available + parseInt(receivedQuantity);
   }
+}
+
+function calculateHasDoneQuantity (array) {
+  return array.map(item => item.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
+    return sum + quantity;
+  })).reduce((sum, quantity) => {
+    return sum + quantity;
+  });
 }
 
 export {
@@ -151,5 +159,6 @@ export {
   calculateDistance,
   setSameAttributeValues,
   calculateCost,
-  calculateStockAft
+  calculateStockAft,
+  calculateHasDoneQuantity
   };

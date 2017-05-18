@@ -15,7 +15,7 @@
     </div>
     <purchase-order-content
         :search-content="searchContent"
-        :purchaseOrders="toReceiveOrders"
+        :purchaseOrders="toStoreOrders"
         :statuses="statuses"
         :headers="headers"
     ></purchase-order-content>
@@ -33,7 +33,7 @@
 
   export default {
 
-    name: 'Receiving',
+    name: 'Storing',
 
     components: {
       Breadcrumbs,
@@ -45,35 +45,36 @@
         'purchaseOrders',
       ]),
 
-      toReceiveOrders() {
-        return this.purchaseOrders.filter(p => p.status === s.STATUS_PURCHASED);
+      toStoreOrders() {
+        return this.purchaseOrders.filter(p => p.toStores.length > 0);
       },
 
       headers() {
         let headers = s.PURCHASE_ORDER_BASE_HEADERS.slice();
         headers.splice(5, 0,
           {
-            text: 'Due',
-            value: 'due',
+            text: 'Stored',
+            value: 'stored',
             left: true
           }, {
-            text: 'Received',
-            value: 'received',
+            text: 'Checked At',
+            value: 'checkedAt',
             left: true
           }
         );
         return headers;
       }
+
     },
 
     data () {
       return {
         breadcrumbs: [
           { text: 'Inbound' },
-          { text: 'Receiving' }
+          { text: 'Storing' }
         ],
         searchContent: '',
-        statuses: ['To Receive']
+        statuses: ['To Store']
       }
     },
 

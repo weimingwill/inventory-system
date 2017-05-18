@@ -80,3 +80,39 @@ export const SOLD = 'sold'
 export const INCOMING = 'incoming'
 export const INBOUNDING = 'inbounding'
 export const OUTBOUNDING = 'outbounding'
+
+export const PURCHASE_ORDER_BASE_HEADERS = [{
+  text: 'Order #',
+  left: true,
+  value: 'orderNum',
+}, {
+  text: 'Supplier',
+  value: 'supplier',
+  left: true
+}, {
+  text: 'Status',
+  value: 'status',
+  left: true
+}, {
+  text: 'Quantity',
+  value: 'quantity',
+  left: true
+}, {
+  text: 'Total Cost (S$)',
+  value: 'totalCost',
+  left: true
+}, {
+  text: 'Created',
+  value: 'created',
+  left: true
+}, {
+  text: 'Updated',
+  value: 'updated',
+  left: true
+}]
+
+export const RECEIVING = 'receiving'
+export const CHECKING = 'checking'
+export const STORING = 'storing'
+export const INBOUND = 'inbound'
+export const PURCHASE_ORDERS = 'purchaseOrders'

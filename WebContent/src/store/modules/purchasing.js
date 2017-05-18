@@ -9,6 +9,7 @@ import {
   getDateRangeOfWeek,
   setSameAttributeValues,
   removeArrayDuplicates,
+  calculateHasDoneQuantity,
   log} from '../../utils/utils';
 
 import {
@@ -336,13 +337,9 @@ const mutations = {
     });
     
     // Update received percentage
-    let receivedQuantity = purchaseOrder.receives.map(item => item.variants.map(variant => variant.quantity).reduce((sum, quantity) => {
-      return sum + quantity;
-    })).reduce((sum, quantity) => {
-      return sum + quantity;
-    });
-    purchaseOrder.receivedPercentage = (receivedQuantity / purchaseOrder.quantity).toFixed(2) * 100;
-    
+    purchaseOrder.receivedQuantity = calculateHasDoneQuantity(purchaseOrder.receives);
+    purchaseOrder.receivedPercentage = (purchaseOrder.receivedQuantity / purchaseOrder.quantity).toFixed(2) * 100;
+  
     updatePurchaseOrder(purchaseOrder);
   },
   
@@ -384,6 +381,9 @@ const mutations = {
       purchaseOrder.checkedAt = checked.datetime;
     }
   
+    purchaseOrder.checkedQuantity = calculateHasDoneQuantity(purchaseOrder.checkedItems);
+    purchaseOrder.checkedPercentage = (purchaseOrder.checkedQuantity / purchaseOrder.quantity).toFixed(2) * 100;
+  
     // init toStores
     Array.from(variants).forEach(variant => {
       variant.toStore = variant.quantity;
@@ -392,17 +392,6 @@ const mutations = {
     });
     
     updatePurchaseOrder(purchaseOrder);
-  },
-  
-  [types.ALLOCATE_PURCHASE] (state, { purchaseOrder, variant, quantity }) {
-    purchaseOrder.toStores = purchaseOrder.toStores.map(t => {
-      if (t.variantId === variant.id) {
-        t.toAllocate -= quantity;
-      }
-      return t;
-    });
-    
-    updatePurchaseOrder(purchaseOrder)
   },
   
   [types.STORE_PURCHASE] (state, { purchaseOrder, items }) {
@@ -423,7 +412,7 @@ const mutations = {
         toStores = toStores.map(t => {
           if (t.variantId === variant.variantId) {
             t.quantity -= variant.quantity;
-            t.storeedQuantity += variant.quantity;
+            t.storedQuantity += variant.quantity;
             t.toStore = t.quantity;
           }
           return t;
@@ -444,8 +433,22 @@ const mutations = {
       purchaseOrder.stored = true;
       purchaseOrder.storedAt = stored.datetime;
     }
-    
+  
+    purchaseOrder.storedQuantity = calculateHasDoneQuantity(purchaseOrder.storedItems);
+    purchaseOrder.storedPercentage = (purchaseOrder.storedQuantity / purchaseOrder.quantity).toFixed(2) * 100;
+  
     updatePurchaseOrder(purchaseOrder);
+  },
+  
+  [types.ALLOCATE_PURCHASE] (state, { purchaseOrder, variant, quantity }) {
+    purchaseOrder.toStores = purchaseOrder.toStores.map(t => {
+      if (t.variantId === variant.id) {
+        t.toAllocate -= quantity;
+      }
+      return t;
+    });
+    
+    updatePurchaseOrder(purchaseOrder)
   },
   
   [types.ADJUST_PURCHASE] (state, {purchaseOrder, adjustment}) {

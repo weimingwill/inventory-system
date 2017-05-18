@@ -1,4 +1,4 @@
-<template>
+receiving.vuereceiving.vue<template>
   <div>
     <breadcrumbs :items="breadcrumbs"></breadcrumbs>
     <div class="tool-card">
@@ -15,7 +15,7 @@
     </div>
     <purchase-order-content
         :search-content="searchContent"
-        :purchaseOrders="toReceiveOrders"
+        :purchaseOrders="toCheckOrders"
         :statuses="statuses"
         :headers="headers"
     ></purchase-order-content>
@@ -45,20 +45,20 @@
         'purchaseOrders',
       ]),
 
-      toReceiveOrders() {
-        return this.purchaseOrders.filter(p => p.status === s.STATUS_PURCHASED);
+      toCheckOrders() {
+        return this.purchaseOrders.filter(p => p.toChecks.length > 0);
       },
 
       headers() {
         let headers = s.PURCHASE_ORDER_BASE_HEADERS.slice();
         headers.splice(5, 0,
           {
-            text: 'Due',
-            value: 'due',
+            text: 'Checked',
+            value: 'checked',
             left: true
           }, {
-            text: 'Received',
-            value: 'received',
+            text: 'Received At',
+            value: 'receivedAt',
             left: true
           }
         );
@@ -70,10 +70,10 @@
       return {
         breadcrumbs: [
           { text: 'Inbound' },
-          { text: 'Receiving' }
+          { text: 'Quality Check' }
         ],
         searchContent: '',
-        statuses: ['To Receive']
+        statuses: ['To Check']
       }
     },
 

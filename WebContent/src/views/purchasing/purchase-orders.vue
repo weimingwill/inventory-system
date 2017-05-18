@@ -22,6 +22,7 @@
         :search-content="searchContent"
         :purchaseOrders="purchaseOrders"
         :statuses="getInboundStatuses"
+        :headers="headers"
     ></purchase-order-content>
   </div>
 
@@ -32,6 +33,7 @@
   import Breadcrumbs from '../components/breadcrumbs.vue'
   import PurchaseOrderContent from './components/purchase-orders-content.vue'
   import { mapGetters, mapActions } from 'vuex'
+  import * as s from '../../utils/setting'
 
   export default {
 
@@ -46,7 +48,43 @@
       ...mapGetters([
         'purchaseOrders',
         'getInboundStatuses'
-      ])
+      ]),
+
+      headers () {
+        let headers = s.PURCHASE_ORDER_BASE_HEADERS.slice();
+        headers.splice(5, 0,
+          {
+            text: 'Due',
+            value: 'due',
+            left: true
+          }, {
+            text: 'Received',
+            value: 'received',
+            left: true
+          }, {
+            text: 'Checked',
+            value: 'checked',
+            left: true
+          }, {
+            text: 'Received At',
+            value: 'receivedAt',
+            left: true
+          }, {
+            text: 'Stored',
+            value: 'stored',
+            left: true
+          }, {
+            text: 'Checked At',
+            value: 'checkedAt',
+            left: true
+          }, {
+            text: 'Stored At',
+            value: 'storedAt',
+            left: true
+          }
+        );
+        return headers;
+      }
     },
     
     data () {

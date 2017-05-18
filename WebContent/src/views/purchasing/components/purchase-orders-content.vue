@@ -47,7 +47,10 @@
                 {{ props.item.status }}
               </v-chip>
             </td>
-            <td>
+            <td>{{ totalQuantity(props.item.orderNumber) }}</td>
+            <td>{{ totalCost(props.item.orderNumber) }}</td>
+            <td v-if="isToReceive">{{ props.item.due }}</td>
+            <td v-if="isToReceive">
               <v-row>
                 <v-col xs9>
                   <v-progress-linear v-model="props.item.receivedPercentage" height="10" info></v-progress-linear>
@@ -57,10 +60,32 @@
                 </v-col>
               </v-row>
             </td>
-            <td>{{ totalQuantity(props.item.orderNumber) }}</td>
-            <td>{{ totalCost(props.item.orderNumber) }}</td>
-            <td>{{ props.item.due }}</td>
-            <td>{{ props.item.receivedAt }}</td>
+
+            <td v-if="isToCheck">
+              <v-row>
+                <v-col xs9>
+                  <v-progress-linear v-model="props.item.checkedPercentage" height="10" info></v-progress-linear>
+                </v-col>
+                <v-col xs3 pt-2>
+                  {{ props.item.checkedPercentage }}%
+                </v-col>
+              </v-row>
+            </td>
+            <td v-if="isToCheck">{{ props.item.receivedAt }}</td>
+
+            <td v-if="isToStore">
+              <v-row>
+                <v-col xs9>
+                  <v-progress-linear v-model="props.item.storedPercentage" height="10" info></v-progress-linear>
+                </v-col>
+                <v-col xs3 pt-2>
+                  {{ props.item.storedPercentage }}%
+                </v-col>
+              </v-row>
+            </td>
+            <td v-if="isToStore">{{ props.item.checkedAt }}</td>
+            <td v-if="isToReceive && isToCheck && isToStore">{{ props.item.storedAt }}</td>
+
             <td>{{ props.item.created }}</td>
             <td>{{ props.item.updated }}</td>
           </template>
@@ -73,31 +98,27 @@
 <script>
 
   import { mapGetters, mapActions } from 'vuex'
+  import * as s from '../../../utils/setting'
 
   export default {
     name: 'PurchaseOrderDetails',
 
-    props: ['searchContent', 'purchaseOrders', 'statuses'],
+    props: ['searchContent', 'purchaseOrders', 'statuses', 'headers'],
 
     computed: {
       ...mapGetters({
-//        purchaseOrders: 'purchaseOrders',
         getSupplierName: 'getSupplierNameById',
         getReceivedPercentage: 'receivedQuantityPercentage',
         totalReceivedQuantity: 'getTotalReceiveQuantity',
         totalQuantity: 'getTotalQuantity',
         totalCost: 'getTotalCost',
-//        statuses: 'getInboundStatuses'
       })
     },
 
     methods: {
       rowOnClick: function (id) {
-        if (this.isInbound) {
-          this.$router.replace('/inbound/view/' + id)
-        } else {
-          this.$router.replace('/purchaseOrders/view/' + id)
-        }
+        let routeTo = '/' + this.page + '/view/' + id;
+        this.$router.replace(routeTo);
       },
 
       tabOnClick: function (status) {
@@ -110,8 +131,17 @@
 
       setPersonnel () {
         let urlsParts = window.location.href.split('/');
+        this.page = urlsParts.pop();
         // Two conditions: inbound and purchasing
-        this.isInbound = urlsParts.pop() === 'inbound';
+        this.isInbound = this.page === s.INBOUND;
+        this.isToReceive = this.page === s.RECEIVING;
+        this.isToCheck = this.page === s.CHECKING;
+        this.isToStore = this.page === s.STORING;
+        if (this.page === s.PURCHASE_ORDERS) {
+          this.isToReceive = true;
+          this.isToCheck = true;
+          this.isToStore = true;
+        }
       },
 
       receivedPercentage (orderNumber) {
@@ -166,51 +196,13 @@
     data () {
       return {
         status: '',
+        page: '',
         isInbound: false,
+        isToReceive: false,
+        isToCheck: false,
+        isToStore: false,
         items: [],
         rowsPerPageItems: [10, 15, 25, { text: "All", value: -1 }],
-
-        headers: [{
-          text: 'Order #',
-          left: true,
-          value: 'orderNum',
-        }, {
-          text: 'Supplier',
-          value: 'supplier',
-          left: true
-        }, {
-          text: 'Status',
-          value: 'status',
-          left: true
-        }, {
-          text: 'Received',
-          value: 'received',
-          left: true
-        }, {
-          text: 'Quantity',
-          value: 'quantity',
-          left: true
-        }, {
-          text: 'Total Cost (S$)',
-          value: 'totalCost',
-          left: true
-        }, {
-          text: 'Due',
-          value: 'due',
-          left: true
-        }, {
-          text: 'Received At',
-          value: 'receivedAt',
-          left: true
-        }, {
-          text: 'Created',
-          value: 'created',
-          left: true
-        }, {
-          text: 'Updated',
-          value: 'updated',
-          left: true
-        }],
       }
     }
   }

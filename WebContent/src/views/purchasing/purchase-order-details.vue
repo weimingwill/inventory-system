@@ -71,7 +71,7 @@
           </v-row>
         </v-col>
 
-        <v-col xs2 class="text-xs-right" v-if="isInbound">
+        <v-col xs2 class="text-xs-right" v-if="isToReceive || isToCheck || isToStore">
 
           <adjustment-dialog
             :order="order"
@@ -96,112 +96,99 @@
       <v-col xs12>
         <v-container fluid id="items-container">
 
-          <v-stepper v-model="step" v-if="isInbound">
-            <v-stepper-header>
-              <v-stepper-step step="1" v-bind:complete="step > 1" editable edit-icon="input">
-                Receiving
-              </v-stepper-step>
-              <v-divider />
-              <v-stepper-step step="2" v-bind:complete="step > 2" editable edit-icon="security">
-                Quality Check
-              </v-stepper-step>
-              <v-divider />
-              <v-stepper-step step="3" editable edit-icon="dashboard">Storing</v-stepper-step>
-            </v-stepper-header>
+          <!-- Receiving -->
+          <div v-if="isToReceive">
+            <to-receive-items
+                v-if="toReceiveItems.length > 0"
+                :to-receive-items="toReceiveItems"
+                :order="order"
+                v-on:receivePurchase="reloadData"
+            >
+            </to-receive-items>
 
-            <!-- Receiving -->
-            <v-stepper-content step="1">
-              <to-receive-items
-                  v-if="toReceiveItems.length > 0"
-                  :to-receive-items="toReceiveItems"
-                  :order="order"
-                  v-on:receivePurchase="reloadData"
-              >
-              </to-receive-items>
+            <div v-else>
+              <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+              <h6 class="completed-text">
+                <span>All items are received at {{ order.receivedAt }}</span>
+              </h6>
+            </div>
 
-              <div v-else>
-                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
-                <h6 class="completed-text">
-                  <span>All items are received at {{ order.receivedAt }}</span>
-                </h6>
-              </div>
+            <received-items
+                v-if="receivedItems.length > 0"
+                :received-items="receivedItems"
+            >
+            </received-items>
+          </div>
 
-              <received-items
-                  v-if="receivedItems.length > 0"
-                  :received-items="receivedItems"
-              >
-              </received-items>
+          <!-- Quality Check -->
+          <div v-if="isToCheck">
+            <to-check-items
+                v-if="toCheckItems.length > 0"
+                :to-check-items="toCheckItems"
+                :order="order"
+                v-on:checkPurchase="reloadData"
+            >
+            </to-check-items>
 
-            </v-stepper-content>
+            <div v-else-if="toReceiveItems.length > 0">
+              <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
+              <h6 class="not-completed-text">
+                <span>Some items are not received</span>
+              </h6>
+            </div>
 
-            <!-- Quality Check -->
-            <v-stepper-content step="2">
-              <to-check-items
-                  v-if="toCheckItems.length > 0"
-                  :to-check-items="toCheckItems"
-                  :order="order"
-                  v-on:checkPurchase="reloadData"
-              >
-              </to-check-items>
+            <div v-else>
+              <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+              <h6 class="completed-text">
+                <span>All items are checked at {{ order.checkedAt }}</span>
+              </h6>
+            </div>
 
-              <div v-else-if="toReceiveItems.length > 0">
-                <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
-                <h6 class="not-completed-text">
-                  <span>Some items are not received</span>
-                </h6>
-              </div>
+            <checked-items
+                v-if="checkedItems.length > 0"
+                :checked-items="checkedItems"
+            >
+            </checked-items>
+          </div>
 
-              <div v-else>
-                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
-                <h6 class="completed-text">
-                  <span>All items are checked at {{ order.checkedAt }}</span>
-                </h6>
-              </div>
+          <!-- Storing -->
+          <div v-if="isToStore">
+            <to-store-items
+                v-if="toStoreItems.length > 0"
+                :to-store-items="toStoreItems"
+                :order="order"
+                v-on:storePurchase="reloadData"
+            >
+            </to-store-items>
 
-              <checked-items
-                  v-if="checkedItems.length > 0"
-                  :checked-items="checkedItems"
-              >
-              </checked-items>
-            </v-stepper-content>
+            <div v-else-if="toReceiveItems.length > 0 || toCheckItems.length > 0">
+              <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
+              <h6 class="not-completed-text">
+                <span>Some items are not received or checked</span>
+              </h6>
+            </div>
 
-            <!-- Storing -->
-            <v-stepper-content step="3">
-              <to-store-items
-                  v-if="toStoreItems.length > 0"
-                  :to-store-items="toStoreItems"
-                  :order="order"
-                  v-on:storePurchase="reloadData"
-              >
-              </to-store-items>
+            <div v-else>
+              <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
+              <h6 class="completed-text">
+                <span>All items are stored at {{ order.storedAt }}</span>
+              </h6>
+            </div>
 
-              <div v-else-if="toReceiveItems.length > 0 || toCheckItems.length > 0">
-                <v-icon medium class="orange--text text--darken-2 completed-icon">do_not_disturb</v-icon>
-                <h6 class="not-completed-text">
-                  <span>Some items are not received or checked</span>
-                </h6>
-              </div>
-
-              <div v-else>
-                <v-icon medium class="green--text text--darken-2 completed-icon">check_circle</v-icon>
-                <h6 class="completed-text">
-                  <span>All items are stored at {{ order.storedAt }}</span>
-                </h6>
-              </div>
-
-              <stored-items
-                  v-if="storedItems.length > 0"
-                  :stored-items="storedItems"
-              >
-              </stored-items>
-            </v-stepper-content>
-          </v-stepper>
+            <stored-items
+                v-if="storedItems.length > 0"
+                :stored-items="storedItems"
+            >
+            </stored-items>
+          </div>
 
           <adjusted-items
               v-if="adjustedItems.length > 0"
               :adjusted-items="adjustedItems"
           >
           </adjusted-items>
+
+          <v-divider v-if="isToReceive || isToCheck || isToStore" class="items-divider"></v-divider>
 
           <order-items
               :ordered-items="orderedItems"
@@ -343,12 +330,28 @@
         let parentText = '';
         let childText = '';
 
-        if (personnel === 'purchaseOrders') {
-          parentText = 'Purchase Orders';
-          this.isInbound = false;
-        } else if (personnel === 'inbound'){
-          parentText = 'Inbound';
-          this.isInbound = true;
+        switch (personnel) {
+          case s.INBOUND:
+            parentText = 'Inbound';
+            this.isInbound = true;
+            break;
+          case s.RECEIVING:
+            parentText = 'Receiving';
+            this.isToReceive = true;
+            break;
+          case s.CHECKING:
+            parentText = 'Checking';
+            this.isToCheck = true;
+            break;
+          case s.STORING:
+            parentText = 'Storing';
+            this.isToStore = true;
+            break;
+          default:
+            this.isInbound = false;
+            this.isToReceive = false;
+            this.isToCheck = false;
+            this.isToStore = false;
         }
 
         if (action === 'view') {
@@ -430,33 +433,24 @@
         this.orderedItems = this.fulfillVariants(purchaseOrder.variants);
 
         // init toReceiveItems
-        this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
-        this.receivedItems = this.fulfillNestedVariants(purchaseOrder.receives);
+        if (this.isToReceive) {
+          this.toReceiveItems = this.fulfillVariants(purchaseOrder.toReceives);
+          this.receivedItems = this.fulfillNestedVariants(purchaseOrder.receives);
+        }
 
         // init toCheckItems
-        this.toCheckItems = this.fulfillVariants(purchaseOrder.toChecks);
-        this.checkedItems = this.fulfillNestedVariants(purchaseOrder.checkedItems);
+        if (this.isToCheck) {
+          this.toCheckItems = this.fulfillVariants(purchaseOrder.toChecks);
+          this.checkedItems = this.fulfillNestedVariants(purchaseOrder.checkedItems);
+        }
 
         // init toStoreItems
-        this.toStoreItems = this.fulfillVariants(purchaseOrder.toStores);
-        this.storedItems = this.fulfillNestedVariants(purchaseOrder.storedItems);
+        if (this.isToStore) {
+          this.toStoreItems = this.fulfillVariants(purchaseOrder.toStores);
+          this.storedItems = this.fulfillNestedVariants(purchaseOrder.storedItems);
+        }
 
         this.adjustedItems = this.fulfillNestedVariants(purchaseOrder.adjustments);
-
-        // init step
-        switch (purchaseOrder.status) {
-          case s.STATUS_RECEIVED:
-            this.step = 2;
-            break;
-          case s.STATUS_CHECKED:
-            this.step = 3;
-            break;
-          case s.STATUS_STORED:
-            this.step = 3;
-            break;
-          default:
-            this.step = 1;
-        }
       }
     },
 
@@ -492,8 +486,10 @@
         isEdit: false,
         isCreate: false,
         isInbound: false,
+        isToReceive: false,
+        isToCheck: false,
+        isToStore: false,
         orderId: '',
-        step: ''
       }
     },
 
