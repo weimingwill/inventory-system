@@ -48,9 +48,34 @@
                 <v-divider light />
                 <v-list-item>
                     <v-list-tile ripple>
-                        <v-list-tile-avatar class="message-icon">
-                            <v-icon>email</v-icon>
-                        </v-list-tile-avatar>
+                        <v-menu class="message-menu" top right>
+                            <v-btn icon="icon" slot="activator" dark>
+                                <v-list-tile-avatar class="message-icon">
+                                    <v-icon
+                                        v-badge="badge"
+                                        class="red--after"
+                                    >email</v-icon>
+                                </v-list-tile-avatar>
+                            </v-btn>
+                            <v-list three-line class="elevation-1 message-list">
+                                <template v-for="item in items">
+                                    <v-subheader v-if="item.header" v-text="item.header"/>
+                                    <v-divider v-else-if="item.divider" v-bind:inset="item.inset"/>
+                                    <v-list-item v-else v-bind:key="item.title">
+                                        <v-list-tile avatar>
+                                            <v-list-tile-avatar>
+                                                <v-icon>{{ item.icon }}</v-icon>
+                                            </v-list-tile-avatar>
+                                            <v-list-tile-content>
+                                                <v-list-tile-title v-html="item.title"/>
+                                                <v-list-tile-sub-title v-html="item.subtitle"/>
+                                            </v-list-tile-content>
+                                        </v-list-tile>
+                                    </v-list-item>
+                                </template>
+                            </v-list>
+                        </v-menu>
+
                         <v-list-tile-title class="message-title" v-text="message"/>
                     </v-list-tile>
                 </v-list-item>
@@ -99,7 +124,21 @@
       return {
         username: 'Zhuang Weiming',
         position: 'Inventory Manager',
-        message: 'Message'
+        message: 'Message',
+        items: [
+          {
+            title: 'title',
+            subtitle: 'sub',
+            icon: 'alarm',
+          },
+          { divider: true, inset: true },
+          {
+            title: 'title2',
+            subtitle: 'sub2',
+            icon: 'mail',
+          }
+        ],
+        badge: { value: 6, right: true, overlap: true }
       }
     }
   }
@@ -134,7 +173,6 @@
     }
 
     .logo {
-        /*width: 20%;*/
         height: auto;
     }
 
@@ -171,5 +209,23 @@
 
     .message-title {
         margin-left: 4%;
+    }
+
+    .message-menu {
+
+    }
+
+    .message-list {
+        width: 250px;
+    }
+
+    .message-list li a {
+        color: #424242;
+    }
+
+    .badge:after {
+        height: 17px;
+        width: 17px;
+        font-size: 0.8rem;
     }
 </style>

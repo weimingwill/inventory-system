@@ -1,0 +1,7 @@
+id,title,content,icon,time,isRead,from,to,href
+1,Time To Reorder,,replay,,FALSE,system,purchasing,
+2,Time To Purchase New Goods,,shopping,,FALSE,system,purchasing,
+3,Goods Incoming Today,,input,,FALSE,system,receiving,
+4,New Items to Check,,security,,FALSE,system,checking,
+5,New Items to Store,,dashboad,,FALSE,system,storing,
+6,Purchase Order Stored,,mail,,FALSE,system,purchasing,
