@@ -131,31 +131,11 @@
                     {{ warningMsg }}
                 </v-alert>
 
-                <v-text-field
+                <warehouse-allocation-table
                     v-if="shelfName || layerName || cellName"
-                    append-icon="search"
-                    label="Search"
-                    single-line
-                    hide-details
-                    v-model="searchVariantTable"
-                ></v-text-field>
-                <v-data-table
-                    class="variant-table"
-                    v-bind:search="searchVariantTable"
-                    v-if="shelfName || layerName || cellName"
-                    v-bind:headers="allocationHeaders"
-                    v-model="cellVariantJoins"
+                    :items="cellVariantJoins"
                 >
-                  <template slot="items" scope="props">
-                    <td class="image-td">
-                      <img class="product-image" :src="props.item.image">
-                    </td>
-                    <td>{{ props.item.fullname }}</td>
-                    <td>{{ props.item.quantity }}</td>
-                    <td>{{ props.item.layerName }}</td>
-                    <td>{{ props.item.cellName }}</td>
-                  </template>
-                </v-data-table>
+                </warehouse-allocation-table>
               </v-container>
             </v-card>
           </v-col>
@@ -178,6 +158,7 @@
   import { mapGetters, mapActions } from 'vuex'
   import WarehouseMap from '../../warehouse/components/warehouse-map.vue'
   import VariantSelectionList from '../../components/variant-selection-list.vue'
+  import WarehouseAllocationTable from '../../warehouse/components/warehouse-allocation-table.vue'
   import * as s from '../../../utils/setting'
 
   export default {
@@ -187,7 +168,8 @@
 
     components: {
       WarehouseMap,
-      VariantSelectionList
+      VariantSelectionList,
+      WarehouseAllocationTable
     },
 
     watch: {
@@ -236,6 +218,8 @@
     computed: {
       ...mapGetters([
         'shelveNames',
+        'getLayerNames',
+        'getCellNames',
         'getCell',
         'getCells',
         'getLayers',
@@ -251,17 +235,11 @@
       ]),
 
       layerNames() {
-        this.layers = this.getLayers(this.shelfName);
-        return this.layers.map(layer => {
-          return layer.fullname;
-        });
+        return this.getLayerNames(this.shelfName);
       },
 
       cellNames() {
-        this.cells = this.getCells(this.shelfName, this.layerName);
-        return this.cells.map(cell => {
-          return cell.name
-        });
+        return this.getCellNames(this.shelfName, this.layerName);
       },
 
       selectionVariants () {
@@ -399,8 +377,6 @@
         shelfName: '',
         layerName: '',
         cellName: '',
-        layers: [],
-        cells: [],
         cellVariantJoins: [],
         searchVariantTable: '',
         successMsgs: [],
@@ -422,31 +398,7 @@
           value: 'quantity'
         }],
 
-        allocationHeaders: [{
-          text: '',
-          left: true,
-          value: 'image',
-        }, {
-          text: 'Name',
-          left: true,
-          value: 'name',
-          sortable: false,
-        }, {
-          text: 'Quantity',
-          left: true,
-          value: 'quantity',
-          sortable: false,
-        }, {
-          text: 'Layer',
-          left: true,
-          value: 'layer',
-          sortable: false,
-        }, {
-          text: 'Cell',
-          left: true,
-          value: 'cell',
-          sortable: false,
-        }]
+        allocationHeaders: s.ALLOCATION_HEADERS
       }
     }
   }
@@ -455,10 +407,6 @@
 <style scoped>
   .toolbar {
     width: 84.5%;
-  }
-
-  .image-td {
-    padding: 0 0 0 0 !important;
   }
 
   .dialog-card {
@@ -484,16 +432,6 @@
     margin-top: 1rem;
     margin-bottom: 2rem;
   }
-
-  .variant-table table tbody tr td {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
-  }
-
-  .variant-table table tbody tr td:first-child {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
-  }
 </style>
 
 <style>
@@ -507,10 +445,5 @@
 
   .allocate-btn {
     width: 100%
-  }
-
-  .variant-table table thead th {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
   }
 </style>

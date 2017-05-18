@@ -9,93 +9,6 @@
               :showWarehouseSelection="true"
               v-on:shelfSelected="selectShelf"
           ></warehouse-map>
-          <!--<v-card id="warehouse-card">-->
-            <!--<v-toolbar class="warehouse-toolbar">-->
-              <!--<v-toolbar-title class="warehouse-title">Warehouse Map</v-toolbar-title>-->
-
-              <!--<v-select-->
-                  <!--class="warehouse-select"-->
-                  <!--v-bind:items="warehouseLocations"-->
-                  <!--v-model="warehouse"-->
-                  <!--dark-->
-              <!--/>-->
-            <!--</v-toolbar>-->
-
-            <!--<v-container class="warehouse-container" fluid>-->
-              <!--<v-row>-->
-                <!--<v-col xs12>-->
-                  <!--&lt;!&ndash; Warehouse common shelves&ndash;&gt;-->
-                  <!--<v-row v-for="(row, index) in commonShelvesInRows" :key="index">-->
-                    <!--<v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">-->
-                      <!--{{ shelf.name }}-->
-                    <!--</v-col>-->
-                  <!--</v-row>-->
-
-                  <!--<v-row class="bounding-area">-->
-                    <!--&lt;!&ndash; Inbound areas&ndash;&gt;-->
-                    <!--<v-col xs2>-->
-                      <!--<v-row>-->
-                        <!--<v-col xs12 class="functional-area">-->
-                          <!--Quality Check-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-
-                      <!--<v-row>-->
-                        <!--<v-col xs12 class="functional-area">-->
-                          <!--Receiving-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-
-                      <!--<v-row>-->
-                        <!--<v-col offset-xs2 xs8 class="functional-area">-->
-                          <!--Inbound Entrance-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-                    <!--</v-col>-->
-
-                    <!--<v-col xs10 class="outbound-area">-->
-                      <!--&lt;!&ndash; Popular area and Cross docking area&ndash;&gt;-->
-                      <!--<v-row>-->
-                        <!--<v-col xs1 v-for="shelf in popularShelves" :key="shelf.id" class="shelf">-->
-                          <!--{{ shelf.name }}-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-
-                      <!--<v-row>-->
-                        <!--<v-col xs1 v-for="shelf in crossDockingShelves" :key="shelf.id" class="shelf">-->
-                          <!--{{ shelf.name }}-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-
-                      <!--&lt;!&ndash; Outbound area &ndash;&gt;-->
-                      <!--<v-row>-->
-                        <!--<v-col xs12>-->
-                          <!--<v-row>-->
-                            <!--<v-col offset-xs5 xs5 class="functional-area">-->
-                              <!--Packing-->
-                            <!--</v-col>-->
-                          <!--</v-row>-->
-
-                          <!--<v-row>-->
-                            <!--<v-col offset-xs8 xs2 class="functional-area">-->
-                              <!--Shipping-->
-                            <!--</v-col>-->
-                          <!--</v-row>-->
-
-                          <!--<v-row>-->
-                            <!--<v-col offset-xs8 xs2 class="functional-area">-->
-                              <!--Outbound Entrance-->
-                            <!--</v-col>-->
-                          <!--</v-row>-->
-                        <!--</v-col>-->
-                      <!--</v-row>-->
-
-                    <!--</v-col>-->
-                  <!--</v-row>-->
-                <!--</v-col>-->
-              <!--</v-row>-->
-            <!--</v-container>-->
-          <!--</v-card>-->
         </v-col>
 
         <v-col xs3>
@@ -125,18 +38,11 @@
                   light
               />
 
-              <v-data-table
-                  v-if="layerName || cellName"
-                  v-bind:headers="headers"
-                  v-model="items"
-                  rows-per-page="6"
+              <warehouse-allocation-table
+                  v-if="shelfName || layerName || cellName"
+                  :items="cellVariantJoins"
               >
-                <template slot="items" scope="props">
-                  <td>{{ props.item.variantName }}</td>
-                  <td>{{ props.item.quantity }}</td>
-                  <td>{{ props.item.cellName }}</td>
-                </template>
-              </v-data-table>
+              </warehouse-allocation-table>
             </v-container>
           </v-card>
         </v-col>
@@ -150,6 +56,8 @@
 
   import Breadcrumbs from '../components/breadcrumbs.vue'
   import WarehouseMap from './components/warehouse-map.vue'
+  import WarehouseAllocationTable from './components/warehouse-allocation-table.vue'
+
   import * as s from '../../utils/setting'
 
   export default {
@@ -157,99 +65,66 @@
 
     components: {
       Breadcrumbs,
-      WarehouseMap
+      WarehouseMap,
+      WarehouseAllocationTable
     },
 
     computed: {
       ...mapGetters([
         'shelves',
         'shelveNames',
+        'getLayerNames',
+        'getCellNames',
         'warehouseLocations',
         'fulfillCellVariantJoins',
         'getObjectByAttr',
         'getObjectListByAttr',
         'getCellVariantJoinByCell',
         'getCells',
-        'getLayers'
+        'getLayers',
+        'getCellVariantJoinByLayer',
+        'getCellVariantJoinByCell',
+        'getCellVariantByShelf'
       ]),
 
-      commonShelves() {
-        let rows = [];
-        let shelves = this.shelves.filter(shelve => shelve.name.charAt(0) === 'C');
-        let numOfRow = shelves.length / 10;
-        for (let i = 0; i < numOfRow; i++) {
-          let row = [];
-          for (let j = 0; j < 10; j++) {
-            row.push(this.shelves[i * 10 + j]);
-          }
-          rows.push(row);
-        }
-        return rows;
+      layerNames () {
+        return this.getLayerNames(this.shelfName);
       },
 
-      popularShelves() {
-        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'P');
-      },
-
-      crossDockingShelves() {
-        return this.shelves.filter(shelve => shelve.name.charAt(0) === 'T');
-      },
-
-      layerNames() {
-        this.layers = this.getLayers(this.shelfName);
-        return this.layers.map(layer => {
-          return layer.fullname;
-        });
-      },
-
-      cellNames() {
-        this.cells = this.getCells(this.shelfName, this.layerName);
-        return this.cells.map(cell => {
-          return cell.name
-        });
+      cellNames () {
+        return this.getCellNames(this.shelfName, this.layerName);
       },
 
     },
 
     watch: {
-      shelfName: function () {
+      shelfName () {
         this.layerName = '';
         this.cellName = '';
-      },
 
-      layerName: function () {
-        this.cellName = '';
-
-        if (this.layerName) {
-          this.cells = this.getCells(this.shelfName, this.layerName);
-          let cellVariantJoins = [];
-          for (let i = 0; i < this.cells.length; i++) {
-            let cell = this.cells[i];
-            let cellVariantJoin = this.getObjectListByAttr(s.MODULE_WAREHOUSE, s.OBJ_CELL_VARIANT, 'cellId', cell.id);
-            cellVariantJoin = cellVariantJoin.map(cv => {
-              cv.cellName = cell.name;
-              return cv;
-            });
-            cellVariantJoins = cellVariantJoins.concat(cellVariantJoin);
-          }
-          cellVariantJoins = this.fulfillCellVariantJoins(cellVariantJoins);
-          this.items = cellVariantJoins;
+        if (this.shelfName) {
+          this.cellVariantJoins = this.getCellVariantByShelf(this.shelfName);
         }
       },
 
-      cellName: function () {
+      layerName () {
+        this.cellName = '';
+
+        if (this.layerName) {
+          this.cellVariantJoins = this.getCellVariantJoinByLayer(this.shelfName, this.layerName)
+        }
+      },
+
+      cellName () {
         if (this.cellName) {
-          let cellVariantJoin = this.getCellVariantJoinByCell(this.cellName, this.cells);
-          cellVariantJoin = this.fulfillCellVariantJoins(cellVariantJoin);
-          this.items = cellVariantJoin;
+          this.cellVariantJoins = this.getCellVariantJoinByCell(this.shelfName, this.layerName, this.cellName);
         }
       }
     },
 
     methods: {
-      selectShelf: function (shelfName) {
-        let shelf = this.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'name', shelfName.trim());
-        this.shelfName = shelf.fullname;
+      selectShelf (shelfName) {
+        this.shelfName = shelfName;
       }
     },
 
@@ -262,24 +137,8 @@
         shelfName: '',
         layerName: '',
         cellName: '',
-        layers: [],
-        cells: [],
-        headers: [
-          {
-            text: 'Name',
-            value: 'name',
-            left: true,
-          }, {
-            text: 'Quantity',
-            value: 'quantity',
-            left: true,
-          }, {
-            text: 'Cell Name',
-            value: 'cellName',
-            left: true,
-          }
-        ],
-        items: []
+        headers: s.ALLOCATION_HEADERS,
+        cellVariantJoins: []
       }
     },
 
@@ -289,28 +148,9 @@
     },
 
     mounted() {
-      this.warehouse = this.warehouseLocations[0];
-      let $shelves = document.getElementsByClassName('shelf');
-      Array.from($shelves).forEach($shelf => $shelf.addEventListener('click', () => {
-        // remove existing active class and add to the clicked one
-        let $activeShelves = document.getElementsByClassName('active');
-        if ($activeShelves.length > 0) {
-          Array.from($activeShelves).forEach($shelf => {
-            $shelf.className = $shelf.className.replace(/\bactive\b/,'');
-          })
-        }
-        $shelf.className += " active";
-        this.selectShelf($shelf.textContent);
-      }));
-
       // Set height of variant container equal to map container
       let height = document.getElementById('warehouse-card').offsetHeight;
       document.getElementById('variant-container').style.height = height + 'px';
-    },
-
-    beforeDestory() {
-      let $shelves = document.getElementsByClassName('shelf');
-      Array.from($shelves).forEach($shelf => $shelf.removeEventListener('click', () => this.selectShelf($shelf.textContent)));
     }
   }
 </script>

@@ -33,6 +33,20 @@ const getters = {
     return getters.getObjectList(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'fullname');
   },
   
+  getLayerNames: (state, getters) => (shelfName) => {
+    let layers = getters.getLayers(shelfName);
+    return layers.map(layer => {
+      return layer.fullname;
+    });
+  },
+  
+  getCellNames: (state, getters) => (shelfName, layerName) => {
+    let cells = getters.getCells(shelfName, layerName);
+    return cells.map(cell => {
+      return cell.name
+    });
+  },
+  
   commonShelvesInRows: state => {
     let rows = [];
     let shelves = state.shelves.filter(shelf => shelf.name.charAt(0) === 'C');
@@ -285,9 +299,9 @@ const mutations = {
         cv.purchases = {}
       }
       return cv;
-    })
+    });
     
-    log('cellVariantJoins', state.cellVariantJoins);
+    // log('cellVariantJoins', state.cellVariantJoins);
   },
   
   [types.ALLOCATE_ITEMS] (state, { variant, quantity, orderId, cells, cellVariantJoins }) {
@@ -310,12 +324,6 @@ const mutations = {
         occupiedCapacity = filteredCellVariantJoins.map(cv => cv.quantity).reduce((sum, quantity) => {
           return sum + quantity
         });
-        let filteredCellVariantJoin = cellVariantJoins.find(cv => cv.cellId === cell.id && variant.variantId === cv.variantId);
-        if (!filteredCellVariantJoin) {
-          cellVariantJoins.push(cellVariantJoin);
-        } else {
-          cellVariantJoin = filteredCellVariantJoin;
-        }
       }
       
       let capacity = cell.capacity - occupiedCapacity;
@@ -327,13 +335,22 @@ const mutations = {
           allocatedQuantity = quantity;
         }
   
-        quantity -= allocatedQuantity;
-        cellVariantJoin.quantity += allocatedQuantity;
+        if (allocatedQuantity > 0) {
+          let filteredCellVariantJoin = cellVariantJoins.find(cv => cv.cellId === cell.id && variant.variantId === cv.variantId);
+          if (!filteredCellVariantJoin) {
+            cellVariantJoins.push(cellVariantJoin);
+          } else {
+            cellVariantJoin = filteredCellVariantJoin;
+          }
   
-        if (cellVariantJoin.purchases.hasOwnProperty(orderId)) {
-          cellVariantJoin.purchases[orderId] += allocatedQuantity;
-        } else {
-          cellVariantJoin.purchases[orderId] = allocatedQuantity;
+          quantity -= allocatedQuantity;
+          cellVariantJoin.quantity += allocatedQuantity;
+  
+          if (cellVariantJoin.purchases.hasOwnProperty(orderId)) {
+            cellVariantJoin.purchases[orderId] += allocatedQuantity;
+          } else {
+            cellVariantJoin.purchases[orderId] = allocatedQuantity;
+          }
         }
       }
       
@@ -494,7 +511,9 @@ const actions = {
     
     for (i = 0; i < numOfVariants; i++) {
       let variant = variants[i];
-      variant.productId = getters.getVariantById(variant.variantId).productId;
+      let completeVariant = getters.getVariantById(variant.variantId);
+      variant.productId = completeVariant.productId;
+      variant.popularity = completeVariant.popularity;
       totalToAllocate = variant.toAllocate;
       log('totalToAllocate', totalToAllocate);
       log('variant', variant);

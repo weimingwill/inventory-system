@@ -186,6 +186,7 @@
           checkedQuantity: 0,
           available: 0,
           costPrice: 0,
+          popularity: 0,
           image: '',
           value: false
         },

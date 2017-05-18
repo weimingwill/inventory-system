@@ -116,3 +116,29 @@ export const CHECKING = 'checking'
 export const STORING = 'storing'
 export const INBOUND = 'inbound'
 export const PURCHASE_ORDERS = 'purchaseOrders'
+
+export const ALLOCATION_HEADERS = [{
+  text: '',
+  left: true,
+  value: 'image',
+}, {
+  text: 'Name',
+  left: true,
+  value: 'name',
+  sortable: false,
+}, {
+  text: 'Quantity',
+  left: true,
+  value: 'quantity',
+  sortable: false,
+}, {
+  text: 'Layer',
+  left: true,
+  value: 'layer',
+  sortable: false,
+}, {
+  text: 'Cell',
+  left: true,
+  value: 'cell',
+  sortable: false,
+}]
