@@ -191,6 +191,7 @@
           <v-divider v-if="isToReceive || isToCheck || isToStore" class="items-divider"></v-divider>
 
           <order-items
+              v-if="!isToCheck && !isToStore"
               :ordered-items="orderedItems"
               :isView="isView"
               :order="order"
