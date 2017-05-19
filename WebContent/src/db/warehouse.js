@@ -3,9 +3,10 @@
  */
 import {
   log,
+  updateArrayById
 } from '../utils/utils'
 
-import { CELL_VARAINT_JOINS } from './setting'
+import { CELL_VARAINT_JOINS, SHELVES, LAYERS, CELLS } from './setting'
 
 function updateCellVariantJoins(newCellVariantJoins) {
   log('update cell variant joins', newCellVariantJoins);
@@ -30,6 +31,42 @@ function updateCellVariantJoins(newCellVariantJoins) {
   localStorage.setItem(CELL_VARAINT_JOINS, JSON.stringify(cellVariantJoins));
 }
 
+function updateAllShelves(shelves) {
+  localStorage.setItem(SHELVES, JSON.stringify(shelves));
+}
+
+function updateAllLayers(layers) {
+  localStorage.setItem(LAYERS, JSON.stringify(layers));
+}
+
+function updateAllCells(cells) {
+  localStorage.setItem(CELLS, JSON.stringify(cells));
+}
+
+function updateShelves(updatedShelves) {
+  let shelves = JSON.parse(localStorage.getItem(SHELVES));
+  shelves = updateArrayById(updatedShelves, shelves);
+  localStorage.setItem(SHELVES, JSON.stringify(shelves));
+}
+
+function updateLayers(updatedLayers) {
+  let layers = JSON.parse(localStorage.getItem(LAYERS));
+  layers = updateArrayById(updatedLayers, layers);
+  localStorage.setItem(LAYERS, JSON.stringify(layers));
+}
+
+function updateCells(updatedCells) {
+  let cells = JSON.parse(localStorage.getItem(CELLS));
+  cells = updateArrayById(updatedCells, cells);
+  localStorage.setItem(CELLS, JSON.stringify(cells));
+}
+
 export {
-  updateCellVariantJoins
+  updateAllCells,
+  updateAllLayers,
+  updateAllShelves,
+  updateCellVariantJoins,
+  updateCells,
+  updateLayers,
+  updateShelves
 }

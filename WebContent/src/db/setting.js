@@ -6,3 +6,7 @@ export const VARIANTS = 'variants';
 export const PURCHASE_ORDERS = 'purchaseOrders';
 export const WAREHOUSE = 'warehouses';
 export const CELL_VARAINT_JOINS = 'cellVariantJoins';
+
+export const SHELVES = 'shelves';
+export const LAYERS = 'layers';
+export const CELLS = 'cells';

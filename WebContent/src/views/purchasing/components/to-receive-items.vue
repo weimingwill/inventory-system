@@ -117,12 +117,10 @@
         this.items = this.items.map(item => {
           item = Object.assign({}, item);
           if (item.value) {
-            console.log(item)
             let toReceive = parseInt(item.toReceive);
             item.quantity -= toReceive;
             item.receivedQuantity += toReceive;
             item.toReceive = item.quantity;
-            console.log(item)
           }
           item.value = true;
           return item;

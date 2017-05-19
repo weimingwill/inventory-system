@@ -146,6 +146,18 @@ function calculateHasDoneQuantity (array) {
   });
 }
 
+function updateArrayById(updatedArray, toUpdateArray) {
+  let i;
+  Array.from(updatedArray).forEach(each => {
+    for (i = 0; i < toUpdateArray.length; i++) {
+      if (toUpdateArray[i].id === each.id) {
+        toUpdateArray[i] = each;
+      }
+    }
+  });
+  return toUpdateArray;
+}
+
 export {
   log,
   newIdOfArray,
@@ -160,5 +172,6 @@ export {
   setSameAttributeValues,
   calculateCost,
   calculateStockAft,
-  calculateHasDoneQuantity
+  calculateHasDoneQuantity,
+  updateArrayById
   };

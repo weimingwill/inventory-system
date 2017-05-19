@@ -192,7 +192,7 @@
         this.cellName = '';
 
         if (this.shelfName) {
-          this.cellVariantJoins = this.getCellVariantByShelf(this.shelfName);
+          this.cellVariantJoins = this.getCellVariantsByShelfName(this.shelfName);
         }
       },
 
@@ -202,7 +202,7 @@
         this.cellName = '';
 
         if (this.layerName) {
-          this.cellVariantJoins = this.getCellVariantJoinByLayer(this.shelfName, this.layerName)
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerName(this.shelfName, this.layerName)
         }
       },
 
@@ -210,7 +210,7 @@
         this.resetAlert();
 
         if (this.cellName) {
-          this.cellVariantJoins = this.getCellVariantJoinByCell(this.shelfName, this.layerName, this.cellName);
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerCellName(this.shelfName, this.layerName, this.cellName);
         }
       }
     },
@@ -220,18 +220,18 @@
         'shelveNames',
         'getLayerNames',
         'getCellNames',
-        'getCell',
-        'getCells',
-        'getLayers',
+        'getCellByNames',
+        'getCellsByShelfLayerName',
+        'getLayersOfShelf',
         'getLayerCapacity',
         'getShelfCapacity',
         'getObjectByAttr',
         'getObjectListByAttr',
         'fulfillCellVariantJoins',
         'fulfillVariants',
-        'getCellVariantJoinByLayer',
-        'getCellVariantJoinByCell',
-        'getCellVariantByShelf'
+        'getCellVariantsByShelfLayerName',
+        'getCellVariantsByShelfLayerCellName',
+        'getCellVariantsByShelfName'
       ]),
 
       layerNames() {
@@ -292,11 +292,11 @@
 
       resetCellVariantJoins() {
         if (this.shelfName && this.layerName && this.cellName) {
-          this.cellVariantJoins = this.getCellVariantJoinByCell(this.shelfName, this.layerName, this.cellName);
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerCellName(this.shelfName, this.layerName, this.cellName);
         } else if (this.shelfName && this.layerName) {
-          this.cellVariantJoins = this.getCellVariantJoinByLayer(this.shelfName, this.layerName)
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerName(this.shelfName, this.layerName)
         } else if (this.shelfName) {
-          this.cellVariantJoins = this.getCellVariantByShelf(this.shelfName);
+          this.cellVariantJoins = this.getCellVariantsByShelfName(this.shelfName);
         } else {
           this.cellVariantJoins = []
         }
@@ -327,7 +327,7 @@
         let totalCapacity = 0
           , capacity;
         if (this.shelfName && this.layerName && this.cellName) {
-          let cell = this.getCell(this.shelfName, this.layerName, this.cellName);
+          let cell = this.getCellByNames(this.shelfName, this.layerName, this.cellName);
           totalCapacity = cell.capacity;
         } else if (this.shelfName && this.layerName) {
           totalCapacity = this.getLayerCapacity(this.shelfName, this.layerName);

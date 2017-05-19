@@ -79,12 +79,12 @@
         'fulfillCellVariantJoins',
         'getObjectByAttr',
         'getObjectListByAttr',
-        'getCellVariantJoinByCell',
-        'getCells',
-        'getLayers',
-        'getCellVariantJoinByLayer',
-        'getCellVariantJoinByCell',
-        'getCellVariantByShelf'
+        'getCellVariantsByShelfLayerCellName',
+        'getCellsByShelfLayerName',
+        'getLayersOfShelf',
+        'getCellVariantsByShelfLayerName',
+        'getCellVariantsByShelfLayerCellName',
+        'getCellVariantsByShelfName'
       ]),
 
       layerNames () {
@@ -103,7 +103,7 @@
         this.cellName = '';
 
         if (this.shelfName) {
-          this.cellVariantJoins = this.getCellVariantByShelf(this.shelfName);
+          this.cellVariantJoins = this.getCellVariantsByShelfName(this.shelfName);
         }
       },
 
@@ -111,13 +111,13 @@
         this.cellName = '';
 
         if (this.layerName) {
-          this.cellVariantJoins = this.getCellVariantJoinByLayer(this.shelfName, this.layerName)
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerName(this.shelfName, this.layerName)
         }
       },
 
       cellName () {
         if (this.cellName) {
-          this.cellVariantJoins = this.getCellVariantJoinByCell(this.shelfName, this.layerName, this.cellName);
+          this.cellVariantJoins = this.getCellVariantsByShelfLayerCellName(this.shelfName, this.layerName, this.cellName);
         }
       }
     },
