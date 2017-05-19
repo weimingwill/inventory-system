@@ -116,7 +116,11 @@
     },
 
     methods: {
+      ...mapActions([
+        'toggleLoader'
+      ]),
       rowOnClick: function (id) {
+        this.toggleLoader()
         let routeTo = '/' + this.page + '/view/' + id;
         this.$router.replace(routeTo);
       },

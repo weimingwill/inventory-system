@@ -1,6 +1,5 @@
 <template>
   <v-container fluid>
-
     <v-row>
       <v-col xs6>
         <h6 class="item-header">Not Yet Checked Items</h6>
@@ -79,12 +78,16 @@
 <script>
   import { mapGetters, mapActions } from 'vuex'
   import { calculateCost, calculateStockAft } from '../../../utils/utils'
-
+  import Loader from '../../components/loader.vue'
 
   export default {
     name: 'toCheckItems',
 
     props: ['toCheckItems', 'order'],
+
+    components: {
+      Loader
+    },
 
     watch: {
       toCheckItems() {
@@ -101,7 +104,8 @@
 
     methods: {
       ...mapActions([
-        'checkPurchaseOrder'
+        'checkPurchaseOrder',
+        'toggleLoader'
       ]),
 
       calculateTotalCost: function (quantity, unitCost) {

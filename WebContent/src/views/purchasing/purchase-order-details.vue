@@ -497,6 +497,7 @@
     created() {
       this.$store.dispatch('initSupplier');
       this.init();
+      this.$store.dispatch('setLoader', false);
     },
 
     mounted () {

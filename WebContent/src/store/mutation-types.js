@@ -1,4 +1,6 @@
-export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR'
+export const INIT_APP = 'INIT_APP'
+
+export const TOGGLE_LOADER = 'TOGGLE_LOADER'
 
 export const EXPAND_MENU = 'EXPAND_MENU'
 

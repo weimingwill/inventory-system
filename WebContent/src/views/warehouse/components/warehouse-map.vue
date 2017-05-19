@@ -160,6 +160,7 @@
     },
 
     created() {
+      this.$store.dispatch('initApp');
       this.$store.dispatch('initWarehouse');
       this.$store.dispatch('initInventory');
     },
