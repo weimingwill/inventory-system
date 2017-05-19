@@ -17,7 +17,7 @@
         <v-col xs12>
           <!-- Warehouse common shelves-->
           <v-row v-for="(row, index) in commonShelvesInRows" :key="index">
-            <v-col class="shelf" xs1 v-for="shelf in row" :key="shelf.id">
+            <v-col class="shelf common-shelf" xs1 v-for="shelf in commonShelvesInRows[5 - index]" :key="shelf.id">
               {{ shelf.name }}
             </v-col>
           </v-row>
@@ -47,13 +47,13 @@
             <v-col xs10 class="outbound-area">
               <!-- Popular area and Cross docking area-->
               <v-row>
-                <v-col xs1 v-for="shelf in popularShelves" :key="shelf.id" class="shelf">
+                <v-col xs1 v-for="shelf in popularShelves" :key="shelf.id" class="shelf popular-shelf">
                   {{ shelf.name }}
                 </v-col>
               </v-row>
 
               <v-row>
-                <v-col xs1 v-for="shelf in crossDockingShelves" :key="shelf.id" class="shelf">
+                <v-col xs1 v-for="shelf in crossDockingShelves" :key="shelf.id" class="shelf cross-docking-shelf">
                   {{ shelf.name }}
                 </v-col>
               </v-row>
@@ -82,6 +82,15 @@
               </v-row>
 
             </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col xs3 v-for="(item, index) in colorLabels" :key="index">
+          <v-row class="mt-2 mb-2">
+            <v-col xs5 class="">{{ item.label }}</v-col>
+            <v-col xs2 class="shelf-label" v-bind:style="{ background: item.base }"></v-col>
+            <v-col xs2 class="shelf-label-filled" v-bind:style="{ background: item.color }"></v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -121,8 +130,15 @@
         'getObjectByAttr',
         'commonShelvesInRows',
         'popularShelves',
-        'crossDockingShelves'
+        'crossDockingShelves',
+        'getSupplierShelfNames',
+        'getShelfFilledPercentage',
+        'getShelfFilledBackgroundColor'
       ]),
+
+      colorLabels () {
+        return s.WAREHOUSE_COLORS;
+      }
     },
 
     methods: {
@@ -163,7 +179,30 @@
         this.selectShelf($shelf.textContent);
       }));
 
+      let shelfNames, shelfName, percentage, $selectedShelves;
 
+      Array.from(s.WAREHOUSE_COLORS).forEach(c => {
+        switch (c.type) {
+          case 'popular':
+            $selectedShelves = document.getElementsByClassName('popular-shelf');
+            break;
+          case 'crossDocking':
+            $selectedShelves = document.getElementsByClassName('cross-docking-shelf');
+            break;
+          default:
+            $selectedShelves = document.getElementsByClassName('common-shelf');
+        }
+        if (c.type === 'common') {
+          shelfNames = this.getSupplierShelfNames(c.supplierId);
+        }
+        Array.from($selectedShelves).forEach($shelf => {
+          shelfName = $shelf.textContent.trim();
+          if ((c.type === 'common' && shelfNames.includes(shelfName)) || c.type !== 'common') {
+            percentage = this.getShelfFilledPercentage(shelfName);
+            $shelf.style.background = this.getShelfFilledBackgroundColor(c.base, c.color, percentage);
+          }
+        })
+      });
     },
 
     beforeDestory() {
@@ -182,6 +221,10 @@
     margin-bottom: 4rem;
   }
 
+  .shelf-label, .shelf-label-filled {
+    padding: 0.5rem;
+  }
+
   .shelf, .functional-area {
     border: 1px solid lightgray;
     padding: 1rem;
@@ -191,16 +234,21 @@
   }
 
   .shelf:hover {
-    background-color: lightgray;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 5px 8px rgba(0,0,0,.14),0 1px 14px rgba(0,0,0,.12);
     cursor: pointer;
   }
 
+  .shelf {
+    /*background: linear-gradient(to top, #c4e8ae 0%, rgba(0, 0, 0, 0) 10%);*/
+    /*background-color: #efffe5;*/
+  }
+
   .active {
-    background-color: lightgray;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 5px 8px rgba(0,0,0,.14),0 1px 14px rgba(0,0,0,.12)
   }
 
   .shelf:active {
-    background-color: lightgray;
+    box-shadow: 0 3px 5px -1px rgba(0,0,0,.2),0 5px 8px rgba(0,0,0,.14),0 1px 14px rgba(0,0,0,.12)
   }
 
   .bounding-area {

@@ -143,32 +143,46 @@ export const ALLOCATION_HEADERS = [{
   sortable: false,
 }]
 
-export const WAREHOUSE_COLOR = {
-  common: [{
-    label: 'Levi\'s',
-    color: '#97cd76'
-  }, {
-    label: 'Cotton On',
-    color: '#588eff'
-  }, {
-    label: 'Jack & Jones',
-    color: '#76dbd4'
-  }],
-  popular: {
+export const WAREHOUSE_COLORS = [
+  {
     label: 'Popular',
-    color: '#fce473'
-  },
-  crossDocking: {
+    base: '#ffffcc',
+    color: '#fcec85',
+    type: 'popular'
+  }, {
     label: 'Cross Docking',
-    color: '#ed6c63'
-  },
-  adjust: {
+    base: '#ffcccc',
+    color: '#ed8c7d',
+    type: 'crossDocking'
+  }, {
+    supplierId: -1,
     label: 'Adjustment',
-    color: '#ffbb99'
-  },
-  return: {
-    label: 'Return To Supplier',
-    color: '#6666cc'
-  },
-  
-}
+    base: '#ffdec7',
+    color: '#ffbb99',
+    type: 'common'
+  }, {
+    supplierId: 0,
+    label: 'To Supplier',
+    base: '#c1b1cc',
+    color: '#6c71cc',
+    type: 'common'
+  }, {
+    supplierId: 1,
+    label: 'Levi\'s',
+    base: '#efffe5',
+    color: '#c4e8ae',
+    type: 'common'
+  }, {
+    supplierId: 2,
+    label: 'Cotton On',
+    base: '#c3d7ff',
+    color: '#6aadff',
+    type: 'common'
+  }, {
+    supplierId: 3,
+    label: 'Jack & Jones',
+    base: '#cdf1ff',
+    color: '#7dd2db',
+    type: 'common'
+  }
+]

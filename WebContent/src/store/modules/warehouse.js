@@ -92,6 +92,10 @@ const getters = {
     return getters.getObjectListByAttr(s.MODULE_WAREHOUSE, s.OBJ_LAYERS, 'shelfId', shelf.id);
   },
   
+  getSupplierShelfNames: (state, getters) => (supplierId) => {
+    return state.shelves.filter(shelf => shelf.supplierId === supplierId).map(shelf => shelf.name);
+  },
+  
   getCells: (state, getters) => (shelfName, layerName) => {
     let layers = getters.getLayers(shelfName);
     let layer = layers.find(layer => layer.fullname === layerName);
@@ -124,9 +128,30 @@ const getters = {
   },
   
   getVariantJoinsCapacity: (state, getters) => (cellVariantJoins) => {
-    return cellVariantJoins.map(cv => cv.quantity).reduce((sum, quantity) => {
-      return sum + quantity;
-    })
+    if (cellVariantJoins.length === 0) {
+      return 0
+    } else {
+      return cellVariantJoins.map(cv => cv.quantity).reduce((sum, quantity) => {
+        return sum + quantity;
+      })
+    }
+  },
+  
+  getShelfFilledBackgroundColor: (state, getters) => (baseColor, color, percentage) => {
+    return `linear-gradient(to top, ${color} ${percentage}%, ${baseColor} 0%)`
+  },
+  
+  getOccupiedCapacityOfShelf: (state, getters) => (shelfName) => {
+    let cellVariantJoins = getters.getCellVariantByShelf(shelfName);
+    return getters.getVariantJoinsCapacity(cellVariantJoins)
+  },
+  
+  getShelfFilledPercentage: (state, getters) => (shelfName) => {
+    let shelf = getters.getObjectByAttr(s.MODULE_WAREHOUSE, s.OBJ_SHELVES, 'name', shelfName);
+    shelfName = shelf.fullname;
+    let capacity = getters.getShelfCapacity(shelfName);
+    let occupiedCapacity = getters.getOccupiedCapacityOfShelf(shelfName);
+    return (occupiedCapacity / capacity).toFixed(2) * 100;
   },
   
   getCellVariantByShelves: (state, getters) => (shelves) => {
