@@ -11,6 +11,7 @@ import supplier from './modules/supplier'
 import purchasing from './modules/purchasing'
 import warehouse from './modules/warehouse'
 import sales from './modules/sales'
+import notifications from './modules/notifications'
 
 Vue.use(Vuex);
 
@@ -26,7 +27,8 @@ const store = new Vuex.Store({
     supplier,
     purchasing,
     warehouse,
-    sales
+    sales,
+    notifications
   },
   // strict: debug
 });

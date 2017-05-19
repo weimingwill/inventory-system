@@ -1,7 +1,7 @@
-id,title,content,icon,time,isRead,from,to,href
-1,Time To Reorder,,replay,,FALSE,system,purchasing,
-2,Time To Purchase New Goods,,shopping,,FALSE,system,purchasing,
-3,Goods Incoming Today,,input,,FALSE,system,receiving,
-4,New Items to Check,,security,,FALSE,system,checking,
-5,New Items to Store,,dashboad,,FALSE,system,storing,
-6,Purchase Order Stored,,mail,,FALSE,system,purchasing,
+id,title,subtitle,icon,time,isRead,from,to,href
+1,Time To Reorder,Inventory of Sweatshirt Hoodie is low-click to reorder.,replay,,false,system,purchasing,
+2,Time To Purchase New Goods,New season is coming-time to purchase new goods! Click to view demand forecast.,add_shopping_cart,,false,system,purchasing,/purchasingDashboard
+3,Goods Incoming Today,Purchase order #P00001 and #P00002 is incoming today. Click to view details.,input,,false,system,receiving,/receiving
+4,New Items to Check,200 new items are received-click to view details.,security,,false,system,checking,/checking
+5,New Items to Store,300 new items are checked-click to view details.,dashboard,,false,system,storing,/storing
+6,Adjustment on Purchase Order,"Purchase order #P00001 has some problems, click to view details.",error,,false,system,purchasing,/purchaseOrders/view/1

@@ -71,6 +71,13 @@ function initSales() {
   return init(objects);
 }
 
+function initNotifications() {
+  let objects = [
+    'messages'
+  ];
+  return init(objects);
+}
+
 // Helper functions
 function init(objects, combinedObjParam) {
   let initObject = {};
@@ -185,5 +192,6 @@ export {
   initPurchasing,
   initSuppliers,
   initWarehouses,
-  initSales
+  initSales,
+  initNotifications
 }

@@ -58,13 +58,15 @@
                                 </v-list-tile-avatar>
                             </v-btn>
                             <v-list three-line class="elevation-1 message-list">
-                                <template v-for="item in items">
+                                <template v-for="item in messages">
                                     <v-subheader v-if="item.header" v-text="item.header"/>
                                     <v-divider v-else-if="item.divider" v-bind:inset="item.inset"/>
                                     <v-list-item v-else v-bind:key="item.title">
-                                        <v-list-tile avatar>
+                                        <v-list-tile :href="item.href" avatar>
                                             <v-list-tile-avatar>
-                                                <v-icon>{{ item.icon }}</v-icon>
+                                                <v-icon
+                                                    class="grey--text text--darken-2"
+                                                >{{ item.icon }}</v-icon>
                                             </v-list-tile-avatar>
                                             <v-list-tile-content>
                                                 <v-list-tile-title v-html="item.title"/>
@@ -110,6 +112,7 @@
     computed: {
       ...mapGetters({
         menu: 'menuitems',
+        messages: 'notifications'
       }),
     },
 
@@ -138,7 +141,7 @@
             icon: 'mail',
           }
         ],
-        badge: { value: 6, right: true, overlap: true }
+        badge: { value: 6, right: true, overlap: true },
       }
     }
   }
@@ -222,6 +225,8 @@
     .message-list li a {
         color: #424242;
     }
+
+
 
     .badge:after {
         height: 17px;

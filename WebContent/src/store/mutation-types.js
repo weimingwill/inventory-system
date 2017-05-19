@@ -12,6 +12,8 @@ export const INIT_WAREHOUSE = 'INIT_WAREHOUSE'
 
 export const INIT_SALES = 'INIT_SALES'
 
+export const INIT_NOTIFICATIONS = 'INIT_NOTIFICATIONS'
+
 // Products
 export const CREATE_PRODUCT = 'CREATE_PRODUCT'
 
