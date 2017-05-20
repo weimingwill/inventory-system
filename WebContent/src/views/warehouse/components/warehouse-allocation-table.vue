@@ -19,8 +19,9 @@
         </td>
         <td>{{ props.item.fullname }}</td>
         <td>{{ props.item.quantity }}</td>
-        <td>{{ props.item.layerName }}</td>
-        <td>{{ props.item.cellName }}</td>
+        <td>{{ props.item.location }}</td>
+        <!--<td>{{ props.item.layerName }}</td>-->
+        <!--<td>{{ props.item.cellName }}</td>-->
       </template>
     </v-data-table>
   </div>

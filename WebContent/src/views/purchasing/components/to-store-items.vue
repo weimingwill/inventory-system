@@ -98,7 +98,8 @@
         'getVariantById',
         'variants',
         'getVariantAllocations',
-        'getVariantAllocationsShelves'
+        'getVariantAllocationsShelves',
+        'getCellVariantByVariantIdAndOrderId'
       ]),
     },
 
@@ -167,7 +168,8 @@
             }
           });
           this.item.location = this.getVariantAllocationsShelves(this.item.id, this.order.id);
-          this.item.allocations = this.getVariantAllocations(this.item.id, this.order.id);
+          let cellVariants = this.getCellVariantByVariantIdAndOrderId(this.item.id, this.order.id);
+          this.item.allocations = this.getVariantAllocations(cellVariants);
           this.items.push(Object.assign({}, this.item))
         });
       },

@@ -229,6 +229,20 @@ const getters = {
     return getters.getCellVariantsByCell(cell);
   },
 
+  getCellVariantByVariantIdAndOrderId: (state, getters) => (variantId, purchaseOrderId) => {
+    let cellVariants = state.cellVariantJoins.filter(cv => cv.variantId === variantId && Object.keys(cv.purchases).includes(purchaseOrderId.toString()));
+    return getters.fulfillCellVariantJoinsWithVariantInfo(cellVariants);
+  },
+
+  fulfillCellVariantJoinsWithVariantInfo: (state, getters) => (cellVariantJoins) => {
+    return cellVariantJoins.map(cv => {
+      let variant = getters.getVariantById(cv.variantId);
+      cv.fullname = variant.fullname;
+      cv.image = variant.image;
+      return cv
+    });
+  },
+
   fulfillCellVariantJoins: (state, getters) => (cell, cellVariantJoins) => {
     let layer = getters.getLayerById(cell.layerId);
     let shelf = getters.getShelfById(layer.shelfId);
@@ -242,6 +256,16 @@ const getters = {
       cv.image = variant.image;
       return cv
     });
+  },
+
+  getVariantsOfCellVariants: (state) => (cellVariants) => {
+    let variantIds = [];
+    Array.from(cellVariants).forEach(cv => {
+      if (!variantIds.includes(cv.variantId)) {
+        variantIds.push(cv.variantId);
+      }
+    });
+    return variantIds;
   },
 
   getShelfFilledBackgroundColor: (state, getters) => (baseColor, color, percentage) => {
@@ -262,7 +286,8 @@ const getters = {
   },
 
 
-  getVariantAllocations: (state, getters) => (variantId, purchaseOrderId) => {
+  getVariantAllocations: (state, getters) => (cellVariantJoins, purchaseOrderId) => {
+    // All these cellVariants should be the same variant
     let allocations = []
       , cellName
       , layerName
@@ -287,10 +312,18 @@ const getters = {
       , isCellFull
       , cellStart
       , cellEnd
-      , cellCumulateQuantity
-      , cellVariantJoins = state.cellVariantJoins.filter(cv => cv.variantId === variantId && Object.keys(cv.purchases).includes(purchaseOrderId.toString()));
+      , cellCumulatedQuantity
+      , fullname = ''
+      , image = '';
+
     Array.from(cellVariantJoins).forEach(cv => {
-      quantity = cv.purchases[purchaseOrderId]
+      fullname = cv.fullname;
+      image = cv.image;
+      if (purchaseOrderId) {
+        quantity = cv.purchases[purchaseOrderId];
+      } else {
+        quantity = cv.quantity;
+      }
       cell = getters.getCellById(cv.cellId);
       layer = getters.getLayerById(cell.layerId);
       shelf = getters.getShelfById(layer.shelfId);
@@ -321,6 +354,16 @@ const getters = {
       }
     });
 
+    function setAllocations (allocations, { location, quantity, fullname, image }) {
+        let allocation = {
+          location: location,
+          quantity: quantity,
+          fullname: fullname,
+          image: image
+        };
+        allocations.push(allocation);
+    }
+
     // Todo: refactor this function to be more elegant
     shelfKeys = Object.keys(nameMap);
     for (i = 0; i < shelfKeys.length; i++) {
@@ -330,11 +373,7 @@ const getters = {
         location = shelfKey;
         quantity = nameMap[shelfKey].quantity;
         if (!allocatedLocations.includes(location)) {
-          allocation = {
-            location: location,
-            quantity: quantity
-          };
-          allocations.push(allocation);
+          setAllocations(allocations, { location, quantity, fullname, image });
           allocatedLocations.push(location);
           continue;
         }
@@ -348,11 +387,7 @@ const getters = {
           location = [shelfKey, layerKey].join(', ');
           quantity = nameMap[shelfKey][layerKey].quantity;
           if (!allocatedLocations.includes(location)) {
-            allocation = {
-              location: location,
-              quantity: quantity
-            };
-            allocations.push(allocation);
+            setAllocations(allocations, { location, quantity, fullname, image });
             allocatedLocations.push(location);
             continue;
           }
@@ -360,7 +395,7 @@ const getters = {
 
         cellKeys = Object.keys(nameMap[shelfKey][layerKey]);
         isCellFull = false;
-        cellCumulateQuantity = [];
+        cellCumulatedQuantity = [];
         cellStart = '';
         cellEnd = '';
         for (k = 0; k < cellKeys.length; k++) {
@@ -373,18 +408,14 @@ const getters = {
                 cellStart = cellKey;
               }
               cellEnd = cellKey;
-              cellCumulateQuantity.push(quantity);
+              cellCumulatedQuantity.push(quantity);
               if (k !== cellKeys.length - 1) {
                 continue;
               }
             } else if (!isCellFull){
               location = [shelfKey, layerKey, cellKey].join(', ');
               if (!allocatedLocations.includes(location)) {
-                allocation = {
-                  location: location,
-                  quantity: quantity
-                };
-                allocations.push(allocation);
+                setAllocations(allocations, { location, quantity, fullname, image });
                 allocatedLocations.push(location);
               }
             }
@@ -395,19 +426,15 @@ const getters = {
               } else {
                 location = [shelfKey, layerKey, cellStart + " - " + cellEnd].join(', ');
               }
-              quantity = cellCumulateQuantity.reduce((sum, quantity) => { return sum + quantity });
+              quantity = cellCumulatedQuantity.reduce((sum, quantity) => { return sum + quantity });
 
               if (!allocatedLocations.includes(location)) {
-                allocation = {
-                  location: location,
-                  quantity: quantity
-                };
-                allocations.push(allocation);
+                setAllocations(allocations, { location, quantity, fullname, image });
                 allocatedLocations.push(location);
               }
 
               isCellFull = false;
-              cellCumulateQuantity = [];
+              cellCumulatedQuantity = [];
               cellStart = '';
               cellEnd = ''
             }
@@ -416,6 +443,7 @@ const getters = {
       }
     }
 
+    allocations.sort((a, b) => a.location - b.location);
     return allocations;
   },
 

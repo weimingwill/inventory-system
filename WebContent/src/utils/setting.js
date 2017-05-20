@@ -125,23 +125,30 @@ export const ALLOCATION_HEADERS = [{
   text: 'Name',
   left: true,
   value: 'name',
-  sortable: false,
+  // sortable: false,
 }, {
   text: 'Quantity',
   left: true,
   value: 'quantity',
-  sortable: false,
+  // sortable: false,
 }, {
-  text: 'Layer',
+  text: 'Location',
   left: true,
-  value: 'layer',
-  sortable: false,
-}, {
-  text: 'Cell',
-  left: true,
-  value: 'cell',
-  sortable: false,
-}]
+  value: 'location',
+  // sortable: false,
+},
+//   {
+//   text: 'Layer',
+//   left: true,
+//   value: 'layer',
+//   sortable: false,
+// }, {
+//   text: 'Cell',
+//   left: true,
+//   value: 'cell',
+//   sortable: false,
+// }
+]
 
 export const WAREHOUSE_COLORS = [
   {

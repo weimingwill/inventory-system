@@ -133,7 +133,7 @@
 
                 <warehouse-allocation-table
                     v-if="shelfName || layerName || cellName"
-                    :items="cellVariantJoins"
+                    :items="allocations"
                 >
                 </warehouse-allocation-table>
               </v-container>
@@ -212,6 +212,17 @@
         if (this.cellName) {
           this.cellVariantJoins = this.getCellVariantsByShelfLayerCellName(this.shelfName, this.layerName, this.cellName);
         }
+      },
+
+      cellVariantJoins() {
+        let variantIds = this.getVariantsOfCellVariants(this.cellVariantJoins);
+        this.allocations = [];
+        let cellVariants;
+        Array.from(variantIds).forEach(variantId => {
+          cellVariants = this.cellVariantJoins.filter(cv => cv.variantId === variantId);
+          this.allocations = this.allocations.concat(this.getVariantAllocations(cellVariants));
+        })
+        this.allocations.sort((a, b) => a.location - b.location);
       }
     },
 
@@ -231,7 +242,8 @@
         'fulfillVariants',
         'getCellVariantsByShelfLayerName',
         'getCellVariantsByShelfLayerCellName',
-        'getCellVariantsByShelfName'
+        'getCellVariantsByShelfName',
+        'getVariantsOfCellVariants'
       ]),
 
       layerNames() {
@@ -398,6 +410,7 @@
           value: 'quantity'
         }],
 
+        allocations: [],
         allocationHeaders: s.ALLOCATION_HEADERS
       }
     }
