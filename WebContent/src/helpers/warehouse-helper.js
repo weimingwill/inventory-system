@@ -59,12 +59,12 @@ function getVariantJoinsCapacity (cellVariantJoins) {
 }
 
 function isSameVariant (cellVariantJoins) {
-  let isSameVariant = false;
+  let isSameVariant = true;
   if (cellVariantJoins.length > 0) {
     let variantId = cellVariantJoins[0].variantId;
     Array.from(cellVariantJoins).forEach(cv => {
       if (variantId !== cv.variantId) {
-        isSameVariant = true;
+        isSameVariant = false;
       }
     })
   }

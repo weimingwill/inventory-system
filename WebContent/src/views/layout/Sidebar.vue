@@ -226,8 +226,6 @@
         color: #424242;
     }
 
-
-
     .badge:after {
         height: 17px;
         width: 17px;
