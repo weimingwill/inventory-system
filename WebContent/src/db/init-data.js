@@ -8,6 +8,14 @@ import {
 
 const initClasses = {};
 
+function initUsers() {
+  let objects = [
+    'users'
+  ];
+
+  return init(objects);
+}
+
 function initProducts() {
   let objects = [
     'products',
@@ -188,6 +196,7 @@ function resetIds(objects) {
 }
 
 export {
+  initUsers,
   initProducts,
   initPurchasing,
   initSuppliers,

@@ -9,8 +9,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: require('../views/Home')
+      name: 'Login',
+      component: require('../views/login.vue')
     },
     ...generateRoutesFromMenu(menuModule.state.items),
     {

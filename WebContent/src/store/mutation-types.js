@@ -2,6 +2,12 @@ export const INIT_APP = 'INIT_APP'
 
 export const TOGGLE_LOADER = 'TOGGLE_LOADER'
 
+export const LOGIN = 'LOGIN'
+
+export const LOGOUT = 'LOGOUT'
+
+export const TOGGLE_IS_ROOT = 'TOGGLE_IS_ROOT'
+
 export const EXPAND_MENU = 'EXPAND_MENU'
 
 export const INIT_INVENTORY = 'INIT_INVENTORY'

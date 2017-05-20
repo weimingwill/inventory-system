@@ -1,5 +1,5 @@
 <template>
-    <v-sidebar height="100vh" fixed>
+    <v-sidebar height="100vh" fixed :drawer="!isNotRoot">
         <div class="sidebar-logo">
             <img class="logo" src="../../assets/logo2.png">
             <p class="logo-title">
@@ -13,7 +13,7 @@
         <!--<v-divider light />-->
         <v-list dense :close-on-lock="false">
             <!--<p style="color: white">{{ menu }}</p>-->
-            <template v-for="(item,i) in menu">
+            <template v-for="(item,i) in menuitems">
                 <v-list-group v-if="item.subItems">
                     <v-list-item slot="item">
                         <v-list-tile ripple>
@@ -58,7 +58,7 @@
                                 </v-list-tile-avatar>
                             </v-btn>
                             <v-list three-line class="elevation-1 message-list">
-                                <template v-for="item in messages">
+                                <template v-for="item in notifications">
                                     <v-subheader v-if="item.header" v-text="item.header"/>
                                     <v-divider v-else-if="item.divider" v-bind:inset="item.inset"/>
                                     <v-list-item v-else v-bind:key="item.title">
@@ -91,9 +91,14 @@
                                  src="../../assets/avatar/matthew.png">
                         </v-list-tile-avatar>
                         <v-list-tile-content class="avatar-title-content">
-                            <v-list-tile-title class="avatar-title" v-text="username"/>
-                            <v-list-tile-sub-title v-text="position"/>
+                            <v-list-tile-title class="avatar-title" v-text="user.name"/>
+                            <v-list-tile-sub-title v-text="user.position"/>
                         </v-list-tile-content>
+                        <v-list-tile-action>
+                            <v-btn @click.native="logoutUser" icon v-tooltip:top="{ html: 'Logout' }">
+                                <v-icon class="red--text">power_settings_new</v-icon>
+                            </v-btn>
+                        </v-list-tile-action>
                     </v-list-tile>
                 </v-list-item>
 
@@ -110,16 +115,27 @@
     name: 'sidebar',
 
     computed: {
-      ...mapGetters({
-        menu: 'menuitems',
-        messages: 'notifications'
-      }),
+      ...mapGetters([
+        'menuitems',
+        'notifications',
+        'isNotRoot',
+        'user'
+      ]),
     },
 
     methods: {
+      ...mapActions([
+        'logout'
+      ]),
+
       clearStorage: function () {
         console.log('Clear Storage');
         localStorage.clear();
+      },
+
+      logoutUser () {
+        this.logout();
+        this.$router.replace('/')
       }
     },
 
