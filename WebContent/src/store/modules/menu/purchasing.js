@@ -35,6 +35,16 @@ export default {
       }
     },
     {
+      title: 'Recommendations',
+      path: '/recommendations',
+      router: true,
+      isMenu: true,
+      component: lazyLoading('purchasing/recommendations'),
+      meta: {
+        link: 'purchasing/recommendations.vue'
+      }
+    },
+    {
       title: 'Reorder',
       path: '/reorder',
       router: true,
@@ -50,6 +60,11 @@ export default {
       component: lazyLoading('purchasing/purchase-order-details')
     },
     {
+      path: '/purchaseOrders/create/purchaseOrderDetails/:number',
+      isMenu: false,
+      component: lazyLoading('purchasing/purchase-order-details')
+    },
+    {
       path: '/purchaseOrders/view/:id',
       canReuse: false,
       isMenu: false,
@@ -60,6 +75,12 @@ export default {
       canReuse: false,
       isMenu: false,
       component: lazyLoading('purchasing/purchase-order-details')
+    },
+    {
+      path: '/recommendations/:type',
+      canReuse: false,
+      isMenu: false,
+      component: lazyLoading('purchasing/recommendations')
     }
   ]
 }

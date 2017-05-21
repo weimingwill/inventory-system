@@ -216,6 +216,10 @@
         </v-card>
       </v-col>
     </v-row>
+
+    <demand-forecast
+        v-if="recommendationNumber"
+        :productType="recommendation.productType"></demand-forecast>
   </div>
 
 
@@ -233,6 +237,7 @@
   import AdjustmentDialog from './components/adjustment-dialog.vue'
   import AdjustedItems from './components/adjusted-items.vue'
   import PurchaseSummary from './components/purchase-order-summary.vue'
+  import DemandForecast from './components/demand-forecast.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
 
@@ -253,7 +258,8 @@
       StoredItems,
       AdjustmentDialog,
       AdjustedItems,
-      PurchaseSummary
+      PurchaseSummary,
+      DemandForecast
     },
 
     watch: {
@@ -280,11 +286,16 @@
         'getVariantById',
         'getSupplierById',
         'fulfillVariants',
-        'fulfillNestedVariants'
+        'fulfillNestedVariants',
+        'getRecommendationByNumber',
+        'getVariantsByTypeColorSize',
+        'getSupplierByVariant',
+        'getSupplierContactsByName',
+        'getSupplierContactsBySupplierId'
       ]),
       supplierContacts() {
         if (this.order.supplier) {
-          return this.$store.getters.getSupplierContactsByName(this.order.supplier);
+          return this.getSupplierContactsByName(this.order.supplier);
         } else {
           return []
         }
@@ -293,7 +304,8 @@
 
     methods: {
       ...mapActions([
-        'createPurchase'
+        'createPurchase',
+        'handleRecommendation'
       ]),
 
       validateOrder() {
@@ -307,6 +319,11 @@
             order: this.order,
             items: this.orderedItems
           });
+
+          if (this.recommendationNumber) {
+            this.handleRecommendation(this.recommendationNumber);
+          }
+
           this.$router.replace('/purchaseOrders');
         })
         .catch(err => {
@@ -372,6 +389,11 @@
           childText = 'Create New Purchase Order';
         }
 
+        this.recommendationNumber = this.$route.params.number;
+        if (this.recommendationNumber) {
+          this.setRecommendation(this.recommendationNumber);
+        }
+
         this.breadcrumbs = [
           {
             text: parentText,
@@ -380,6 +402,27 @@
           },
           { text: childText }
         ];
+      },
+
+      setRecommendation (number) {
+        this.recommendation = this.getRecommendationByNumber(number);
+        Array.from(this.recommendation.variants).forEach(variant => {
+          let variants = this.getVariantsByTypeColorSize(this.recommendation.productType, variant.color, variant.size);
+          variants = variants.map(v => {
+            v.quantity = variant.quantity;
+            return v;
+          });
+          this.orderedItems = this.orderedItems.concat(variants);
+
+        });
+
+        let supplier = this.getSupplierByVariant(this.orderedItems[0]);
+        this.order.supplierId = supplier.id;
+        this.order.supplier = supplier.name;
+        this.order.warehouse = this.warehouseLocations[0];
+        let supplierContacts = this.getSupplierContactsBySupplierId(supplier.id);
+        this.order.contact = supplierContacts[0].email;
+        this.order.supplierContactId = supplierContacts[0].id;
       },
 
       setSameHeight () {
@@ -492,6 +535,10 @@
         isToCheck: false,
         isToStore: false,
         orderId: '',
+
+        // recommendations
+        recommendationNumber: '',
+        recommendation: {}
       }
     },
 

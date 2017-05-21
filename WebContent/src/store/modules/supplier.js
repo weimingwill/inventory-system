@@ -45,11 +45,11 @@ const getters = {
     return supplier.brand;
   },
   
-  getSupplierByName: (state, getters) => (name) => {
-    return state.suppliers.find(s => s.name === name);
-  },
-  
   // Supplier Contacts
+  getSupplierContactsBySupplierId: (state) => (supplierId) => {
+    return state.supplierContacts.filter(s => s.supplierId === supplierId);
+  },
+
   getSupplierContactsByName: (state, getters) => (name) => {
     let supplierId = getters.getSupplierByName(name).id;
     return state.supplierContacts.filter((sc) => sc.supplierId === supplierId).map(sc => sc.email);
@@ -57,9 +57,13 @@ const getters = {
   
   getSupplierContactByEmail: (state) => (email) => {
     return state.supplierContacts.find(sc => sc.email === email);
+  },
+
+  getSupplierByVariant: (state, getters) => (variant) => {
+    return state.suppliers.find(s => s.id === getters.getProductById(variant.productId).supplierId);
   }
-  
 };
+
 
 const mutations = {
   [types.INIT_SUPPLIER] (state) {

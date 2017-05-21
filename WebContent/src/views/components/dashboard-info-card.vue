@@ -9,7 +9,7 @@
       </v-card-row>
 
       <v-card-row>
-        <div>
+        <div style="width: 100%">
           <v-icon class="mr-1 percentage-icon increase"
                   v-if="info.isIncreased">keyboard_arrow_up</v-icon>
           <v-icon class="mr-1 percentage-icon decrease"
@@ -48,7 +48,7 @@
     font-weight: 500;
   }
 
-  .card-percentage {
+  .action {
     float: left;
   }
 

@@ -133,7 +133,7 @@
         }
       },
 
-      setPersonnel () {
+      setData () {
         let urlsParts = window.location.href.split('/');
         this.page = urlsParts.pop();
         // Two conditions: inbound and purchasing
@@ -164,7 +164,7 @@
     },
 
     mounted() {
-      this.setPersonnel();
+      this.setData();
       // Add eventListener to tabs
       let $tabs = document.getElementsByClassName('tab');
       Array.from($tabs).forEach($tab => {

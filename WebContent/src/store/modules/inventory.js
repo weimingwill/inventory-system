@@ -57,7 +57,11 @@ const getters = {
       return product.type === type
     });
   },
-  
+
+  getVariantsByTypeColorSize: (state, getters) => (type, color, size) => {
+    return state.variants.filter(variant => variant.color === color && variant.size === size && getters.getProductById(variant.productId).type === type)
+  },
+
   sizesOfType: state => (type) => {
     let filteredVariants = state.variants.filter(v => {
       let product = state.products.find(p => p.id === v.productId);

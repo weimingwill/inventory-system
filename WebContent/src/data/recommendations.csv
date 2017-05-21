@@ -1,0 +1,10 @@
+id,number,type,productType,size,color,quantity,isHandled,variantId,importance
+1,R00001,new,T-shirt,Large,White,2000,FALSE,,1
+1,R00001,new,T-shirt,Medium,White,20,FALSE,,1
+1,R00001,new,T-shirt,Large,Navy Blue,20,FALSE,,1
+2,R00002,new,Dress,Large,Forest Green,20,FALSE,,2
+2,R00002,new,Dress,Medium,Soft Gray,20,FALSE,,2
+2,R00002,new,Dress,Large,Forest Green,20,FALSE,,2
+2,R00002,new,Dress,Medium,Soft Gray,30,FALSE,,2
+3,R00003,reorder,Dress,Large,Forest Green,30,FALSE,1,3
+3,R00003,reorder,Dress,Medium,Forest Green,30,FALSE,2,3

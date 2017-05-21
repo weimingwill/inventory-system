@@ -25,6 +25,26 @@ function initProducts() {
   return init(objects)
 }
 
+function initRecommendation() {
+  let objects = [
+    'recommendations'
+  ];
+
+  let combinedObjParam = {
+    objectsToCombine: 'recommendations',
+    attrsToCombine: [
+      'variantId',
+      'size',
+      'color',
+      'quantity'
+    ],
+    identifier: 'id',
+    combinedKey: 'variants'
+  };
+
+  return init(objects, combinedObjParam);
+}
+
 function initPurchasing() {
   let objects = [
     'purchase-orders',
@@ -119,11 +139,9 @@ function initObjects(name, nameCamelCase, combinedObjParam) {
             value = parseFloat(value).toFixed(2);
           } else if (!isNaN(value) && value) {
             value = parseInt(value);
-          }
-          
-          if (value === 'false') {
+          } else if (value.toLowerCase() === 'false') {
             value = false;
-          } else if (value === 'true') {
+          } else if (value.toLowerCase() === 'true') {
             value = true;
           }
           object[key] = value
@@ -198,6 +216,7 @@ function resetIds(objects) {
 export {
   initUsers,
   initProducts,
+  initRecommendation,
   initPurchasing,
   initSuppliers,
   initWarehouses,

@@ -221,7 +221,7 @@
         Array.from(variantIds).forEach(variantId => {
           cellVariants = this.cellVariantJoins.filter(cv => cv.variantId === variantId);
           this.allocations = this.allocations.concat(this.getVariantAllocations(cellVariants));
-        })
+        });
         this.allocations.sort((a, b) => a.location - b.location);
       }
     },
@@ -243,7 +243,8 @@
         'getCellVariantsByShelfLayerName',
         'getCellVariantsByShelfLayerCellName',
         'getCellVariantsByShelfName',
-        'getVariantsOfCellVariants'
+        'getVariantsOfCellVariants',
+        'getVariantAllocations'
       ]),
 
       layerNames() {

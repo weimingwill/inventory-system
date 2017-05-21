@@ -13,22 +13,27 @@ import {
   log} from '../../utils/utils';
 
 import {
-  initPurchasing
+  initPurchasing,
+  initRecommendation
 } from '../../db/init-data'
 
 import {
   addPurchaseOrder,
-  updatePurchaseOrder
+  updatePurchaseOrder,
+  udpateRecommendation
 } from '../../db/purchasing'
 
 import * as s from '../../utils/setting'
 
 const state = {
-  purchaseOrders: []
+  purchaseOrders: [],
+  recommendations: []
 };
 
 const getters = {
   purchaseOrders: state => state.purchaseOrders,
+
+  recommendations: state => state.recommendations,
 
   getOrderByNumber: (state, getters) => (orderNumber) => state.purchaseOrders.find((order) => order.orderNumber === orderNumber),
 
@@ -178,7 +183,7 @@ const getters = {
       data.title = s.PURCHASING_DASHBOARD_TITLES[i];
       data.unit = s.PURCHASING_DASHBOARD_UNITS[i];
       data.isIncreased = percentage[i] > 0;
-      data.percentage = percentage[i];
+      data.percentage = percentage[i] === Infinity? 0 : percentage[i];
       data.value = values[i];
       info.push(data);
     }
@@ -186,7 +191,54 @@ const getters = {
     log(info);
     return info
   },
-  
+
+  getDashboardAction: (state, getters) => {
+    let actions = []
+      , action;
+
+    action = {
+      id: 'to-purchase',
+      title: 'To Purchase',
+      number: getters.toPurchaseNew.length,
+      unit: 'Recommendations',
+      href: '/recommendations'
+    };
+
+    actions.push(action);
+
+    action = {
+      id: 'to-reorder',
+      title: 'To Reorder',
+      number: getters.toReorder.length,
+      unit: 'Recommendations',
+      href: '/reorder'
+    };
+
+    actions.push(action);
+
+    action = {
+      id: 'to-adjust',
+      title: 'To Adjust',
+      number: getters.toAdjust.length,
+      unit: 'Purcahse Orders',
+      href: '/purchaseOrder/adjustments'
+    };
+
+    actions.push(action);
+
+    return actions;
+  },
+
+
+  // Recommendations
+  toPurchaseNew: state => state.recommendations.filter(r => r.type === 'new'),
+
+  toReorder: state => state.recommendations.filter(r => r.type === 'reorder'),
+
+  toAdjust: state => state.purchaseOrders.filter(p => p.adjustments.length > 0),
+
+  getRecommendationByNumber: state => (number) => state.recommendations.find(r => r.number === number),
+
   // Get statuses
   getInboundStatuses() {
     return [s.ALL, s.STATUS_PURCHASED, s.STATUS_RECEIVED, s.STATUS_CHECKED, s.STATUS_STORED]
@@ -225,7 +277,15 @@ const mutations = {
       }
       return p;
     });
-    
+
+    let recommendationObj = initRecommendation();
+    state.recommendations = recommendationObj.recommendations.map(r => {
+      r.quantity = r.variants.map(v => v.quantity).reduce((sum, quantity) => { return sum + quantity });
+      return r;
+    });
+
+    state.purchaseOrders.sort((a, b) => a.created - b.created);
+
     log('purchaseOrders', state.purchaseOrders);
   },
 
@@ -275,6 +335,8 @@ const mutations = {
     purchaseOrder.receives = [];
     purchaseOrder.adjustments = [];
     purchaseOrder.receivedPercentage = 0;
+    purchaseOrder.checkedPercentage = 0;
+    purchaseOrder.storedPercentage = 0;
     purchaseOrder.toChecks = [];
     purchaseOrder.checkedItems = [];
     purchaseOrder.toStores = [];
@@ -477,6 +539,16 @@ const mutations = {
   [types.ADJUST_PURCHASE] (state, {purchaseOrder, adjustment}) {
     purchaseOrder.adjustments.push(adjustment);
     updatePurchaseOrder(purchaseOrder);
+  },
+
+  [types.HANDLE_RECOMMENDATION] (state, recommendation) {
+    state.recommendations.map(r => {
+      if (r.id === recommendation.id) {
+        r = recommendation;
+      }
+      return r;
+    });
+    udpateRecommendation(state.recommendations);
   }
 };
 
@@ -568,6 +640,12 @@ const actions = {
       commit(types.UPDATE_STOCK, { increaseAttr, decreaseAttr, items, itemAttr });
       // Todo: send message to purchasing crew to create new order
     }
+  },
+
+  handleRecommendation ({commit, getters}, number) {
+    log('handle recommendation');
+    let recommendation = getters.getRecommendationByNumber(number);
+    commit(types.HANDLE_RECOMMENDATION, recommendation);
   }
 
 };

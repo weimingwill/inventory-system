@@ -5,7 +5,7 @@ import {
   log,
 } from '../utils/utils'
 
-import { PURCHASE_ORDERS } from './setting'
+import { PURCHASE_ORDERS, RECOMMENDATION } from './setting'
 
 function addPurchaseOrder(purchaseOrder) {
   let purchaseOrders = JSON.parse(localStorage.getItem(PURCHASE_ORDERS));
@@ -23,7 +23,12 @@ function updatePurchaseOrder(purchaseOrder) {
   localStorage.setItem(PURCHASE_ORDERS, JSON.stringify(purchaseOrders));
 }
 
+function udpateRecommendation(recommendations) {
+  localStorage.setItem(RECOMMENDATION, recommendations);
+}
+
 export {
   addPurchaseOrder,
-  updatePurchaseOrder
+  updatePurchaseOrder,
+  udpateRecommendation
 }

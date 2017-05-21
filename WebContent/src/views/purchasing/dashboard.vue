@@ -3,8 +3,12 @@
     <breadcrumbs :items="breadcrumbs" :isSlim="true"></breadcrumbs>
     <v-container class="dashboard-container" fluid>
       <v-row>
-        <v-col v-for="card in getDashboardInfo" :key="card.id" xs4>
-          <card :info="card"></card>
+        <v-col v-for="(action, index) in getDashboardAction" :key="index" xs2>
+          <action-card :action="action"></action-card>
+        </v-col>
+
+        <v-col v-for="info in getDashboardInfo" :key="info.id" xs2>
+          <info-card :info="info"></info-card>
         </v-col>
       </v-row>
 
@@ -138,7 +142,8 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import Card from '../components/datacard.vue'
+  import ActionCard from '../components/dashboard-action-card.vue'
+  import InfoCard from '../components/dashboard-info-card.vue'
   import Chart from '../components/chartjs.vue'
 
   import { mapGetters, mapActions } from 'vuex'
@@ -149,13 +154,15 @@
 
     components: {
       Breadcrumbs,
-      Card,
+      ActionCard,
+      InfoCard,
       Chart
     },
 
     computed: {
       ...mapGetters([
         'getDashboardInfo',
+        'getDashboardAction',
         'getPredictions',
         'getLabels',
         'getSales',
