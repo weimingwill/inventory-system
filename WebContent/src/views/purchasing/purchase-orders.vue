@@ -66,12 +66,12 @@
             value: 'checked',
             left: true
           }, {
-            text: 'Received At',
-            value: 'receivedAt',
-            left: true
-          }, {
             text: 'Stored',
             value: 'stored',
+            left: true
+          }, {
+            text: 'Received At',
+            value: 'receivedAt',
             left: true
           }, {
             text: 'Checked At',

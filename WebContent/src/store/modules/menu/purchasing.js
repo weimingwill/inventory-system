@@ -44,16 +44,16 @@ export default {
         link: 'purchasing/recommendations.vue'
       }
     },
-    {
-      title: 'Reorder',
-      path: '/reorder',
-      router: true,
-      isMenu: true,
-      component: lazyLoading('purchasing/reorder'),
-      meta: {
-        link: 'purchasing/reorder.vue'
-      }
-    },
+    // {
+    //   title: 'Reorder',
+    //   path: '/reorder',
+    //   router: true,
+    //   isMenu: true,
+    //   component: lazyLoading('purchasing/reorder'),
+    //   meta: {
+    //     link: 'purchasing/reorder.vue'
+    //   }
+    // },
     {
       path: '/purchaseOrders/create/purchaseOrderDetails',
       isMenu: false,

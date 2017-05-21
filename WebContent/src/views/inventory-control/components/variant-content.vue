@@ -37,12 +37,13 @@
             <td class="">{{ props.item.name }}</td>
             <td class="">{{ props.item.costPrice }}</td>
             <td class="">{{ props.item.sellPrice }}</td>
+            <td class="">{{ props.item.incoming }}</td>
             <td class="">{{ props.item.onHand }}</td>
             <td class="">{{ props.item.available }}</td>
             <td class="">{{ props.item.committed }}</td>
             <td class="">{{ props.item.size }}</td>
             <td class="">{{ props.item.color }}</td>
-            <td class="">{{ props.item.weight }}</td>
+            <td class="">{{ props.item.popularity }}</td>
             <td class=""><v-icon>place</v-icon></td>
           </template>
         </v-data-table>
@@ -100,6 +101,10 @@
           value: 'sellPrice',
           left: true
         }, {
+          text: 'Incoming',
+          value: 'incoming',
+          left: true
+        }, {
           text: 'On Hand',
           value: 'onHand',
           left: true
@@ -120,8 +125,8 @@
           value: 'color',
           left: true
         }, {
-          text: 'Weight',
-          value: 'weight',
+          text: 'Popularity',
+          value: 'popularity',
           left: true
         }, {
           text: 'Map',

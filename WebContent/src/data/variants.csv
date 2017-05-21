@@ -7,11 +7,11 @@ id,productId,channelId,warehouseId,shelveId,layerId,popularity,name,color,size,s
 6,1,1,2,2,3,2,Soft Gray/Small,Soft Gray,Small,CD001-SG-S,40,30,10,0,0,0,0,1kg,10,20,,20,true,src/assets/images/1-2.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
 7,2,1,2,2,3,2,Dark Gray/Large,Dark Gray,Large,CT001-DG-L,40,30,10,5,0,0,0,1kg,10,20,,20,true,src/assets/images/2-1.jpg,true,2017-03-03 14:20:00,2017-03-04 15:22:22
 8,2,1,2,2,3,1,White/Large,White,Large,CT001-W-L,10,10,5,5,0,0,0,1kg,10,20,,20,true,src/assets/images/2-2.jpg,true,2017-03-03 14:20:00,2017-03-04 15:22:22
-9,2,1,2,2,3,3,Navy Blue/Large,Navy Blue,Large,CT001-NB-L,50,40,10,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-3.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
-10,2,1,2,2,3,2,Dark Gray/Medium,Dark Gray,Medium,CT001-DG-M,30,30,0,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-1.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
-11,2,1,2,2,3,1,White/Medium,White,Medium,CT001-W-M,20,10,10,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-2.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
-12,2,1,2,2,3,3,Navy Blue/Medium,Navy Blue,Medium,CT001-NB-M,20,10,10,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-3.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
-13,2,1,2,2,3,2,Dark Gray/Small,Dark Gray,Small,CT001-DG-S,10,10,0,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-1.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
+9,2,1,2,2,3,3,Navy Blue/Large,Navy Blue,Large,CT001-NB-L,10,10,0,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-3.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
+10,2,1,2,2,3,2,Dark Gray/Medium,Dark Gray,Medium,CT001-DG-M,10,10,0,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-1.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
+11,2,1,2,2,3,1,White/Medium,White,Medium,CT001-W-M,10,5,5,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-2.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
+12,2,1,2,2,3,3,Navy Blue/Medium,Navy Blue,Medium,CT001-NB-M,10,5,5,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-3.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
+13,2,1,2,2,3,2,Dark Gray/Small,Dark Gray,Small,CT001-DG-S,10,5,5,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-1.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
 14,2,1,2,2,3,2,White/Small,White,Small,CT001-W-S,10,5,5,0,0,0,0,1kg,10,20,,20,true,src/assets/images/2-2.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
 15,3,1,2,2,3,2,Dark Gray/Large,Dark Gray,Large,SH001-DG-L,40,30,10,5,0,0,0,2kg,15,30,,20,true,src/assets/images/3-1.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22
 16,3,1,2,2,3,1,Light Gray/Large,Light Gray,Large,SH001-LG-L,10,10,5,5,0,0,0,2kg,15,30,,20,true,src/assets/images/3-2.jpg,false,2017-03-03 14:20:00,2017-03-04 15:22:22

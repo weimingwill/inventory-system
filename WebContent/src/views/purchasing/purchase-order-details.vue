@@ -201,7 +201,13 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col xs2 offset-xs10>
+      <v-col xs8 offset-xs1 class="pt-3">
+        <demand-forecast
+            v-if="recommendationNumber"
+            :productType="recommendation.productType"></demand-forecast>
+      </v-col>
+
+      <v-col xs2 offset-xs1>
         <v-card id="order-summary-card" class="elevation-0">
           <purchase-summary
               :ordered-items="orderedItems"
@@ -216,10 +222,6 @@
         </v-card>
       </v-col>
     </v-row>
-
-    <demand-forecast
-        v-if="recommendationNumber"
-        :productType="recommendation.productType"></demand-forecast>
   </div>
 
 
@@ -366,6 +368,7 @@
             this.isToStore = true;
             break;
           default:
+            parentText = 'Purchasing';
             this.isInbound = false;
             this.isToReceive = false;
             this.isToCheck = false;

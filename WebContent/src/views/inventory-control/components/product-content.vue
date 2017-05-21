@@ -42,6 +42,7 @@
             <td class="">{{ props.item.type }}</td>
             <td class="">{{ getSupplierName(props.item.supplierId) }}</td>
             <td class="">{{ getBrand(props.item.supplierId) }}</td>
+            <td class="">{{ props.item.incoming }}</td>
             <td class="">{{ props.item.onHand }}</td>
             <td class="">{{ props.item.available }}</td>
             <td class="">{{ props.item.committed }}</td>
@@ -125,6 +126,10 @@
         }, {
           text: 'Brand',
           value: 'brand',
+          left: true
+        }, {
+          text: 'Incoming',
+          value: 'incoming',
           left: true
         }, {
           text: 'On Hand',

@@ -23,11 +23,11 @@
         <td>{{ props.item.size }}</td>
         <td>{{ props.item.costPrice }}</td>
         <td>{{ props.item.sellPrice }}</td>
+        <td>{{ props.item.incoming }}</td>
         <td>{{ props.item.onHand }}</td>
         <td>{{ props.item.available }}</td>
         <td>{{ props.item.committed }}</td>
-
-        <td>{{ props.item.weight }}</td>
+        <td>{{ props.item.popularity }}</td>
         <td><v-icon>place</v-icon></td>
       </template>
     </v-data-table>
@@ -88,6 +88,10 @@
           value: 'sellPrice',
           left: true
         }, {
+          text: 'Incoming',
+          value: 'incoming',
+          left: true
+        }, {
           text: 'On Hand',
           value: 'onHand',
           left: true
@@ -99,9 +103,9 @@
           text: 'Committed',
           value: 'committed',
           left: true
-        },  {
-          text: 'Weight',
-          value: 'weight',
+        }, {
+          text: 'Popularity',
+          value: 'popularity',
           left: true
         }, {
           text: 'Map',

@@ -19,20 +19,19 @@
             v-bind:headers="headers"
             v-model="items"
             v-bind:search="searchContent"
-            select-all
             rows-per-page="10"
             :rows-per-page-items="rowsPerPageItems"
         >
 
           <template slot="items" scope="props" class="template-datatable">
             <td class="order-td hidden"><input v-model="props.item.id"></td>
-            <td>
-              <v-checkbox
-                  hide-details
-                  primary
-                  v-model="props.item.value"
-              ></v-checkbox>
-            </td>
+            <!--<td>-->
+              <!--<v-checkbox-->
+                  <!--hide-details-->
+                  <!--primary-->
+                  <!--v-model="props.item.value"-->
+              <!--&gt;</v-checkbox>-->
+            <!--</td>-->
             <td>{{ props.item.orderNumber }}</td>
             <td>{{ getSupplierName(props.item.supplierId) }}</td>
             <td>
@@ -60,6 +59,16 @@
                 </v-col>
               </v-row>
             </td>
+            <td v-if="isToStore">
+              <v-row>
+                <v-col xs9>
+                  <v-progress-linear v-model="props.item.storedPercentage" height="10" info></v-progress-linear>
+                </v-col>
+                <v-col xs3 pt-2>
+                  {{ props.item.storedPercentage }}%
+                </v-col>
+              </v-row>
+            </td>
 
             <td v-if="isToCheck">
               <v-row>
@@ -72,17 +81,6 @@
               </v-row>
             </td>
             <td v-if="isToCheck">{{ props.item.receivedAt }}</td>
-
-            <td v-if="isToStore">
-              <v-row>
-                <v-col xs9>
-                  <v-progress-linear v-model="props.item.storedPercentage" height="10" info></v-progress-linear>
-                </v-col>
-                <v-col xs3 pt-2>
-                  {{ props.item.storedPercentage }}%
-                </v-col>
-              </v-row>
-            </td>
             <td v-if="isToStore">{{ props.item.checkedAt }}</td>
             <td v-if="isToReceive && isToCheck && isToStore">{{ props.item.storedAt }}</td>
 

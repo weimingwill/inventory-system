@@ -6,7 +6,7 @@
       transition="v-dialog-bottom-transition" :overlay=false>
     <v-btn primary light outline slot="activator" id="dialog-activate-btn" class="mt-4">
       <v-icon left>replay</v-icon>
-      Change Allocation
+      Allocation Details
     </v-btn>
     <v-card>
       <v-card-row>
