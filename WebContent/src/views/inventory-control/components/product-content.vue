@@ -84,7 +84,7 @@
     },
 
     mounted() {
-      this.$refs.productIdTd.forEach(($td) => {
+      Array.from(this.$refs.productIdTd).forEach(($td) => {
         $td.parentNode.addEventListener('click', () => this.rowOnClick($td.lastChild.value))
       });
 
@@ -98,7 +98,7 @@
     },
 
     beforeDestroy() {
-      this.$refs.productIdTd.forEach(($td) => {
+      Array.from(this.$refs.productIdTd).forEach(($td) => {
         $td.parentNode.removeEventListener('click', () => this.rowOnClick($td.lastChild.value))
       });
     },

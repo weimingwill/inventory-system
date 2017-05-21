@@ -46,21 +46,33 @@
       ProductDetails
     },
 
+    computed: {
+      productUrl () {
+        let url = window.location.href.split('/');
+        url.pop();
+        console.log('url', url.join('/'))
+        return url.join('/');
+      }
+    },
+
     data () {
       return {
         breadcrumbs: [
           {
             text: 'products',
-            href: window.location.href.replace('product-variant', 'product'),
             target: '_self'
           },
           { text: 'Variants'}
-
         ],
         searchContent: '',
         id: parseInt(this.$route.params.id)
+      }
+    },
+
+    mounted () {
+      this.breadcrumbs[0].href = this.productUrl;
     }
-    }
+
   }
 </script>
 
