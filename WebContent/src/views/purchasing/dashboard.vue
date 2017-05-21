@@ -164,18 +164,6 @@
         'colorsOfType'
       ]),
 
-      sizes () {
-        if (this.type) {
-          return this.$store.getters.sizesOfType(this.type);
-        }
-      },
-
-      colors () {
-        if (this.type) {
-          return this.$store.getters.colorsOfType(this.type);
-        }
-      },
-
       supplierSelectionNames () {
         let names = this.suppliers.map(s => s.name);
         names.unshift('All');
@@ -214,8 +202,8 @@
     watch: {
       type () {
         if (this.type) {
-          this.sizes = this.$store.getters.sizesOfType(this.type);
-          this.colors = this.$store.getters.colorsOfType(this.type);
+          this.sizes = this.sizesOfType(this.type);
+          this.colors = this.colorsOfType(this.type);
           this.size = this.sizes[0];
           this.color = this.colors[0];
         }

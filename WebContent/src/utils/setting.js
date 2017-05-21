@@ -193,3 +193,8 @@ export const WAREHOUSE_COLORS = [
     type: 'common'
   }
 ]
+
+export const USER_MENU = {
+  'purchasing': ['Inventory Control', 'Purchasing', 'Suppliers'],
+  'inbound': ['Inbound', 'Warehouse']
+}

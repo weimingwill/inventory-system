@@ -1,6 +1,8 @@
 import * as types from '../mutation-types'
 import { log } from '../../utils/utils'
 import { initUsers } from '../../db/init-data'
+import { USER_MENU } from '../../utils/setting'
+
 
 const state = {
   loading: false,
@@ -18,7 +20,18 @@ const getters = {
 
   isNotRoot: state => state.isNotRoot,
 
-  user: state => state.user
+  user: state => state.user,
+
+  userMenus: (state, getters) => {
+    log('user', state.user)
+    log('USER_MENU', USER_MENU)
+    if (Object.keys(state.user).length > 0) {
+      let userMenu = USER_MENU[state.user.username];
+      log('userMenu', userMenu)
+      return getters.menuitems.filter(item => userMenu.includes(item.title));
+    }
+    return getters.menuitems;
+  }
 };
 
 const mutations = {

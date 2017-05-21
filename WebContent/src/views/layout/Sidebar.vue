@@ -13,7 +13,7 @@
         <!--<v-divider light />-->
         <v-list dense :close-on-lock="false">
             <!--<p style="color: white">{{ menu }}</p>-->
-            <template v-for="(item,i) in menuitems">
+            <template v-for="(item,i) in userMenus">
                 <v-list-group v-if="item.subItems">
                     <v-list-item slot="item">
                         <v-list-tile ripple>
@@ -88,7 +88,7 @@
                     <v-list-tile ripple class="bottom-list-item">
                         <v-list-tile-avatar class="customised-avatar">
                             <img class="ui small circular image avatar-image"
-                                 src="../../assets/avatar/matthew.png">
+                                 :src="user.image">
                         </v-list-tile-avatar>
                         <v-list-tile-content class="avatar-title-content">
                             <v-list-tile-title class="avatar-title" v-text="user.name"/>
@@ -116,7 +116,7 @@
 
     computed: {
       ...mapGetters([
-        'menuitems',
+        'userMenus',
         'notifications',
         'isNotRoot',
         'user'
