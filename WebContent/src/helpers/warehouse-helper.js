@@ -13,8 +13,7 @@ function calculateShelvesDistance (shelfA, shelfB) {
   let b = parseInt(shelfB / 10);
   
   let distance = Math.abs(a - b);
-  distance += distance * 10 + Math.min(a, b) - Math.max(a, b);
-  distance /= 10;
+  distance += Math.abs(distance * 10 + Math.min(shelfA, shelfB) - Math.max(shelfA, shelfB));
   return distance;
 }
 

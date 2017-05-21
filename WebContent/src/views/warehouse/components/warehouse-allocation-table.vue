@@ -12,6 +12,8 @@
         v-bind:search="searchVariantTable"
         v-bind:headers="headers"
         v-model="cellVariantJoins"
+        rows-per-page="9"
+        :rows-per-page-items="rowsPerPageItems"
     >
       <template slot="items" scope="props">
         <td class="image-td">
@@ -45,7 +47,8 @@
     data () {
       return {
         searchVariantTable: '',
-        headers: ALLOCATION_HEADERS
+        headers: ALLOCATION_HEADERS,
+        rowsPerPageItems: [5, 9],
       }
     }
   }

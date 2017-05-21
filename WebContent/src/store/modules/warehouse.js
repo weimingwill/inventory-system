@@ -695,8 +695,9 @@ const actions = {
       , shelvesWithDistances = helper.getShelvesWithDistances(shelves, supplierShelves);
     for (i = 0; i < Object.keys(shelvesWithDistances).length && variant.toAllocate > 0; i++) {
       let newShelves = shelvesWithDistances[i];
+      newShelves.sort((a, b) => a.name - b.name);
       for (j = 0; j < newShelves.length && variant.toAllocate > 0; j++) {
-        let shelfName = newShelves[i].fullname;
+        let shelfName = newShelves[j].fullname;
         cellVariantJoins = getters.getCellVariantsByShelfName(shelfName);
         if (cellVariantJoins.length === 0) {
           capacity = getters.getShelfCapacity(shelfName);
