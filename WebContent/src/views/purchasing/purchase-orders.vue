@@ -31,7 +31,7 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import PurchaseOrderContent from './components/purchase-orders-content.vue'
+  import PurchaseOrderContent from './purchase-orders-content.vue'
   import { mapGetters, mapActions } from 'vuex'
   import * as s from '../../utils/setting'
 

@@ -96,7 +96,7 @@
 <script>
 
   import { mapGetters, mapActions } from 'vuex'
-  import * as s from '../../../utils/setting'
+  import * as s from '../../utils/setting'
 
   export default {
     name: 'PurchaseOrderDetails',

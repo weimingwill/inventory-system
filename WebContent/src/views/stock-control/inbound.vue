@@ -25,7 +25,7 @@
 
 <script>
   import Breadcrumbs from '../components/breadcrumbs.vue'
-  import PurchaseOrderContent from '../purchasing/components/purchase-orders-content.vue'
+  import PurchaseOrderContent from '../purchasing/purchase-orders-content.vue'
   import { mapGetters, mapActions } from 'vuex'
 
   export default {
