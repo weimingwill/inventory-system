@@ -331,20 +331,21 @@ const getters = {
       layerName = layer.fullname;
       cellName = cell.name;
       if (nameMap.hasOwnProperty(shelfName) && nameMap[shelfName].hasOwnProperty(layerName)) {
-        nameMap[shelfName].quantity += quantity
+        nameMap[shelfName].quantity += quantity;
         nameMap[shelfName][layerName].quantity += quantity
       } else {
         if (!nameMap.hasOwnProperty(shelfName)) {
           nameMap[shelfName] = {
             capacity: shelf.capacity,
           };
+          nameMap[shelfName].quantity = 0;
         }
 
         nameMap[shelfName][layerName] = {
           capacity: layer.capacity,
         };
-
-        nameMap[shelfName].quantity = quantity;
+  
+        nameMap[shelfName].quantity += quantity;
         nameMap[shelfName][layerName].quantity = quantity;
       }
 
@@ -444,6 +445,7 @@ const getters = {
     }
 
     allocations.sort((a, b) => a.location - b.location);
+    log('allocation', allocations);
     return allocations;
   },
 
