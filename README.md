@@ -1,14 +1,27 @@
 # Ecommerce Inventory System
 
-## Products
+## Project setup
+```
+git clone git@github.com:weimingwill/inventory-system.git
+cd inventory-system\WebContent
+npm install
+npm run dev
+
+// To login
+username: admin/purchasing/inbound
+password: weiming
+```
+
+## Business Operations
+### Products
 List of products managed in the inventory system.
 
-## Variants
+### Variants
 Each product has several variants, varied by size or color.
 
-## Purchasing
+### Purchasing
 
-### Purchasing dashboard
+#### Purchasing dashboard
 - Data: total purchase units, total cost, avg unit cost
 - Charts: demand forecast, incoming stocks
 - Recommendations: 
@@ -16,7 +29,7 @@ Each product has several variants, varied by size or color.
   - to reorder variants based on demand forecast and low inventory
 - To handle adjustment from inbound process: receiving, checking, storing
 
-## Inbound
+### Inbound
 - Receive: 
   - Partial receive
   - Adjust problems in receiving process
@@ -28,6 +41,9 @@ Each product has several variants, varied by size or color.
   
 - Store:
   - Warehouse map to locate the storing location
+
+- Adjustment
+  - In process of receiving, checking and storing, if any problems such as wrong items or item damaged, users can record it in the system. It will be sent to purchasing crew to further deal with suppliers. 
   
-## Warehouse Map
+### Warehouse Map
 - Check the goods stored in each location of warehouse.
