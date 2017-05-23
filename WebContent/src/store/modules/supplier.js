@@ -2,18 +2,8 @@
  * Created by zhuang_w-pc on 4/27/2017.
  */
 import * as types from '../mutation-types'
-import {
-  newIdOfArray,
-  currentDateTime,
-  formatProductName,
-  getFirstCharOfEachWord,
-  log} from '../../utils/utils';
-
-import {
-  initSuppliers
-} from '../../db/init-data'
-
-const imagePath = '/inventory-i18n-task3/WebContent/src/assets/logo.png';
+import { log } from '../../utils/utils';
+import { initSuppliers } from '../../db/init-data'
 
 const state = {
   suppliers: [],
@@ -23,9 +13,7 @@ const state = {
 const getters = {
   suppliers: state => state.suppliers,
   supplierContacts: state => state.supplierContacts,
-  
   supplierNames: state => state.suppliers.map(s => s.name),
-  supplierBrands: state => state.suppliers.map(s => s.brand),
   
   getSupplierById: (state, getters) => (id) => {
     return state.suppliers.find(s => s.id === id);

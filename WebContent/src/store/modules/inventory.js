@@ -2,7 +2,6 @@
  * Created by zhuang_w-pc on 4/27/2017.
  */
 import * as types from '../mutation-types'
-import * as s from '../../utils/setting'
 import {
   newIdOfArray,
   currentDateTime,
@@ -21,7 +20,7 @@ import {
   initProducts
 } from '../../db/init-data'
 
-const imagePath = '/inventory-i18n-task3/WebContent/src/assets/logo.png';
+const imagePath = '/inventory-i18n-task3/WebContent/src/assets/product-temp.png';
 
 const state = {
   products: [],

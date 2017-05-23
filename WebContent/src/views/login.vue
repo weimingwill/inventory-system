@@ -4,7 +4,7 @@
       <v-content>
         <v-container>
           <div class="logo">
-            <img class="logo-image" src="../assets/logo2.png">
+            <img class="logo-image" src="../assets/logo.png">
             <p class="logo-title">
               EC Inventory
             </p>

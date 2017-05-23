@@ -1,7 +1,7 @@
 <template>
     <v-sidebar height="100vh" fixed :drawer="!isNotRoot">
         <div class="sidebar-logo">
-            <img class="logo" src="../../assets/logo2.png">
+            <img class="logo" src="../../assets/logo.png">
             <p class="logo-title">
                 EC Inventory
                 <v-btn @click.native="clearStorage" icon="icon" slot="activator" v-tooltip:top="{ html: 'Reload DB' }">
