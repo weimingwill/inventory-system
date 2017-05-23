@@ -84,6 +84,8 @@
               this.$router.replace('/purchasingDashboard');
             } else if (user.username === 'inbound') {
               this.$router.replace('/receiving');
+            } else {
+              this.$router.replace('/inventory');
             }
             this.toggleIsRoot();
           } else {

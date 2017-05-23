@@ -5,3 +5,4 @@ id,username,password,name,position,image
 4,checking,weiming,Luo Shaohuai,Quality Checker,src/assets/avatar/matthew.png
 5,storing,weiming,Liu Xin,Keeper,src/assets/avatar/matthew.png
 6,picking,weiming,Wu Cai,Picker,src/assets/avatar/matthew.png
+7,admin,weiming,Wang Jinghan,Admin,src/assets/avatar/elliot.jpg

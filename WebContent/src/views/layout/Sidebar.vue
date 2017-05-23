@@ -12,7 +12,6 @@
 
         <!--<v-divider light />-->
         <v-list dense :close-on-lock="false">
-            <!--<p style="color: white">{{ menu }}</p>-->
             <template v-for="(item,i) in userMenus">
                 <v-list-group v-if="item.subItems">
                     <v-list-item slot="item">

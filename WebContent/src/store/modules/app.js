@@ -23,11 +23,8 @@ const getters = {
   user: state => state.user,
 
   userMenus: (state, getters) => {
-    log('user', state.user)
-    log('USER_MENU', USER_MENU)
     if (Object.keys(state.user).length > 0) {
       let userMenu = USER_MENU[state.user.username];
-      log('userMenu', userMenu)
       return getters.menuitems.filter(item => userMenu.includes(item.title));
     }
     return getters.menuitems;

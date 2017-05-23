@@ -16,7 +16,7 @@ export default {
   
   subItems: [
     {
-      title: 'Inventory',
+      title: 'Product',
       path: '/inventory',
       router: true,
       isMenu: true,

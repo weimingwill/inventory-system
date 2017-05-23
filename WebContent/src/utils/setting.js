@@ -195,6 +195,7 @@ export const WAREHOUSE_COLORS = [
 ]
 
 export const USER_MENU = {
-  'purchasing': ['Inventory Control', 'Purchasing', 'Suppliers'],
-  'inbound': ['Inbound', 'Warehouse']
-}
+  'purchasing': ['Inventory Control', 'Purchasing', 'Supplier'],
+  'inbound': ['Inbound', 'Warehouse'],
+  'admin': ['Inventory Control', 'Purchasing', 'Supplier', 'Inbound', 'Warehouse']
+};
