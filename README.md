@@ -54,7 +54,7 @@ Each product has several variants, varied by size or color.
 ## Major function
 
 ### Demand forecast
-Use Holt-Winters Forecasting, from `https://github.com/wdamron/Nostradamus.js`.
+Use Holt-Winters Forecasting, from [this github](https://github.com/wdamron/Nostradamus.js).
 Forecast the demand of variants by type, size and color. Based on demand forecast, recommend purchasing crew the type-size-color variant to purchase/reorder
 
 ### Auto allocation
