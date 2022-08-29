@@ -1,7 +1,7 @@
 <template>
     <div>
         <breadcrumbs :items="breadcrumbs"></breadcrumbs>
-        <div class="tool-card">
+        <div class="tool-card text-xs-right">
             <v-card-title>
                 <v-spacer></v-spacer>
                 <v-text-field
